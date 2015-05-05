@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Singleton;
 
 @Singleton
-public class HelloServlet extends HttpServlet {
+public class HealthCheckServlet extends HttpServlet {
 
 	/**
 	 * 
@@ -21,7 +21,7 @@ public class HelloServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.setStatus(HttpServletResponse.SC_OK);
-		resp.getWriter().append("hello");
+		resp.getWriter().append("okay");
 		resp.getWriter().close();
 	}
 
