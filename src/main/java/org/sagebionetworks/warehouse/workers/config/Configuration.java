@@ -1,5 +1,7 @@
 package org.sagebionetworks.warehouse.workers.config;
 
+import java.util.List;
+
 import com.amazonaws.auth.AWSCredentials;
 
 /**
@@ -21,4 +23,11 @@ public interface Configuration {
 	 * @return
 	 */
 	public String getProperty(String key);
+	
+	/**
+	 * Get the list of database class names.
+	 * 
+	 * @return
+	 */
+	List<String> getDatabaseObjectClassNames();
 }

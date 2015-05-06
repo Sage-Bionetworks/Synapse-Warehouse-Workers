@@ -2,7 +2,12 @@ package org.sagebionetworks.warehouse.workers.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
+
+import org.jdom.JDOMException;
+import org.sagebionetworks.warehouse.workers.db.FileState;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -13,8 +18,14 @@ public class ConfigurationImpl implements Configuration {
 
 	private static final String CONFIGURATION_PROPERTIES = "configuration.properties";
 	Properties properties;
+	/**
+	 * Add the class name of each database object to this list.
+	 */
+	List<String> databaseObjectClassNames =  Arrays.asList(
+			FileState.class.getName()
+	);
 	
-	public ConfigurationImpl() throws IOException{
+	public ConfigurationImpl() throws IOException, JDOMException{
 		// First load the configuration properties.
 		properties = new Properties();
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream(CONFIGURATION_PROPERTIES);
@@ -29,6 +40,13 @@ public class ConfigurationImpl implements Configuration {
 		// Now override the configuration with the system properties.
 		for(String key: System.getProperties().stringPropertyNames()){
 			properties.put(key, System.getProperties().get(key));
+		}
+		// replace the properties from settings
+		Properties settings = SettingsLoader.loadSettingsFile();
+		if(settings != null){
+			for(String key: settings.stringPropertyNames()){
+				properties.put(key, settings.get(key));
+			}
 		}
 	}
 
@@ -58,6 +76,14 @@ public class ConfigurationImpl implements Configuration {
 			throw new IllegalArgumentException("Cannot property: "+key+" was empty");
 		}
 		return value;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sagebionetworks.warehouse.workers.config.Configuration#getDatabaseObjectClassNames()
+	 */
+	public List<String> getDatabaseObjectClassNames() {
+		return databaseObjectClassNames;
 	}
 
 }
