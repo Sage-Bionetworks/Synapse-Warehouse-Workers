@@ -1,23 +1,18 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
-
-import org.springframework.jdbc.core.RowMapper;
 
 
 /**
  * State of a file.
  *
  */
-public class FileState implements DatabaseObject<FileState> {
+public class FileState {
 	
 	public enum State {
 		UNKNOWN,
-		PROCESSING,
+		QUEUED,
 		COMPLETE,
 		FAILED
 	}
@@ -65,39 +60,7 @@ public class FileState implements DatabaseObject<FileState> {
 	public void setErrorDetails(byte[] errorDetails) {
 		this.errorDetails = errorDetails;
 	}
-	public String getCreateTableStatement() {
-		return ClasspathUtils.loadStringFromClassPath("FileState.ddl.sql");
-	}
-	
-	public String getInsertStatement() {
-		return "INSERT IGNORE INTO "+Sql.TABLE_FILE_STATE+" ("+Sql.COL_TABLE_STATE_BUCKET+","+Sql.COL_TABLE_STATE_KEY+","+Sql.COL_TABLE_STATE_STATE+") VALUES (?,?,?)";
-	}
 
-	/**
-	 * Map a query to a new object.
-	 */
-	public RowMapper<FileState> getRowMapper() {
-		return new RowMapper<FileState>() {
-			
-			public FileState mapRow(ResultSet rs, int rowNum) throws SQLException {
-				FileState file = new FileState();
-				file.setBucket(rs.getString(Sql.COL_TABLE_STATE_BUCKET));
-				file.setKey(rs.getString(Sql.COL_TABLE_STATE_KEY));
-				file.setState(State.valueOf(rs.getString(Sql.COL_TABLE_STATE_STATE)));
-				return file;
-			}
-		};
-	}
-	
-	/**
-	 * Write this object to a prepared statement.
-	 */
-	public void setValues(PreparedStatement ps) throws SQLException {
-		ps.setString(1, bucket);
-		ps.setString(2, key);
-		ps.setString(3, state.name());
-	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -152,5 +115,5 @@ public class FileState implements DatabaseObject<FileState> {
 				+ state + ", updatedOn=" + updatedOn + ", error=" + error
 				+ ", errorDetails=" + Arrays.toString(errorDetails) + "]";
 	}
-	
+
 }

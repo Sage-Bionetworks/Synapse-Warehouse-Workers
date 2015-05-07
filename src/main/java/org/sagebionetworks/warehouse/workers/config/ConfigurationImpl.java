@@ -11,6 +11,7 @@ import org.sagebionetworks.warehouse.workers.db.FileState;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.google.inject.Singleton;
 
 @Singleton
@@ -84,6 +85,10 @@ public class ConfigurationImpl implements Configuration {
 	 */
 	public List<String> getDatabaseObjectClassNames() {
 		return databaseObjectClassNames;
+	}
+
+	public AmazonSQSClient createSQSClient() {
+		return new AmazonSQSClient(getAWSCredentials());
 	}
 
 }

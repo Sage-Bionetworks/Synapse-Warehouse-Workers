@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
