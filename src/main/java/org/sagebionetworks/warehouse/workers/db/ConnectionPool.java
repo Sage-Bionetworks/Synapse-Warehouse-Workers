@@ -1,15 +1,20 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import org.springframework.jdbc.core.JdbcTemplate;
+import javax.sql.DataSource;
 
 
 public interface ConnectionPool {
 	
 	/**
-	 * Create a thread-safe template connected to the connection pool.
+	 * Get the DataSource that wraps the connection pool.
 	 * @return
 	 */
-	public JdbcTemplate createTempalte();
+	public DataSource getDataSource();
 	
+	
+	/**
+	 * Close the connection pool on shutdown.
+	 */
+	public void close();
 
 }

@@ -1,10 +1,14 @@
 package org.sagebionetworks.warehouse.workers.db;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -12,6 +16,9 @@ import com.google.inject.Singleton;
 @Singleton
 public class ConnectionPoolImpl implements ConnectionPool {
 
+	private static final Logger log = LogManager.getLogger(ConnectionPoolImpl.class
+			.getName());
+	
 	Configuration config;
 	BasicDataSource datasource;
 
@@ -19,6 +26,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 	public ConnectionPoolImpl(Configuration config) {
 		super();
 		this.config = config;
+		log.info("Starting database connection pool...");
 		datasource = new BasicDataSource();
 		datasource.setDriverClassName(config.getProperty("org.sagebionetworks.warehouse.workers.jdbc.driver.name"));
 		datasource.setDefaultAutoCommit(Boolean.parseBoolean(config.getProperty("org.sagebionetworks.warehouse.workers.jdbc.default.autocommit")));
@@ -31,15 +39,28 @@ public class ConnectionPoolImpl implements ConnectionPool {
 		datasource.setTestOnBorrow(true);
 		datasource.setValidationQuery(config.getProperty("org.sagebionetworks.warehouse.workers.jdbc.validation.query"));
 		datasource.setUrl(config.getProperty("org.sagebionetworks.warehouse.workers.jdbc.connection.url"));
+		log.info("Connecting to "+datasource.getUrl());
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sagebionetworks.warehouse.workers.db.ConnectionPool#getDataSource()
+	 */
+	public DataSource getDataSource() {
+		return datasource;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sagebionetworks.warehouse.workers.db.ConnectionPool#createTempalte()
+	 * @see org.sagebionetworks.warehouse.workers.db.ConnectionPool#close()
 	 */
-	public JdbcTemplate createTempalte() {
-		// Connect a new instance to the pool.
-		return new JdbcTemplate(datasource);
+	public void close() {
+		try {
+			log.info("Shutting down database connection pool..");
+			datasource.close();
+		} catch (SQLException e) {
+			log.error("Failed to shut down the connection pool", e);
+		}
 	}
 	
 	

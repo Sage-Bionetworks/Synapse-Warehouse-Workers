@@ -2,6 +2,8 @@ package org.sagebionetworks.warehouse.workers.config;
 
 import java.util.List;
 
+import org.sagebionetworks.warehouse.workers.WorkerStack;
+
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 
@@ -32,9 +34,8 @@ public interface Configuration {
 	public String getProperty(String key);
 	
 	/**
-	 * Get the list of database class names.
-	 * 
+	 * List all of the workers in this stack.
 	 * @return
 	 */
-	List<String> getDatabaseObjectClassNames();
+	public List<Class<? extends WorkerStack>> listAllWorkerStackInterfaces();
 }

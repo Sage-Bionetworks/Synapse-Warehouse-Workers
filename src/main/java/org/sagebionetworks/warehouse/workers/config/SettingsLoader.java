@@ -23,8 +23,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class SettingsLoader {
 	
-	private static final Logger log = LogManager.getLogger(SettingsLoader.class
-			.getName());
+	private static final Logger log = LogManager.getLogger(SettingsLoader.class);
 	
 	public static Properties loadSettingsFile() throws IOException, JDOMException{
 		// Get the user home

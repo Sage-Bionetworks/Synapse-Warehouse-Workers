@@ -65,9 +65,9 @@ public class FileMetadataDaoImpl implements FileMetadataDao {
 	};
 
 	@Inject
-	public FileMetadataDaoImpl(ConnectionPool pool) throws SQLException {
+	FileMetadataDaoImpl(JdbcTemplate template) throws SQLException {
 		super();
-		this.template = pool.createTempalte();
+		this.template = template;
 		// Create the table
 		this.template.update(ClasspathUtils
 				.loadStringFromClassPath(FILE_STATE_DDL_SQL));

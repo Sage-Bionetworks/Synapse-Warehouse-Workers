@@ -22,6 +22,6 @@
 	</filter-mapping>
 
 	<listener>
-		<listener-class>org.sagebionetworks.warehouse.workers.config.ApplicationSetup</listener-class>
+		<listener-class>org.sagebionetworks.warehouse.workers.config.ApplicationServletContextListener</listener-class>
 	</listener>
 </web-app>
