@@ -3,13 +3,13 @@ package org.sagebionetworks.warehouse.workers;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.sagebionetworks.warehouse.workers.semaphore.MultipleLockSemaphore;
 
 public class SemaphoreGatedRunnerImplTest {
@@ -50,5 +50,68 @@ public class SemaphoreGatedRunnerImplTest {
 		verify(mockSemaphore).releaseLock(lockKey, atoken);
 		// The lock should not be refreshed for this case.
 		verify(mockSemaphore, never()).refreshLockTimeout(anyString(), anyString(), anyLong());
+	}
+	
+	@Test
+	public void testLockReleaseOnException() throws Exception{
+		// The lock must be released on exception.
+		// Simulate an exception thrown by the runner.
+		doThrow(new RuntimeException("Something went wrong!")).when(mockRunner).run(any(ProgressCallback.class));
+		// Issue a lock.
+		String atoken = "atoken";
+		when(mockSemaphore.attemptToAcquireLock(lockKey, lockTimeoutSec, maxLockCount)).thenReturn(atoken);
+		gate.run();
+		// The lock should get released.
+		verify(mockSemaphore).releaseLock(lockKey, atoken);
+	}
+	
+	@Test
+	public void testLockNotAcquired() throws Exception{
+		// Null is returned when a lock cannot be acquired.
+		when(mockSemaphore.attemptToAcquireLock(lockKey, lockTimeoutSec, maxLockCount)).thenReturn(null);
+		// Start the run
+		gate.run();
+		// the lock should not be released or refreshed.
+		verify(mockSemaphore, never()).refreshLockTimeout(anyString(), anyString(), anyLong());
+		verify(mockSemaphore, never()).releaseLock(anyString(), anyString());
+		// The worker should not get called.
+		verify(mockRunner, never()).run(any(ProgressCallback.class));
+	}
+	
+	@Test
+	public void testExceptionOnAcquireLock() throws Exception{
+		when(mockSemaphore.attemptToAcquireLock(lockKey, lockTimeoutSec, maxLockCount)).thenThrow(new OutOfMemoryError("Something bad!"));
+		// Start the run. The exception should not make it out of the runner.
+		gate.run();
+		// the lock should not be released or refreshed.
+		verify(mockSemaphore, never()).refreshLockTimeout(anyString(), anyString(), anyLong());
+		verify(mockSemaphore, never()).releaseLock(anyString(), anyString());
+		// The worker should not get called.
+		verify(mockRunner, never()).run(any(ProgressCallback.class));
+	}
+	
+	@Test
+	public void testProgress() throws Exception{
+		String atoken = "atoken";
+		when(mockSemaphore.attemptToAcquireLock(lockKey, lockTimeoutSec, maxLockCount)).thenReturn(atoken);
+		
+		// Setup the runner to make progress at twice
+		doAnswer(new Answer<Void>() {
+
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				ProgressCallback callback = (ProgressCallback) invocation.getArguments()[0];
+				// once
+				callback.progressMade();
+				// twice
+				callback.progressMade();
+				return null;
+			}
+		}).when(mockRunner).run(any(ProgressCallback.class));
+		// start the gate
+		gate.run();
+		// The lock should get refreshed twice.
+		verify(mockSemaphore, times(2)).refreshLockTimeout(lockKey, atoken, lockTimeoutSec);
+		// The lock should get released.
+		verify(mockSemaphore).releaseLock(lockKey, atoken);
 	}
 }

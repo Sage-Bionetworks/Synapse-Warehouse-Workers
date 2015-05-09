@@ -52,14 +52,14 @@ public class SemaphoreGatedRunnerImpl implements SemaphoreGatedRunner {
 					runner.run(new ProgressCallback() {
 						public void progressMade() {
 							// Give the lock more time
-							semaphore.refreshLockTimeout(lockKey, lockToken, maxLockCount);
+							semaphore.refreshLockTimeout(lockKey, lockToken, lockTimeoutSec);
 						}
 					});
 				}finally{
 					semaphore.releaseLock(this.lockKey, lockToken);
 				}
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			log.error(e);
 		}
 	}
