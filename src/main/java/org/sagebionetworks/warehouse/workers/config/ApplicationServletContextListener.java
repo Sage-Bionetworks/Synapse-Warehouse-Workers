@@ -2,6 +2,8 @@ package org.sagebionetworks.warehouse.workers.config;
 
 import javax.servlet.ServletContextEvent;
 
+import org.sagebionetworks.warehouse.workers.WorkersModule;
+import org.sagebionetworks.warehouse.workers.db.DatabaseModule;
 import org.sagebionetworks.warehouse.workers.servlet.WorkersServletModule;
 
 import com.google.inject.Guice;
@@ -21,7 +23,7 @@ public class ApplicationServletContextListener extends GuiceServletContextListen
 
 	@Override
 	protected Injector getInjector() {
-		Injector injector = Guice.createInjector(new WorkersServletModule());
+		Injector injector = Guice.createInjector(new WorkersServletModule(), new DatabaseModule(), new WorkersModule());
 		main = new ApplicationMain(injector);
 		return injector;
 	}

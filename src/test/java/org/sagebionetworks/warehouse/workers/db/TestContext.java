@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers.db;
 
+import org.sagebionetworks.warehouse.workers.WorkersModule;
 import org.sagebionetworks.warehouse.workers.servlet.WorkersServletModule;
 
 import com.google.inject.Guice;
@@ -12,7 +13,7 @@ import com.google.inject.Injector;
  */
 public class TestContext {
 
-	private static Injector SINGLETON = Guice.createInjector(new WorkersServletModule());
+	private static Injector SINGLETON = Guice.createInjector(new WorkersServletModule(), new DatabaseModule(), new WorkersModule());
 	
 	/**
 	 * Get the singleton Injector.
