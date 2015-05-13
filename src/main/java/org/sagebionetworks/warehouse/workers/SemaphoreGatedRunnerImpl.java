@@ -6,6 +6,11 @@ import org.sagebionetworks.warehouse.workers.semaphore.MultipleLockSemaphore;
 
 import com.google.inject.Inject;
 
+/**
+ * This is not a singleton! A new instance of this worker must be created each time you need one.
+ * @author jhill
+ *
+ */
 public class SemaphoreGatedRunnerImpl implements SemaphoreGatedRunner {
 	
 	private static final Logger log = LogManager.getLogger(SemaphoreGatedRunnerImpl.class);
