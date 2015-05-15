@@ -30,15 +30,13 @@ import com.google.inject.Inject;
  */
 public class MultipleLockSemaphoreImpl implements MultipleLockSemaphore {
 
+	private static final String SQL_TRUNCATE_LOCK_TABLE = "TRUNCATE TABLE "+TABLE_SEMAPHORE_LOCK;
+
 	private static final String SQL_UPDATE_LOCK_EXPIRES = "UPDATE "
 			+ TABLE_SEMAPHORE_LOCK + " SET " + COL_TABLE_SEM_LOCK_EXPIRES_ON
 			+ " = (CURRENT_TIMESTAMP + INTERVAL ? SECOND) WHERE "
 			+ COL_TABLE_SEM_LOCK_LOCK_KEY + " = ? AND "
 			+ COL_TABLE_SEM_LOCK_TOKEN + " = ?";
-	
-	private static final String SQL_DELETE_ALL_MASTER = "DELETE FROM "
-			+ TABLE_SEMAPHORE_MASTER + " WHERE " + COL_TABLE_SEM_MAST_KEY
-			+ " IS NOT NULL";
 	
 	private static final String SQL_DELETE_LOCK_WITH_TOKEN = "DELETE FROM "
 			+ TABLE_SEMAPHORE_LOCK + " WHERE " + COL_TABLE_SEM_LOCK_TOKEN
@@ -184,7 +182,7 @@ public class MultipleLockSemaphoreImpl implements MultipleLockSemaphore {
 	 * #releaseAllLocks()
 	 */
 	public void releaseAllLocks() {
-		template.update(SQL_DELETE_ALL_MASTER);
+		template.update(SQL_TRUNCATE_LOCK_TABLE);
 	}
 
 	/*
