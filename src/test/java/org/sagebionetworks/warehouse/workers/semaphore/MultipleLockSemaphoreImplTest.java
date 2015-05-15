@@ -1,6 +1,7 @@
 package org.sagebionetworks.warehouse.workers.semaphore;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -111,4 +112,17 @@ public class MultipleLockSemaphoreImplTest {
 		semaphore.refreshLockTimeout(key, token1, timeoutSec);
 	}
 
+	@Test (expected=LockExpiredException.class)
+	public void testReleaseLockAfterReleaseAllLocks(){
+		String key = "sampleKey";
+		int maxLockCount = 1;
+		long timeoutSec = 1;
+		// get one lock
+		String token1 = semaphore.attemptToAcquireLock(key, timeoutSec, maxLockCount);
+		assertNotNull(token1);
+		// Force the release of all locks
+		semaphore.releaseAllLocks();
+		// Now try to release the lock
+		semaphore.releaseLock(key, token1);
+	}
 }
