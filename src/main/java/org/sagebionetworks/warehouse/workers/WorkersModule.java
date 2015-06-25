@@ -10,8 +10,8 @@ public class WorkersModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(SemaphoreGatedRunner.class).to(SemaphoreGatedRunnerImpl.class);
 
 	}
+	
 
 }

@@ -53,6 +53,8 @@ public class ConfigurationImpl implements Configuration {
 				properties.put(key, settings.get(key));
 			}
 		}
+		// Link and replace references in values.
+		properties = PropertyLinker.linkAndReplace(properties);
 	}
 
 	/*

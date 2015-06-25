@@ -28,16 +28,5 @@ public class WorkersServletModule extends ServletModule {
 	}
 	
 
-	
-	/**
-	 * Create a new AmazonSQSClient configured with the current AWS credentials.
-	 * @return
-	 */
-	@Provides
-	public AmazonSQSClient createSQSClient(Configuration configuration){
-		return new AmazonSQSClient(configuration.getAWSCredentials());
-	}
-	
-
 
 }

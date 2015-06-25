@@ -6,8 +6,6 @@ import javax.sql.DataSource;
 
 import org.sagebionetworks.warehouse.workers.db.transaction.Required;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
-import org.sagebionetworks.warehouse.workers.semaphore.MultipleLockSemaphore;
-import org.sagebionetworks.warehouse.workers.semaphore.MultipleLockSemaphoreImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -32,7 +30,6 @@ public class DatabaseModule extends AbstractModule {
 		// Dao binding
 		bind(ConnectionPool.class).to(ConnectionPoolImpl.class);
 		bind(FileMetadataDao.class).to(FileMetadataDaoImpl.class);
-		bind(MultipleLockSemaphore.class).to(MultipleLockSemaphoreImpl.class);
 	}
 	
 	/**
