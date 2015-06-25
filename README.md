@@ -9,6 +9,9 @@ Key | Description
 org.sagebionetworks.warehouse.worker.stack | A unique identifier for a stack. This prefix is applied to all AWS resources.
 org.sagebionetworks.stack.iam.id | The AMI id used used to connect to AWS
 org.sagebionetworks.stack.iam.key | The AMI secret key used to connect to AWS
+org.sagebionetworks.warehouse.workers.jdbc.user.username | database username
+org.sagebionetworks.warehouse.workers.jdbc.user.password | database password
+
 
 ### Settings.xml
 One option for making the properties available is to add them to the maven settings file:
