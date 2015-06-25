@@ -12,6 +12,12 @@ org.sagebionetworks.stack.iam.key | The AMI secret key used to connect to AWS
 org.sagebionetworks.warehouse.workers.jdbc.user.username | database username
 org.sagebionetworks.warehouse.workers.jdbc.user.password | database password
 
+### Local MySQL
+By default the build will attempt to connect to a local MySQL database with a schema named: warehouse.
+This can be override by providing a new value for the following property:
+```
+org.sagebionetworks.warehouse.workers.jdbc.connection.url=jdbc:mysql://localhost/warehouse
+```
 
 ### Settings.xml
 One option for making the properties available is to add them to the maven settings file:
