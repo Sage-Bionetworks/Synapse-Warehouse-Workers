@@ -31,7 +31,7 @@ public class AccessRecordBucketScanWorker implements ProgressingRunner<Void>{
 
 
 	public void run(ProgressCallback<Void> progressCallback) throws Exception {
-		// TODO Auto-generated method stub
+		// does the bucket exist
 		
 	}
 
