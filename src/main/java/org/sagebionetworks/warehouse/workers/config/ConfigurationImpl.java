@@ -8,14 +8,10 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jdom.JDOMException;
-import org.sagebionetworks.warehouse.workers.AccessRecordBootstrap;
 import org.sagebionetworks.warehouse.workers.WorkerStack;
+import org.sagebionetworks.warehouse.workers.bucket.BucketScanningStack;
 import org.sagebionetworks.warehouse.workers.db.FileState;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
 @Singleton
@@ -59,15 +55,6 @@ public class ConfigurationImpl implements Configuration {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sagebionetworks.warehouse.workers.config.Configuration#getAWSCredentials()
-	 */
-	public AWSCredentials getAWSCredentials() {
-		return new BasicAWSCredentials(getProperty("AWS_ACCESS_KEY_ID"), getProperty("AWS_SECRET_KEY"));
-	}
-	
-
-	/*
-	 * (non-Javadoc)
 	 * @see org.sagebionetworks.warehouse.workers.config.Configuration#getProperty(java.lang.String)
 	 */
 	public String getProperty(String key) {
@@ -84,15 +71,6 @@ public class ConfigurationImpl implements Configuration {
 		}
 		return value;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sagebionetworks.warehouse.workers.config.Configuration#createSQSClient()
-	 */
-	@Provides
-	public AmazonSQSClient createSQSClient() {
-		return new AmazonSQSClient(getAWSCredentials());
-	}
 	
 	/**
 	 * Add each worker stack interface to this list to add it to the application.
@@ -101,7 +79,7 @@ public class ConfigurationImpl implements Configuration {
 	public List<Class<? extends WorkerStack>> listAllWorkerStackInterfaces() {
 		List<Class<? extends WorkerStack>> list = new ArrayList<Class<? extends WorkerStack>>();
 		// Finds all access record files that need to be processed.
-		list.add(AccessRecordBootstrap.class);
+		list.add(BucketScanningStack.class);
 		return list;
 	}
 

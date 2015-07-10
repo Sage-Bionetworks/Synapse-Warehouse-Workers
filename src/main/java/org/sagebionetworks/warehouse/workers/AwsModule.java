@@ -37,6 +37,7 @@ public class AwsModule extends AbstractModule {
 		return new AmazonSQSClient(credentials);
 	}
 	
+	@Provides @Singleton
 	public AmazonSNSClient getSNSClient(AWSCredentials credentials){
 		return new AmazonSNSClient(credentials);
 	}

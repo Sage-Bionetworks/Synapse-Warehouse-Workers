@@ -4,6 +4,8 @@ import java.sql.Connection;
 
 import javax.sql.DataSource;
 
+import org.sagebionetworks.database.semaphore.CountingSemaphore;
+import org.sagebionetworks.database.semaphore.CountingSemaphoreImpl;
 import org.sagebionetworks.warehouse.workers.db.transaction.Required;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -94,6 +96,11 @@ public class DatabaseModule extends AbstractModule {
 		transactionDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 		transactionDef.setName("RequiredTemplate");
 		return new TransactionTemplate(transactionManager,	transactionDef);
+	}
+	
+	@Provides @Singleton
+	public CountingSemaphore createCountingSemaphore(PlatformTransactionManager trxManager, DataSource datasource){
+		return new CountingSemaphoreImpl(datasource, trxManager);
 	}
 
 }
