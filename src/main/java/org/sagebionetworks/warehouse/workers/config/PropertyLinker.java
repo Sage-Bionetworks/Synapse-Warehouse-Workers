@@ -1,6 +1,8 @@
 package org.sagebionetworks.warehouse.workers.config;
 
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +42,7 @@ public class PropertyLinker {
 	public static Properties linkAndReplace(Properties input){
 		Properties output = new Properties();
 		for(String key: input.stringPropertyNames()){
-			linkAndReplaceRecursive(input, output, key);
+			linkAndReplaceRecursive(input, output, key, new HashSet<String>());
 		}
 		return output;
 	}
@@ -52,7 +54,7 @@ public class PropertyLinker {
 	 * @param key
 	 * @return
 	 */
-	private static String linkAndReplaceRecursive(Properties input, Properties output, String key){
+	private static String linkAndReplaceRecursive(Properties input, Properties output, String key, Set<String> visitedKeys){
 		if(output.contains(key)){
 			// This key has already been processed
 			return output.getProperty(key);
@@ -61,11 +63,17 @@ public class PropertyLinker {
 		if(startValue == null){
 			throw new IllegalArgumentException("Referenced key: '"+key+"' was not found in the input Properties");
 		}
+		// cycle check
+		if(visitedKeys.contains(key)){
+			throw new IllegalArgumentException("Cycles are not allowed");
+		}else{
+			visitedKeys.add(key);
+		}
 		Matcher matcher = pattern.matcher(startValue);
 		StringBuffer sb = new StringBuffer();
 		while(matcher.find()){
 			String newKey = startValue.substring(matcher.start() + 2, matcher.end() - 1);
-			String replacement = linkAndReplaceRecursive(input, output, newKey);
+			String replacement = linkAndReplaceRecursive(input, output, newKey, visitedKeys);
 			matcher.appendReplacement(sb, replacement);
 		}
 		matcher.appendTail(sb);

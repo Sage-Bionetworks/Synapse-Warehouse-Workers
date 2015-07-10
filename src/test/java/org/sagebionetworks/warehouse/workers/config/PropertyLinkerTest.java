@@ -37,5 +37,19 @@ public class PropertyLinkerTest {
 			assertTrue(e.getMessage().contains("key: 'prop.one' was not found"));
 		}
 	}
+	
+	@Test
+	public void testLinkAndReplaceCycle(){
+		Properties input = new Properties();
+		input.put("prop.one", "${prop.two}");
+		input.put("prop.two", "${prop.one}");
+		Properties output;
+		try {
+			output = PropertyLinker.linkAndReplace(input);
+			fail("Should have failed");
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.getMessage().contains("Cycles are not allowed"));
+		}
+	}
 
 }
