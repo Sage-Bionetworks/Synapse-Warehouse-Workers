@@ -1,5 +1,11 @@
 package org.sagebionetworks.warehouse.workers.db;
 
+import java.util.Iterator;
+
+import org.sagebionetworks.workers.util.progress.ProgressCallback;
+
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+
 /**
  * Abstraction for all business logic around files and folder.
  *
@@ -7,21 +13,20 @@ package org.sagebionetworks.warehouse.workers.db;
 public interface FileManager {
 
 	/**
-	 * This method should be called for each key discovered either from a bucket
-	 * scan or a bucket event. This method is idempotent so it can be called multiple
-	 * times with the same key.
+	 * Notify the manager of a stream of S3 objects discovered either from a
+	 * bucket event or a bucket scan. This method is idempotent so it can be
+	 * called multiple times with the same objects.
 	 * 
-	 * When called with a rolling file, the folder containing the file will be marked
-	 * as "rolling".
+	 * Rolling S3 objects in the stream will result in the containing folder
+	 * being marked as rolling.
 	 * 
-	 * For non-rolling files, if the file has already been processed then this call will do nothing.
-	 * If the file has not been processed before, then a message will be sent to the bucket's topic
-	 * for processing.
+	 * Non-rolling files in the stream that have already been processed will be
+	 * ignored. New non-rolling files will start the processing of each file.
 	 * 
-	 * 
-	 * @param bucket
-	 * @param key
+	 * @param objectStream A stream of S3 objects.
+	 * @param progressCallback Will be called as progress is made.
 	 */
-	public void keyDiscovered(String bucket, String key, long timestamp);
-	
+	public void addS3Objects(Iterator<S3ObjectSummary> objectStream,
+			ProgressCallback<Void> progressCallback);
+
 }
