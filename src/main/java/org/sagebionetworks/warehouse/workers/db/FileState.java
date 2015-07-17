@@ -12,8 +12,7 @@ public class FileState {
 	
 	public enum State {
 		UNKNOWN,
-		QUEUED,
-		COMPLETE,
+		SUBMITTED,
 		FAILED
 	}
 	
