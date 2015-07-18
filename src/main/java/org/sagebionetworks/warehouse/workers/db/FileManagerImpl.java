@@ -1,6 +1,5 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import org.sagebionetworks.aws.utils.s3.KeyData;
