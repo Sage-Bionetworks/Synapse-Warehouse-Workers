@@ -60,13 +60,12 @@ public class FileMetadataDaoImplTest {
 		// ensure the state exists.
 		FileState state = dao.getFileState(bucket, key);
 		assertNotNull(state);
-		// Set it to failed.
-		dao.setFileState(bucket, key, QUEUED);
+		dao.setFileState(bucket, key, SUBMITTED);
 		state = dao.getFileState(bucket, key);
 		assertNotNull(state);
 		assertEquals(bucket, state.getBucket());
 		assertEquals(key, state.getKey());
-		assertEquals(QUEUED, state.getState());
+		assertEquals(SUBMITTED, state.getState());
 		assertNotNull(state.getUpdatedOn());
 		assertEquals(null, state.getError());
 		assertEquals(null, state.getErrorDetails());

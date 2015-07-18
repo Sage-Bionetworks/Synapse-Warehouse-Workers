@@ -5,8 +5,12 @@ import java.util.List;
 
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
+import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
+import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisherImpl;
 import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerStackConfig;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
+import org.sagebionetworks.warehouse.workers.db.FileManager;
+import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -20,6 +24,8 @@ public class WorkersModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(BucketDaoProvider.class).to(BucketDaoProviderImpl.class);
+		bind(BucketTopicPublisher.class).to(BucketTopicPublisherImpl.class);
+		bind(FileManager.class).to(FileManagerImpl.class);
 	}
 
 	/**
