@@ -20,7 +20,7 @@ public interface FolderMetadataDao {
 	 * @param bucketName
 	 * @return
 	 */
-	public List<String> listRollingFolders(String bucketName);
+	public List<FolderState> listRollingFolders(String bucketName);
 	
 	/**
 	 * Clear all data from this table.

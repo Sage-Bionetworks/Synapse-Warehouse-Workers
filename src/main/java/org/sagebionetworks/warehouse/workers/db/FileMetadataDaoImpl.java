@@ -57,7 +57,7 @@ public class FileMetadataDaoImpl implements FileMetadataDao {
 			file.setBucket(rs.getString(COL_TABLE_STATE_BUCKET));
 			file.setKey(rs.getString(COL_TABLE_STATE_KEY));
 			file.setState(State.valueOf(rs.getString(COL_TABLE_STATE_STATE)));
-			file.setUpdatedOn(rs.getDate(COL_TABLE_STATE_UPDATED_ON));
+			file.setUpdatedOn(rs.getTimestamp(COL_TABLE_STATE_UPDATED_ON));
 			file.setError(rs.getString(COL_TABLE_STATE_ERROR));
 			file.setErrorDetails(rs.getBytes(COL_TABLE_STATE_ERROR_DETAILS));
 			return file;
