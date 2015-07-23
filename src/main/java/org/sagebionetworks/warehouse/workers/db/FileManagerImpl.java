@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers.db;
 
+import java.sql.Timestamp;
 import java.util.Iterator;
 
 import org.sagebionetworks.aws.utils.s3.KeyData;
@@ -50,7 +51,7 @@ public class FileManagerImpl implements FileManager{
 					continue;
 				}
 				// set this folder to rolling
-				folderMetadataDao.markFolderAsRolling(summary.getBucketName(), keyData.getPath(), keyData.getTimeMS());
+				folderMetadataDao.createOfUpdateFolderState(new FolderState(summary.getBucketName(), keyData.getPath(), FolderState.State.ROLLING, new Timestamp(keyData.getTimeMS())));
 				// used to skip folders that have already been marked as rolling.
 				lastRollingPath = keyData.getPath();
 			}else{

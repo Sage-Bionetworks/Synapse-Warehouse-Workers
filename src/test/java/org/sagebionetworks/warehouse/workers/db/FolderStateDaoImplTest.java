@@ -3,6 +3,8 @@ package org.sagebionetworks.warehouse.workers.db;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
@@ -22,9 +24,9 @@ public class FolderStateDaoImplTest {
 		long now = 1437462333000L;
 		String bucket = "someBucket";
 		String path = "somePath";
-		dao.markFolderAsRolling(bucket, path, now);
+		dao.createOfUpdateFolderState(new FolderState(bucket, path, FolderState.State.ROLLING, new Timestamp(now)));
 		
-		List<FolderState> list = dao.listRollingFolders(bucket);
+		List<FolderState> list = new LinkedList<FolderState>(dao.listFolders(bucket, FolderState.State.ROLLING));
 		assertNotNull(list);
 		assertEquals(1, list.size());
 		FolderState state = list.get(0);
@@ -36,7 +38,7 @@ public class FolderStateDaoImplTest {
 		
 		// we should be able to call it again with a new time.
 		long nowPlus = now+5000;
-		dao.markFolderAsRolling(bucket, path, nowPlus);
+		dao.createOfUpdateFolderState(new FolderState(bucket, path, FolderState.State.ROLLING, new Timestamp(nowPlus)));
 		
 		list = dao.listRollingFolders(bucket);
 		assertNotNull(list);

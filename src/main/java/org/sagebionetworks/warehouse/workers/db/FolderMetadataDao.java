@@ -1,31 +1,33 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import java.util.List;
-
+import java.util.Iterator;
 
 public interface FolderMetadataDao {
-	
+
 	/**
-	 * A rolling folder is one that contains rolling files.  Call this method to mark a folder as rolling.
-	 * @param bucketName The name of the folder's bucket.
-	 * @param key The full path of the folder.
-	 * @param modifiedOnTimeMS The modified on of the file that triggered this call.
+	 * Create the folder state if it does not exist. If state already exists for
+	 * the folder it will be update.
+	 * 
+	 * @param bucketName
+	 *            The name of the folder's bucket.
+	 * @param key
+	 *            The full path of the folder.
+	 * @param modifiedOnTimeMS
+	 *            The modified on of the file that triggered this call.
 	 */
-	public void markFolderAsRolling(String bucketName, String path, long modifiedOnTimeMS);
-	
+	public void createOfUpdateFolderState(FolderState state);
+
 	/**
-	 * A rolling folder is one that contains rolling files. This will list the full path of 
-	 * each rolling folder for a given bucket ordered by the modifiedOn descending.
+	 * List all folders with the given state from the given bucket.
 	 * 
 	 * @param bucketName
 	 * @return
 	 */
-	public List<FolderState> listRollingFolders(String bucketName);
-	
+	public Iterator<FolderState> listFolders(String bucketName, FolderState.State state);
+
 	/**
 	 * Clear all data from this table.
 	 */
 	public void truncateTable();
-	
 
 }

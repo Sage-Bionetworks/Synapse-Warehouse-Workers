@@ -1,18 +1,21 @@
 package org.sagebionetworks.warehouse.workers.db;
 
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_FOLDER_STATE_BUCKET;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_FOLDER_STATE_PATH;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_FOLDER_STATE_STATE;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_FOLDER_STATE_UPDATED_ON;
+import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_FOLDER_STATE;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
+import java.util.Iterator;
 
+import org.sagebionetworks.warehouse.workers.db.FolderState.State;
 import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.google.inject.Inject;
-
-import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 
 public class FolderMetadataDaoImpl implements FolderMetadataDao {
 
@@ -57,23 +60,30 @@ public class FolderMetadataDaoImpl implements FolderMetadataDao {
 	}
 
 	@Override
-	public void markFolderAsRolling(String bucketName, String path,
-			long modifiedOnTimeMS) {
-		String state = FolderState.State.ROLLING.name();
-		Timestamp modifiedDate = new Timestamp(modifiedOnTimeMS);
-		template.update(SQL_INSERT_DUPLICATE_UPDATE, bucketName, path, state,
-				modifiedDate, state, modifiedDate);
-	}
-
-	@Override
-	public List<FolderState> listRollingFolders(String bucketName) {
-		return template.query(SQL_LIST_ROLLING_FOR_BUCKET, rowMapper,
-				bucketName, FolderState.State.ROLLING.name());
+	public void createOfUpdateFolderState(FolderState state) {
+		if(state == null){
+			throw new IllegalArgumentException("State cannot be null");
+		}
+		if(state.getBucket() == null){
+			throw new IllegalArgumentException("Bucket cannot be null");
+		}
+		String stateString = FolderState.State.ROLLING.name();
+		template.update(SQL_INSERT_DUPLICATE_UPDATE, state.getBucket(), state.getPath(), stateString,
+				state.getUpdatedOn(), stateString, state.getUpdatedOn());
 	}
 
 	@Override
 	public void truncateTable() {
 		template.update(SQL_TRUCATE);
 	}
+
+	@Override
+	public Iterator<FolderState> listFolders(String bucketName, State state) {
+		// return the query with an iterator.
+		return new QueryIterator<FolderState>(1000L, template, SQL_LIST_ROLLING_FOR_BUCKET, rowMapper, bucketName, FolderState.State.ROLLING.name());
+	}
+	
+
+
 
 }

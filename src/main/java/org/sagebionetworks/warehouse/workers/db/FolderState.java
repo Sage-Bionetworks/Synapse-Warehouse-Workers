@@ -1,12 +1,17 @@
 package org.sagebionetworks.warehouse.workers.db;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
+/**
+ * Represents the state of a single folder (or path).
+ *
+ */
 public class FolderState {
 	
 	enum State {
+		// A rolling folder contains non-collated files.
 		ROLLING,
+		// All files in this folder are collated.
 		COLLATED,
 	}
 	
@@ -15,27 +20,83 @@ public class FolderState {
 	private State state;
 	private Timestamp updatedOn;
 	
+	public FolderState(){
+	}
+	
+	/**
+	 * 
+	 * @param bucket The name of the bucket containing the folder.
+	 * @param path The full path of the folder.
+	 * @param state The current state of the folder.
+	 * @param updatedOn  When this folder last updated.
+	 */
+	public FolderState(String bucket, String path, State state,
+			Timestamp updatedOn) {
+		super();
+		this.bucket = bucket;
+		this.path = path;
+		this.state = state;
+		this.updatedOn = updatedOn;
+	}
+
+	/**
+	 * The name of the bucket containing the folder.
+	 * @return
+	 */
 	public String getBucket() {
 		return bucket;
 	}
+	
+	/**
+	 * The name of the bucket containing the folder.
+	 * @param bucket
+	 */
 	public void setBucket(String bucket) {
 		this.bucket = bucket;
 	}
+	
+	/**
+	 * The full path of the folder.
+	 * @return
+	 */
 	public String getPath() {
 		return path;
 	}
+	
+	/**
+	 * The full path of the folder.
+	 * @param path
+	 */
 	public void setPath(String path) {
 		this.path = path;
 	}
+	/**
+	 * The current state of the folder.
+	 * @return
+	 */
 	public State getState() {
 		return state;
 	}
+	/**
+	 * The current state of the folder.
+	 * @param state
+	 */
 	public void setState(State state) {
 		this.state = state;
 	}
+	
+	/**
+	 * When was this folder last updated.
+	 * @return
+	 */
 	public Timestamp getUpdatedOn() {
 		return updatedOn;
 	}
+	
+	/**
+	 * When was this folder last updated.
+	 * @param updatedOn
+	 */
 	public void setUpdatedOn(Timestamp updatedOn) {
 		this.updatedOn = updatedOn;
 	}
