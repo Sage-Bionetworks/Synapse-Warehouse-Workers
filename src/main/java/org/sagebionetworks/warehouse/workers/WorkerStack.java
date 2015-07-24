@@ -17,5 +17,11 @@ public interface WorkerStack {
 	 * Shutdown this worker stack.
 	 */
 	public void shutdown();
+	
+	/**
+	 * The name of the worker.
+	 * @return
+	 */
+	public String getWorketName();
 
 }

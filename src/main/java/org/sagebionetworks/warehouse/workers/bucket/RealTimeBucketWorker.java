@@ -11,6 +11,11 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.sqs.model.Message;
 import com.google.inject.Inject;
 
+/**
+ * This worker response to S3 bucket events and forwards them to the file manager.
+ * @author John
+ *
+ */
 public class RealTimeBucketWorker implements MessageDrivenRunner {
 	
 	private FileManager fileManager;

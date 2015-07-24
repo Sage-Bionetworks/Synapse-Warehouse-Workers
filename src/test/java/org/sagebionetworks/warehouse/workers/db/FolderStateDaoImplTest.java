@@ -4,7 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.sql.Timestamp;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Before;
@@ -26,7 +27,8 @@ public class FolderStateDaoImplTest {
 		String path = "somePath";
 		dao.createOfUpdateFolderState(new FolderState(bucket, path, FolderState.State.ROLLING, new Timestamp(now)));
 		
-		List<FolderState> list = new LinkedList<FolderState>(dao.listFolders(bucket, FolderState.State.ROLLING));
+		Iterator<FolderState> iterator = dao.listFolders(bucket, FolderState.State.ROLLING);
+		List<FolderState> list = createListFromIterator(iterator);
 		assertNotNull(list);
 		assertEquals(1, list.size());
 		FolderState state = list.get(0);
@@ -40,7 +42,8 @@ public class FolderStateDaoImplTest {
 		long nowPlus = now+5000;
 		dao.createOfUpdateFolderState(new FolderState(bucket, path, FolderState.State.ROLLING, new Timestamp(nowPlus)));
 		
-		list = dao.listRollingFolders(bucket);
+		iterator = dao.listFolders(bucket, FolderState.State.ROLLING);
+		list = createListFromIterator(iterator);
 		assertNotNull(list);
 		assertEquals(1, list.size());
 		
@@ -50,6 +53,19 @@ public class FolderStateDaoImplTest {
 		assertEquals(path, state.getPath());
 		assertEquals(nowPlus, state.getUpdatedOn().getTime());
 		assertEquals(FolderState.State.ROLLING, state.getState());
+	}
+	
+	/**
+	 * Convert an interator to a list.
+	 * @param iterator
+	 * @return
+	 */
+	public static <T> List<T> createListFromIterator(Iterator<T> iterator){
+		List<T> list = new ArrayList<T>();
+		while(iterator.hasNext()){
+			list.add(iterator.next());
+		}
+		return list;
 	}
 
 }

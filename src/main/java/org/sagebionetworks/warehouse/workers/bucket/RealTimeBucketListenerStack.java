@@ -1,31 +1,28 @@
 package org.sagebionetworks.warehouse.workers.bucket;
 
 import java.util.Arrays;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.sagebionetworks.aws.utils.s3.BucketListener;
 import org.sagebionetworks.aws.utils.s3.BucketListenerConfiguration;
 import org.sagebionetworks.database.semaphore.CountingSemaphore;
-import org.sagebionetworks.warehouse.workers.WorkerStack;
+import org.sagebionetworks.warehouse.workers.WorkerStackConfiguration;
+import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenWorkerStack;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenWorkerStackConfiguration;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.S3Event;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.s3.model.S3Event;
 import com.google.inject.Inject;
 
 /**
  * This stack listens to the real-time events of each configured bucket.
  * 
  */
-public class RealTimeBucketListenerStack implements WorkerStack {
+public class RealTimeBucketListenerStack implements WorkerStackConfigurationProvider {
 
-	ScheduledExecutorService scheduler;
-	Runnable stackRunner;
+	final WorkerStackConfiguration config;
 
 	@Inject
 	public RealTimeBucketListenerStack(CountingSemaphore semaphore,
@@ -33,9 +30,6 @@ public class RealTimeBucketListenerStack implements WorkerStack {
 			AmazonSNSClient awsSNClient, BucketInfoList bucketList,
 			RealtimeBucketListenerStackConfig config,
 			RealTimeBucketWorker worker) {
-
-		int threadCount = 1;
-		this.scheduler = Executors.newScheduledThreadPool(threadCount);
 
 		// ensure a listener is setup for each bucket
 		BucketListenerConfiguration listenerConfig = new BucketListenerConfiguration();
@@ -55,22 +49,18 @@ public class RealTimeBucketListenerStack implements WorkerStack {
 		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(60);
 		mdwsc.setSemaphoreLockKey("bucketListenerWorker");
 		mdwsc.setSemaphoreMaxLockCount(4);
-		stackRunner = new MessageDrivenWorkerStack(semaphore, awsSQSClient,
+		Runnable mainRunner = new MessageDrivenWorkerStack(semaphore, awsSQSClient,
 				awsSNClient, mdwsc);
+		
+		this.config = new WorkerStackConfiguration();
+		this.config.setRunner(mainRunner);
+		this.config.setStartDelayMs(987);
+		this.config.setPeriodMS(10*1000);
 	}
 
 	@Override
-	public void start() {
-		int startDalayMS = 987;
-		int periodMS = 1013;
-		// Start the worker.
-		scheduler.scheduleAtFixedRate(stackRunner, startDalayMS, periodMS,
-				TimeUnit.MILLISECONDS);
-	}
-
-	@Override
-	public void shutdown() {
-		scheduler.shutdown();
+	public WorkerStackConfiguration getWorkerConfiguration() {
+		return this.config;
 	}
 
 }

@@ -6,6 +6,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.warehouse.workers.WorkerStack;
+import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
+import org.sagebionetworks.warehouse.workers.WorkerStackImpl;
+import org.sagebionetworks.warehouse.workers.WorkerStackList;
 import org.sagebionetworks.warehouse.workers.db.ConnectionPool;
 
 import com.google.inject.Injector;
@@ -21,7 +24,7 @@ public class ApplicationMain {
 	private static final Logger log = LogManager.getLogger(ApplicationMain.class);
 	
 	Injector injector;
-	List<WorkerStack> stackes;
+	List<WorkerStack> stacks;
 	
 	public ApplicationMain(Injector injector){
 		this.injector = injector;
@@ -36,13 +39,10 @@ public class ApplicationMain {
 			log.error("Injector is null.  Cannot start the application.");
 			return;
 		}
-		Configuration config = injector.getInstance(Configuration.class);
-		List<Class<? extends WorkerStack>> stacksInterfaces = config.listAllWorkerStackInterfaces();
-		stackes = new LinkedList<WorkerStack>();
-		for(Class<? extends WorkerStack> clazz: stacksInterfaces){
-			WorkerStack stack = injector.getInstance(clazz);
-			log.info("Starting stack: "+clazz.getName()+"...");
-			stackes.add(stack);
+		// Get all of the worker stacks and start them.
+		stacks = injector.getInstance(WorkerStackList.class).getList();
+		for(WorkerStack stack: stacks){
+			log.info("Starting stack: "+stack.getWorketName()+"...");
 			stack.start();
 		}
 	}
@@ -57,8 +57,8 @@ public class ApplicationMain {
 			return;
 		}
 		// Stop each stack
-		for(WorkerStack stack: stackes){
-			log.info("Shutting down: "+stack.getClass().getName());
+		for(WorkerStack stack: stacks){
+			log.info("Shutting down: "+stack.getWorketName());
 			stack.shutdown();
 		}
 		

@@ -1,9 +1,7 @@
 package org.sagebionetworks.warehouse.workers;
 
-import static org.mockito.Mockito.*;
-
-import java.util.LinkedList;
-import java.util.List;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +18,7 @@ public class ApplicationMainTest {
 	WorkerStack mockStack;
 	Injector mockInjector;
 	ApplicationMain main;
-	List<Class<? extends WorkerStack>> workers;
+	WorkerStackList stackList;
 	ConnectionPool mockPool;
 	
 	@Before
@@ -29,10 +27,10 @@ public class ApplicationMainTest {
 		mockConfig = Mockito.mock(Configuration.class);
 		mockStack = Mockito.mock(WorkerStack.class);
 		mockPool = Mockito.mock(ConnectionPool.class);
-		when(mockInjector.getInstance(Configuration.class)).thenReturn(mockConfig);
-		workers = new LinkedList<Class<? extends WorkerStack>>();
-		workers.add(WorkerStack.class);
-		when(mockConfig.listAllWorkerStackInterfaces()).thenReturn(workers);
+		when(mockStack.getWorketName()).thenReturn("MockWorkerStack");
+		stackList = new WorkerStackList();
+		stackList.add(mockStack);
+		when(mockInjector.getInstance(WorkerStackList.class)).thenReturn(stackList);
 		when(mockInjector.getInstance(WorkerStack.class)).thenReturn(mockStack);
 		when(mockInjector.getInstance(ConnectionPool.class)).thenReturn(mockPool);		
 		main = new ApplicationMain(mockInjector);

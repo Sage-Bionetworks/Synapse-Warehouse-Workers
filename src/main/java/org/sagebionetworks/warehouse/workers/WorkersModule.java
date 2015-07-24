@@ -5,15 +5,19 @@ import java.util.List;
 
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
+import org.sagebionetworks.warehouse.workers.bucket.BucketScanningStack;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisherImpl;
+import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketListenerStack;
 import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerStackConfig;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
+
 
 /**
  * Bindings for workers.
@@ -79,4 +83,28 @@ public class WorkersModule extends AbstractModule {
 		return rtbls;
 	}
 	
+	/**
+	 * This the binding for all workers stacks. To add a new worker stack to the the application
+	 * its class must be added to this list.
+	 * 
+	 * @return
+	 */
+	@Provides
+	public WorkerStackConfigurationProviderList getWorkerStackConfigurationProviderList(){
+		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
+		list.add(RealTimeBucketListenerStack.class);
+		list.add(BucketScanningStack.class);
+		return list;
+	}
+	
+	@Provides
+	public WorkerStackList buildWorkerStackList(Injector injetor, WorkerStackConfigurationProviderList providerList){
+		WorkerStackList list = new WorkerStackList();
+		// create each worker stack from the providers
+		for(Class<? extends WorkerStackConfigurationProvider> providerClass: providerList.getList()){
+			WorkerStackConfigurationProvider provider = injetor.getInstance(providerClass);
+			list.add(new WorkerStackImpl(provider.getWorkerConfiguration()));
+		}
+		return list;
+	}
 }

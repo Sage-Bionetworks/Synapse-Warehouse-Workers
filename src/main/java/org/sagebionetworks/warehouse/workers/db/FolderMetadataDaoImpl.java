@@ -19,6 +19,8 @@ import com.google.inject.Inject;
 
 public class FolderMetadataDaoImpl implements FolderMetadataDao {
 
+	private static final long MAX_PAGE_SIZE = 1000L;
+
 	private static final String SQL_LIST_ROLLING_FOR_BUCKET = "SELECT * FROM "
 			+ TABLE_FOLDER_STATE + " WHERE " + COL_FOLDER_STATE_BUCKET
 			+ " = ? AND " + COL_FOLDER_STATE_STATE + " = ?";
@@ -80,10 +82,7 @@ public class FolderMetadataDaoImpl implements FolderMetadataDao {
 	@Override
 	public Iterator<FolderState> listFolders(String bucketName, State state) {
 		// return the query with an iterator.
-		return new QueryIterator<FolderState>(1000L, template, SQL_LIST_ROLLING_FOR_BUCKET, rowMapper, bucketName, FolderState.State.ROLLING.name());
+		return new PagingQueryIterator<FolderState>(MAX_PAGE_SIZE, template, SQL_LIST_ROLLING_FOR_BUCKET, rowMapper, bucketName, FolderState.State.ROLLING.name());
 	}
-	
-
-
 
 }

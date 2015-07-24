@@ -2,7 +2,7 @@ package org.sagebionetworks.warehouse.workers.config;
 
 import java.util.List;
 
-import org.sagebionetworks.warehouse.workers.WorkerStack;
+import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
 
 /**
  * Abstraction for all of the configuration properties.
@@ -21,5 +21,5 @@ public interface Configuration {
 	 * List all of the workers in this stack.
 	 * @return
 	 */
-	public List<Class<? extends WorkerStack>> listAllWorkerStackInterfaces();
+	public List<Class<? extends WorkerStackConfigurationProvider>> listAllWorkerStackInterfaces();
 }
