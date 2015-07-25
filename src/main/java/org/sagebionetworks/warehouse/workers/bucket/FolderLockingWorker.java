@@ -1,12 +1,12 @@
 package org.sagebionetworks.warehouse.workers.bucket;
 
-import org.sagebionetworks.database.semaphore.CountingSemaphore;
+import org.sagebionetworks.warehouse.workers.SemaphoreGatedRunnerProvider;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 import org.sagebionetworks.workers.util.progress.ProgressingRunner;
+import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedRunner;
 import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedRunnerConfiguration;
-import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedRunnerImpl;
 
 import com.amazonaws.services.sqs.model.Message;
 import com.google.inject.Inject;
@@ -20,14 +20,14 @@ public class FolderLockingWorker implements MessageDrivenRunner {
 
 	public static final int TIMEOUT_SEC = 60;
 
-	CountingSemaphore semaphore;
-	FolderCollateWorker collateWorker;
+	SemaphoreGatedRunnerProvider semaphoreProvider;
+	LockedFolderRunner collateWorker;
 
 	@Inject
-	public FolderLockingWorker(CountingSemaphore semaphore,
-			FolderCollateWorker collateWorker) {
+	public FolderLockingWorker(SemaphoreGatedRunnerProvider semaphoreProvider,
+			LockedFolderRunner collateWorker) {
 		super();
-		this.semaphore = semaphore;
+		this.semaphoreProvider = semaphoreProvider;
 		this.collateWorker = collateWorker;
 	}
 
@@ -55,12 +55,12 @@ public class FolderLockingWorker implements MessageDrivenRunner {
 			@Override
 			public void run(ProgressCallback<Void> progressCallback)
 					throws Exception {
-				// Called when we have the folder lock.
-				collateWorker.run(progressCallback, folder);
+				// This work does the real work while holding the lock on the folder's path.
+				collateWorker.runWhileHoldingLock(progressCallback, folder);
 			}
 		});
-		SemaphoreGatedRunnerImpl<Void> gatedRunner = new SemaphoreGatedRunnerImpl<Void>(
-				semaphore, gateConfig);
+		// Create a new gate.
+		SemaphoreGatedRunner gatedRunner = semaphoreProvider.createRunner(gateConfig);
 		// start the gate to attempt to get the lock.
 		gatedRunner.run();
 	}

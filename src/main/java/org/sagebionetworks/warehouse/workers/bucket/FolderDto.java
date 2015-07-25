@@ -42,6 +42,25 @@ public class FolderDto {
 	public void setPath(String path) {
 		this.path = path;
 	}
+	
+	/**
+	 * Create a DTO from XML.
+	 * @param xml
+	 * @return
+	 */
+	public static FolderDto fromXMl(String xml){
+		return XMLUtils.fromXML(xml, FolderDto.class, FOLDER_DTO_ALIAS);
+	}
+	
+	/**
+	 * Create XML to represent the given DTO.
+	 * @param dto
+	 * @return
+	 */
+	public static String toXML(FolderDto dto){
+		return XMLUtils.toXML(dto, FOLDER_DTO_ALIAS);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

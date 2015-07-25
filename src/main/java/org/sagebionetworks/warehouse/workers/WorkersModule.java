@@ -3,11 +3,15 @@ package org.sagebionetworks.warehouse.workers;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.sagebionetworks.database.semaphore.CountingSemaphore;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.bucket.BucketScanningStack;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisherImpl;
+import org.sagebionetworks.warehouse.workers.bucket.FolderCollateWorker;
+import org.sagebionetworks.warehouse.workers.bucket.FolderLockingWorker;
+import org.sagebionetworks.warehouse.workers.bucket.LockedFolderRunner;
 import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketListenerStack;
 import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerStackConfig;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
@@ -30,6 +34,7 @@ public class WorkersModule extends AbstractModule {
 		bind(BucketDaoProvider.class).to(BucketDaoProviderImpl.class);
 		bind(BucketTopicPublisher.class).to(BucketTopicPublisherImpl.class);
 		bind(FileManager.class).to(FileManagerImpl.class);
+		bind(LockedFolderRunner.class).to(FolderCollateWorker.class);
 	}
 
 	/**
@@ -106,5 +111,10 @@ public class WorkersModule extends AbstractModule {
 			list.add(new WorkerStackImpl(provider.getWorkerConfiguration()));
 		}
 		return list;
+	}
+	
+	@Provides
+	public SemaphoreGatedRunnerProvider createSemaphoreGatedRunnerProvider(CountingSemaphore semaphore){
+		return new SemaphoreGatedRunnerProviderImpl(semaphore);
 	}
 }
