@@ -38,5 +38,13 @@ public interface FileMetadataDao {
 	 * @param state
 	 */
 	public void setFileState(String bucket, String key, State state);
+	
+	/**
+	 * Does the given file exist?
+	 * @param bucket
+	 * @param key
+	 * @return
+	 */
+	public boolean doesFileExist(String bucket, String key);
 
 }

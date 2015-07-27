@@ -20,6 +20,7 @@ public class FileMetadataDaoImplTest {
 	public void testGet(){
 		String bucket = "some/bucket";
 		String key = "someKey";
+		assertFalse(dao.doesFileExist(bucket, key));
 		FileState state = dao.getFileState(bucket, key);
 		assertNotNull(state);
 		assertEquals(bucket, state.getBucket());
@@ -28,6 +29,8 @@ public class FileMetadataDaoImplTest {
 		assertNotNull(state.getUpdatedOn());
 		assertEquals(null, state.getError());
 		assertEquals(null, state.getErrorDetails());
+		//the file should now exist
+		assertTrue(dao.doesFileExist(bucket, key));
 		// Getting the state for an file that already exists should work.
 		FileState clone = dao.getFileState(bucket, key);
 		assertEquals(state, clone);

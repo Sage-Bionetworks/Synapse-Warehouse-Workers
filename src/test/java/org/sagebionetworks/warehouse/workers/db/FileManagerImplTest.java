@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers.db;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class FileManagerImplTest {
 		// progress should be made for each file.
 		verify(mockCallback, times(2)).progressMade(null);
 		// Even though there are two files they have the same path so onl one call should be made.
-		verify(mockFolderMetadataDao, times(1)).markFolderAsRolling(rollingOne.getBucketName(), "000000123/1970-01-01", 1);
+		verify(mockFolderMetadataDao, times(1)).createOfUpdateFolderState(new FolderState(rollingOne.getBucketName(), "000000123/1970-01-01", FolderState.State.ROLLING, new Timestamp(1)));
 	}
 
 	@Test
@@ -76,8 +77,8 @@ public class FileManagerImplTest {
 		// progress should be made for each file.
 		verify(mockCallback, times(2)).progressMade(null);
 		// both paths should be marked as rolling.
-		verify(mockFolderMetadataDao, times(1)).markFolderAsRolling(rollingOne.getBucketName(), "000000123/1970-01-01", 1);
-		verify(mockFolderMetadataDao, times(1)).markFolderAsRolling(rollingTwo.getBucketName(), "000000456/1970-01-01", 1);
+		verify(mockFolderMetadataDao, times(1)).createOfUpdateFolderState(new FolderState(rollingOne.getBucketName(), "000000123/1970-01-01", FolderState.State.ROLLING, new Timestamp(1)));
+		verify(mockFolderMetadataDao, times(1)).createOfUpdateFolderState(new FolderState(rollingTwo.getBucketName(), "000000456/1970-01-01", FolderState.State.ROLLING, new Timestamp(1)));
 	}
 	
 	

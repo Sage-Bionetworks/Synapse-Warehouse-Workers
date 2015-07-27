@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jdom.JDOMException;
-import org.sagebionetworks.warehouse.workers.WorkerStack;
+import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketScanningStack;
 import org.sagebionetworks.warehouse.workers.db.FileState;
 
@@ -76,8 +76,9 @@ public class ConfigurationImpl implements Configuration {
 	 * Add each worker stack interface to this list to add it to the application.
 	 * 
 	 */
-	public List<Class<? extends WorkerStack>> listAllWorkerStackInterfaces() {
-		List<Class<? extends WorkerStack>> list = new ArrayList<Class<? extends WorkerStack>>();
+	@Override
+	public List<Class<? extends WorkerStackConfigurationProvider>> listAllWorkerStackInterfaces() {
+		List<Class<? extends WorkerStackConfigurationProvider>> list = new ArrayList<Class<? extends WorkerStackConfigurationProvider>>();
 		// Finds all access record files that need to be processed.
 		list.add(BucketScanningStack.class);
 		return list;

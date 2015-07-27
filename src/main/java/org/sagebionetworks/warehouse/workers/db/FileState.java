@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers.db;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -19,7 +20,7 @@ public class FileState {
 	private String bucket;
 	private String key;
 	private State state;
-	private Date updatedOn;
+	private Timestamp updatedOn;
 	private String error;
 	private byte[] errorDetails;
 	
@@ -41,10 +42,10 @@ public class FileState {
 	public void setState(State state) {
 		this.state = state;
 	}
-	public Date getUpdatedOn() {
+	public Timestamp getUpdatedOn() {
 		return updatedOn;
 	}
-	public void setUpdatedOn(Date updatedOn) {
+	public void setUpdatedOn(Timestamp updatedOn) {
 		this.updatedOn = updatedOn;
 	}
 	public String getError() {

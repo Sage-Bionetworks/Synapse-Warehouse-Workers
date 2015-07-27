@@ -19,6 +19,8 @@ import com.google.inject.Singleton;
 @Singleton
 public class FileMetadataDaoImpl implements FileMetadataDao {
 
+	private static final String SQL_COUNT_WITH_BUCKET_AND_KEY = "SELECT COUNT(*) FROM "+TABLE_FILE_STATE+" WHERE "+COL_TABLE_STATE_BUCKET+" = ? AND "+COL_TABLE_STATE_KEY+" = ?";
+
 	private static final int ERROR_MESSAGE_MAX_CHARS = 2999;
 
 	private static final String SQL_UPDATE_STATE = "UPDATE " + TABLE_FILE_STATE + " SET "
@@ -57,7 +59,7 @@ public class FileMetadataDaoImpl implements FileMetadataDao {
 			file.setBucket(rs.getString(COL_TABLE_STATE_BUCKET));
 			file.setKey(rs.getString(COL_TABLE_STATE_KEY));
 			file.setState(State.valueOf(rs.getString(COL_TABLE_STATE_STATE)));
-			file.setUpdatedOn(rs.getDate(COL_TABLE_STATE_UPDATED_ON));
+			file.setUpdatedOn(rs.getTimestamp(COL_TABLE_STATE_UPDATED_ON));
 			file.setError(rs.getString(COL_TABLE_STATE_ERROR));
 			file.setErrorDetails(rs.getBytes(COL_TABLE_STATE_ERROR_DETAILS));
 			return file;
@@ -148,6 +150,16 @@ public class FileMetadataDaoImpl implements FileMetadataDao {
 			}
 		}
 		template.update(SQL_UPDATE_STATE, state.name(), errorMessage, errorDetails, bucket, key);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sagebionetworks.warehouse.workers.db.FileMetadataDao#doesFileExist(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public boolean doesFileExist(String bucket, String key) {
+		Long count = template.queryForObject(SQL_COUNT_WITH_BUCKET_AND_KEY, Long.class, bucket, key);
+		return count > 0;
 	}
 
 }
