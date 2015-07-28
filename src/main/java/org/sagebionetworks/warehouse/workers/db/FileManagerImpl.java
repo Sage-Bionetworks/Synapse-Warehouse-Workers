@@ -51,7 +51,7 @@ public class FileManagerImpl implements FileManager{
 					continue;
 				}
 				// set this folder to rolling
-				folderMetadataDao.createOfUpdateFolderState(new FolderState(summary.getBucketName(), keyData.getPath(), FolderState.State.ROLLING, new Timestamp(keyData.getTimeMS())));
+				folderMetadataDao.createOrUpdateFolderState(new FolderState(summary.getBucketName(), keyData.getPath(), FolderState.State.ROLLING, new Timestamp(keyData.getTimeMS())));
 				// used to skip folders that have already been marked as rolling.
 				lastRollingPath = keyData.getPath();
 			}else{

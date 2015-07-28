@@ -2,11 +2,14 @@ package org.sagebionetworks.warehouse.workers.bucket;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.aws.utils.s3.BucketDaoImpl;
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
+import org.sagebionetworks.warehouse.workers.WorkerStack;
 import org.sagebionetworks.warehouse.workers.db.FileMetadataDao;
 import org.sagebionetworks.warehouse.workers.db.TestContext;
 
@@ -14,15 +17,25 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.util.StringInputStream;
 
-public class RealTimeBucketWorkerIntegrationTest {
+public class RealTimeBucketListenerStackIntegrationTest {
 	
 	private static long MAX_WAIT_MS = 2*60*1000;
 	
-	static RealTimeBucketListenerStack stack = TestContext.singleton().getInstance(RealTimeBucketListenerStack.class);
+	static WorkerStack stack = TestContext.findWorkerStackByName(RealTimeBucketListenerStack.class.getName());
 
 	FileMetadataDao dao = TestContext.singleton().getInstance(FileMetadataDao.class);
 	BucketInfoList bucketList = TestContext.singleton().getInstance(BucketInfoList.class);
 	AmazonS3Client s3Client = TestContext.singleton().getInstance(AmazonS3Client.class);
+	
+	@BeforeClass
+	public static void beforeClass(){
+		stack.start();
+	}
+	
+	@AfterClass
+	public static void afterClass(){
+		stack.shutdown();
+	}
 	
 	
 	@Before
@@ -44,8 +57,6 @@ public class RealTimeBucketWorkerIntegrationTest {
 		StringInputStream input = new StringInputStream("Sample data");
 		// Create a file in one of the buckets
 		s3Client.putObject(firstBucket.getBucketName(), key, input, metadata);
-		// Now wait for the file to appear
-		dao.getFileState(bucket, key);
 		// wait for the file to exist
 		waitForFileToExist(bucket, key);
 	}

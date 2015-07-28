@@ -1,6 +1,10 @@
 package org.sagebionetworks.warehouse.workers.db;
 
+import java.util.List;
+
 import org.sagebionetworks.warehouse.workers.AwsModule;
+import org.sagebionetworks.warehouse.workers.WorkerStack;
+import org.sagebionetworks.warehouse.workers.WorkerStackList;
 import org.sagebionetworks.warehouse.workers.WorkersModule;
 import org.sagebionetworks.warehouse.workers.servlet.WorkersServletModule;
 
@@ -25,6 +29,21 @@ public class TestContext {
 	 */
 	public static Injector singleton() {
 		return SINGLETON;
+	}
+	
+	/**
+	 * Find a configured worker stack by name.
+	 * @param providerClass
+	 * @return
+	 */
+	public static WorkerStack findWorkerStackByName(String stackName){
+		List<WorkerStack> stacks = singleton().getInstance(WorkerStackList.class).getList();
+		for(WorkerStack stack: stacks){
+			if(stackName.equals(stack.getWorketName())){
+				return stack;
+			}
+		}
+		throw new IllegalArgumentException("Cannot find a worker stack named: "+stackName);
 	}
 
 }

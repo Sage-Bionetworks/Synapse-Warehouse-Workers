@@ -3,6 +3,8 @@ package org.sagebionetworks.warehouse.workers.config;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.warehouse.workers.WorkerStack;
@@ -26,6 +28,7 @@ public class ApplicationMain {
 	Injector injector;
 	List<WorkerStack> stacks;
 	
+	@Inject
 	public ApplicationMain(Injector injector){
 		this.injector = injector;
 	}

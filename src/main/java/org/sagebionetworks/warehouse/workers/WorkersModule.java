@@ -50,33 +50,12 @@ public class WorkersModule extends AbstractModule {
 		list.add(new BucketInfo()
 				.withBucketName(
 						config.getProperty("org.sagebionetworks.warehouse.worker.bucket.access.record"))
-				.withTimestampColumnIndex(4));
-		// acl snapshot
+				.withTimestampColumnIndex(2));
+		// object snapshots
 		list.add(new BucketInfo()
 				.withBucketName(
-						config.getProperty("org.sagebionetworks.warehouse.worker.bucket.snapshot.acl"))
+						config.getProperty("org.sagebionetworks.warehouse.worker.bucket.snapshot.record"))
 				.withTimestampColumnIndex(0));
-		// s3 copy snapshot
-		list.add(new BucketInfo()
-				.withBucketName(
-						config.getProperty("org.sagebionetworks.warehouse.worker.bucket.snapshot.s3filecopyresults"))
-				.withTimestampColumnIndex(0));
-		// team snapshot
-		list.add(new BucketInfo()
-		.withBucketName(
-				config.getProperty("org.sagebionetworks.warehouse.worker.bucket.snapshot.team"))
-		.withTimestampColumnIndex(0));
-		// team member snapshot
-		list.add(new BucketInfo()
-		.withBucketName(
-				config.getProperty("org.sagebionetworks.warehouse.worker.bucket.snapshot.teammember"))
-		.withTimestampColumnIndex(0));
-		// user profile snapshot
-		list.add(new BucketInfo()
-		.withBucketName(
-				config.getProperty("org.sagebionetworks.warehouse.worker.bucket.snapshot.userprofile"))
-		.withTimestampColumnIndex(0));
-	
 		return new BucketInfoList(list);
 	}
 	

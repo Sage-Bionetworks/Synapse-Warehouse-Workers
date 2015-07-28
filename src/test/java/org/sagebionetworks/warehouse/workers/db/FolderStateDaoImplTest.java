@@ -25,7 +25,7 @@ public class FolderStateDaoImplTest {
 		long now = 1437462333000L;
 		String bucket = "someBucket";
 		String path = "somePath";
-		dao.createOfUpdateFolderState(new FolderState(bucket, path, FolderState.State.ROLLING, new Timestamp(now)));
+		dao.createOrUpdateFolderState(new FolderState(bucket, path, FolderState.State.ROLLING, new Timestamp(now)));
 		
 		Iterator<FolderState> iterator = dao.listFolders(bucket, FolderState.State.ROLLING);
 		List<FolderState> list = createListFromIterator(iterator);
@@ -40,7 +40,7 @@ public class FolderStateDaoImplTest {
 		
 		// we should be able to call it again with a new time.
 		long nowPlus = now+5000;
-		dao.createOfUpdateFolderState(new FolderState(bucket, path, FolderState.State.ROLLING, new Timestamp(nowPlus)));
+		dao.createOrUpdateFolderState(new FolderState(bucket, path, FolderState.State.ROLLING, new Timestamp(nowPlus)));
 		
 		iterator = dao.listFolders(bucket, FolderState.State.ROLLING);
 		list = createListFromIterator(iterator);
