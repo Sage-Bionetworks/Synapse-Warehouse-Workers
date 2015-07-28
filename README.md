@@ -1,5 +1,5 @@
 # Synapse-Warehouse-Workers
-Workers that maintain analytical data related to Synapse.
+Workers that maintain analytical data related to Synapse. More information can be found at [warehouse-works-wiki](https://sagebionetworks.jira.com/wiki/display/PLFM/Synapse+Warehouse+workers)
 
 ## Build
 In order to build the following properties must be available to the JVM:
