@@ -85,6 +85,35 @@ public class StreamingCollateUtilsTest {
 		verify(mockCallback, times(expectedOut.size())).progressMade(null);
 	}
 	
+	@Test
+	public void testMergeSortedStreamsDuplicates() throws IOException{
+		int timestampColumnIndex  = 1;
+		
+		CSVReader one = createReader(new String[][]{
+				new String[]{ "a", "1"},
+				new String[]{ "a", "1"},
+		});
+		
+		CSVReader two= createReader(new String[][]{
+				new String[]{ "a", "1"},
+				new String[]{ "a", "1"},
+		});
+		
+		StringWriter stringWriter = new StringWriter();
+		CSVWriter writer = new CSVWriter(stringWriter);
+		StreamingCollateUtils.mergeSortedStreams(mockCallback, Arrays.asList(one, two), writer, timestampColumnIndex);
+	
+		List<String[]> expectedOut = Arrays.asList(
+				new String[]{ "a", "1"},
+				new String[]{ "a", "1"},
+				new String[]{ "a", "1"},
+				new String[]{ "a", "1"}
+				);
+		validateExpected(expectedOut, stringWriter.toString());
+		// progress should be made for each row written.
+		verify(mockCallback, times(expectedOut.size())).progressMade(null);
+	}
+	
 	@Test (expected=IllegalArgumentException.class)
 	public void testMergeSortedStreamsBadData() throws IOException{
 		// the first column is not a timestamp
