@@ -21,7 +21,7 @@ public class FolderMetadataDaoImpl implements FolderMetadataDao {
 
 	private static final long MAX_PAGE_SIZE = 1000L;
 
-	private static final String SQL_LIST_ROLLING_FOR_BUCKET = "SELECT * FROM "
+	private static final String SQL_LIST_FOLDER_FOR_BUCKET_AND_STATE = "SELECT * FROM "
 			+ TABLE_FOLDER_STATE + " WHERE " + COL_FOLDER_STATE_BUCKET
 			+ " = ? AND " + COL_FOLDER_STATE_STATE + " = ?";
 
@@ -62,7 +62,7 @@ public class FolderMetadataDaoImpl implements FolderMetadataDao {
 	}
 
 	@Override
-	public void createOfUpdateFolderState(FolderState state) {
+	public void createOrUpdateFolderState(FolderState state) {
 		if(state == null){
 			throw new IllegalArgumentException("State cannot be null");
 		}
@@ -82,7 +82,7 @@ public class FolderMetadataDaoImpl implements FolderMetadataDao {
 	@Override
 	public Iterator<FolderState> listFolders(String bucketName, State state) {
 		// return the query with an iterator.
-		return new PagingQueryIterator<FolderState>(MAX_PAGE_SIZE, template, SQL_LIST_ROLLING_FOR_BUCKET, rowMapper, bucketName, FolderState.State.ROLLING.name());
+		return new PagingQueryIterator<FolderState>(MAX_PAGE_SIZE, template, SQL_LIST_FOLDER_FOR_BUCKET_AND_STATE, rowMapper, bucketName, FolderState.State.ROLLING.name());
 	}
 
 }

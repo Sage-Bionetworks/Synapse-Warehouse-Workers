@@ -32,6 +32,7 @@ public class BucketScanningStack implements WorkerStackConfigurationProvider {
 		this.config.setStartDelayMs(2987);
 		// run once per minute.
 		this.config.setPeriodMS(60*1000);
+		this.config.setWorkerName(BucketScanningStack.class.getName());
 	}
 
 	@Override

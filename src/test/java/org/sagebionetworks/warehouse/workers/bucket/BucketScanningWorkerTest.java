@@ -66,4 +66,5 @@ public class BucketScanningWorkerTest {
 		verify(mockFileManager).addS3Objects(oneStream, mockProgressCallback);
 		verify(mockFileManager).addS3Objects(twoStream, mockProgressCallback);
 	}
+	
 }

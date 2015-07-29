@@ -15,7 +15,7 @@ public interface FolderMetadataDao {
 	 * @param modifiedOnTimeMS
 	 *            The modified on of the file that triggered this call.
 	 */
-	public void createOfUpdateFolderState(FolderState state);
+	public void createOrUpdateFolderState(FolderState state);
 
 	/**
 	 * List all folders with the given state from the given bucket.

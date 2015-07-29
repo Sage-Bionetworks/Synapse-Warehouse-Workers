@@ -56,6 +56,7 @@ public class RealTimeBucketListenerStack implements WorkerStackConfigurationProv
 		this.config.setRunner(mainRunner);
 		this.config.setStartDelayMs(987);
 		this.config.setPeriodMS(10*1000);
+		this.config.setWorkerName(RealTimeBucketListenerStack.class.getName());
 	}
 
 	@Override

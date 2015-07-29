@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  */
 public class WorkerStackConfigurationProviderList {
 	
-	List<Class<? extends WorkerStackConfigurationProvider>> list;
+	List<Class<? extends WorkerStackConfigurationProvider>> list = new LinkedList<Class<? extends WorkerStackConfigurationProvider>>();
 	
 	/**
 	 * Get the worker stack list.
