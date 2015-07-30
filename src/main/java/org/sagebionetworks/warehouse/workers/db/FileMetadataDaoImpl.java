@@ -19,14 +19,14 @@ import com.google.inject.Singleton;
 @Singleton
 public class FileMetadataDaoImpl implements FileMetadataDao {
 
-	private static final String SQL_COUNT_WITH_BUCKET_AND_KEY = "SELECT COUNT(*) FROM "+TABLE_FILE_STATE+" WHERE "+COL_TABLE_STATE_BUCKET+" = ? AND "+COL_TABLE_STATE_KEY+" = ?";
+	private static final String SQL_COUNT_WITH_BUCKET_AND_KEY = "SELECT COUNT(*) FROM "+TABLE_FILE_STATE+" WHERE "+COL_FILE_STATE_BUCKET+" = ? AND "+COL_FILE_STATE_KEY+" = ?";
 
 	private static final int ERROR_MESSAGE_MAX_CHARS = 2999;
 
 	private static final String SQL_UPDATE_STATE = "UPDATE " + TABLE_FILE_STATE + " SET "
-			+ COL_TABLE_STATE_STATE + " = ? , " + COL_TABLE_STATE_ERROR
-			+ " =  ?, " + COL_TABLE_STATE_ERROR_DETAILS + " = ? WHERE "
-			+ COL_TABLE_STATE_BUCKET + " = ? AND " + COL_TABLE_STATE_KEY
+			+ COL_FILE_STATE_STATE + " = ? , " + COL_FILE_STATE_ERROR
+			+ " =  ?, " + COL_FILE_STATE_ERROR_DETAILS + " = ? WHERE "
+			+ COL_FILE_STATE_BUCKET + " = ? AND " + COL_FILE_STATE_KEY
 			+ " = ?";
 
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_FILE_STATE;
@@ -34,17 +34,17 @@ public class FileMetadataDaoImpl implements FileMetadataDao {
 	private static final String FILE_STATE_DDL_SQL = "FileState.ddl.sql";
 
 	private static final String SQL_SELECT_BY_PRIMARY = "SELECT * FROM "
-			+ TABLE_FILE_STATE + " WHERE " + COL_TABLE_STATE_BUCKET
-			+ " = ? AND " + COL_TABLE_STATE_KEY + " = ?";
+			+ TABLE_FILE_STATE + " WHERE " + COL_FILE_STATE_BUCKET
+			+ " = ? AND " + COL_FILE_STATE_KEY + " = ?";
 	
 	private static final String INSERT_IGNORE_FILE_STATE = "INSERT IGNORE INTO "
 			+ TABLE_FILE_STATE
 			+ " ("
-			+ COL_TABLE_STATE_BUCKET
+			+ COL_FILE_STATE_BUCKET
 			+ ","
-			+ COL_TABLE_STATE_KEY
+			+ COL_FILE_STATE_KEY
 			+ ","
-			+ COL_TABLE_STATE_STATE
+			+ COL_FILE_STATE_STATE
 			+ ") VALUES (?,?,?)";
 
 	JdbcTemplate template;
@@ -56,12 +56,12 @@ public class FileMetadataDaoImpl implements FileMetadataDao {
 
 		public FileState mapRow(ResultSet rs, int arg1) throws SQLException {
 			FileState file = new FileState();
-			file.setBucket(rs.getString(COL_TABLE_STATE_BUCKET));
-			file.setKey(rs.getString(COL_TABLE_STATE_KEY));
-			file.setState(State.valueOf(rs.getString(COL_TABLE_STATE_STATE)));
-			file.setUpdatedOn(rs.getTimestamp(COL_TABLE_STATE_UPDATED_ON));
-			file.setError(rs.getString(COL_TABLE_STATE_ERROR));
-			file.setErrorDetails(rs.getBytes(COL_TABLE_STATE_ERROR_DETAILS));
+			file.setBucket(rs.getString(COL_FILE_STATE_BUCKET));
+			file.setKey(rs.getString(COL_FILE_STATE_KEY));
+			file.setState(State.valueOf(rs.getString(COL_FILE_STATE_STATE)));
+			file.setUpdatedOn(rs.getTimestamp(COL_FILE_STATE_UPDATED_ON));
+			file.setError(rs.getString(COL_FILE_STATE_ERROR));
+			file.setErrorDetails(rs.getBytes(COL_FILE_STATE_ERROR_DETAILS));
 			return file;
 		}
 	};
