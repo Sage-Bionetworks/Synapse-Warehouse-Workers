@@ -55,6 +55,16 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sagebionetworks</groupId>
+			<artifactId>lib-auto-generated</artifactId>
+			<version>${synapse.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sagebionetworks</groupId>
+			<artifactId>schema-to-pojo-org-json</artifactId>
+			<version>0.3.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sagebionetworks</groupId>
 			<artifactId>aws-utilities</artifactId>
 			<version>1.0.4</version>
 		</dependency>
@@ -219,5 +229,6 @@
 
 	<properties>
 		<spring.version>4.1.6.RELEASE</spring.version>
+		<synapse.version>99.0</synapse.version>
 	</properties>
 </project>
