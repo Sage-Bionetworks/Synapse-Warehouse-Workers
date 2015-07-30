@@ -14,6 +14,12 @@ public interface ProcessedAccessRecordDao {
 	public void insert(List<ProcessedAccessRecord> batch);
 
 	/**
+	 * 
+	 * @return all ProcessedAccessRecord that has CLIENT set to UNKNOWN
+	 */
+	public List<ProcessedAccessRecord> getUnknownClient();
+
+	/**
 	 * Truncate all of the data.
 	 */
 	public void truncateAll();

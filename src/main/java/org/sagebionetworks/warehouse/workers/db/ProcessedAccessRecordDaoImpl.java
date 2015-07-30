@@ -1,15 +1,19 @@
 package org.sagebionetworks.warehouse.workers.db;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.*;
+import static org.sagebionetworks.warehouse.workers.utils.Client.*;
 
 import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
+import org.sagebionetworks.warehouse.workers.utils.Client;
 import org.sagebionetworks.warehouse.workers.utils.ProcessedAccessRecord;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -35,6 +39,9 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 			+ " = ?, "
 			+ COL_SYNAPSE_API
 			+ " = ?";
+	private static final String SQL_GET_UNKNOWN_CLIENT = "SELECT *"
+			+ " FROM " + TABLE_PROCESSED_ACCESS_RECORD
+			+ " WHERE " + COL_CLIENT + " = '" + UNKNOWN.name() + "'";
 
 	private static final String PROCESSED_ACCESS_RECORD_DDL_SQL = "ProcessedAccessRecord.ddl.sql";
 
@@ -62,13 +69,13 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 			public void setValues(PreparedStatement ps, int i)
 					throws SQLException {
 				ProcessedAccessRecord par = batch.get(i);
-				ps.setString(0, par.getSessionId());
-				ps.setString(1, par.getEntityId());
-				ps.setString(2, par.getClient().name());
-				ps.setString(3, par.getSynapseApi());
-				ps.setString(4, par.getEntityId());
-				ps.setString(5, par.getClient().name());
-				ps.setString(6, par.getSynapseApi());
+				ps.setString(1, par.getSessionId());
+				ps.setString(2, par.getEntityId());
+				ps.setString(3, par.getClient().name());
+				ps.setString(4, par.getSynapseApi());
+				ps.setString(5, par.getEntityId());
+				ps.setString(6, par.getClient().name());
+				ps.setString(7, par.getSynapseApi());
 			}
 			
 		});
@@ -79,4 +86,23 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 		template.update(TRUNCATE);
 	}
 
+	@Override
+	public List<ProcessedAccessRecord> getUnknownClient() {
+		return template.query(SQL_GET_UNKNOWN_CLIENT, this.rowMapper);
+	}
+
+	/*
+	 * Map all columns to the dba.
+	 */
+	RowMapper<ProcessedAccessRecord> rowMapper = new RowMapper<ProcessedAccessRecord>() {
+
+		public ProcessedAccessRecord mapRow(ResultSet rs, int arg1) throws SQLException {
+			ProcessedAccessRecord par = new ProcessedAccessRecord();
+			par.setSessionId(rs.getString(COL_SESSION_ID));
+			par.setEntityId(rs.getString(COL_ENTITY_ID));
+			par.setClient(Client.valueOf(rs.getString(COL_CLIENT)));
+			par.setSynapseApi(rs.getString(COL_SYNAPSE_API));
+			return par;
+		}
+	};
 }
