@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers;
+package org.sagebionetworks.warehouse.workers.collate;
 
 import java.io.IOException;
 import java.util.List;

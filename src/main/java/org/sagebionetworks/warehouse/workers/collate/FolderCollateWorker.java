@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.bucket;
+package org.sagebionetworks.warehouse.workers.collate;
 
 import java.util.Iterator;
 
@@ -6,6 +6,8 @@ import javax.inject.Inject;
 
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
+import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
+import org.sagebionetworks.warehouse.workers.bucket.LockedFolderRunner;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
 public class FolderCollateWorker implements LockedFolderRunner{
