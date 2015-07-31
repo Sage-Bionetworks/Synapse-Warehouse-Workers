@@ -13,5 +13,4 @@ public interface TopicDaoProvider {
 	 * @return
 	 */
 	public String getTopicArn(String type);
-
 }

@@ -11,8 +11,8 @@ public class WorkerMessageUtils {
 	 * @param key
 	 * @return
 	 */
-	public static String generateFileSubmitMessage(String bucket, String key) {
-		FileSubmitMessage message = new FileSubmitMessage(bucket, key);
+	public static String generateFileSubmissionMessage(String bucket, String key) {
+		FileSubmissionMessage message = new FileSubmissionMessage(bucket, key);
 		return XMLUtils.toXML(message, "message");
 	}
 }

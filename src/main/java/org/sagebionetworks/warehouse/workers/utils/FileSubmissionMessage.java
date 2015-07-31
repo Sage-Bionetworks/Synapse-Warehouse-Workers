@@ -1,11 +1,11 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
-public class FileSubmitMessage {
+public class FileSubmissionMessage {
 
 	String bucket;
 	String key;
 
-	public FileSubmitMessage(String bucket, String key) {
+	public FileSubmissionMessage(String bucket, String key) {
 		super();
 		this.bucket = bucket;
 		this.key = key;

@@ -23,7 +23,7 @@ public class BucketTopicPublisherImpl implements BucketTopicPublisher {
 	public void publishS3ObjectToTopic(String bucket, String key) {
 		KeyData keyData = KeyGeneratorUtil.parseKey(key);
 		String topicArn = topicProvider.getTopicArn(keyData.getType());
-		String message = WorkerMessageUtils.generateFileSubmitMessage(bucket, key);
+		String message = WorkerMessageUtils.generateFileSubmissionMessage(bucket, key);
 		snsClient.publish(topicArn, message);
 	}
 
