@@ -15,7 +15,8 @@ public interface S3ObjectCollator {
 	/**
 	 * Given a S3 bucket and a list of keys from the bucket, collate all of the
 	 * files into a single file and save the result to the given destination key
-	 * within the same bucket.
+	 * within the same bucket.  The original files will be deleted if the collation 
+	 * is successful.
 	 * 
 	 * @param progressCallback Will be called for each row written to the d
 	 * @param bucket
@@ -24,7 +25,7 @@ public interface S3ObjectCollator {
 	 * @param keysToCollate
 	 *            A list of S3Object keys from the given bucket that are to be
 	 *            collated into the destination S3Object. Each S3Object must be
-	 *            a gzipped CSV (*.csv.gz) files sorted on the same column as
+	 *            a gzipped CSV (*.csv.gz). Files must be sorted on the same column as
 	 *            the passed sortColumnIndex.
 	 * @param destinationKey
 	 *            The key of the new destination object. The resulting collated
@@ -36,7 +37,7 @@ public interface S3ObjectCollator {
 	 *            input CSV files are sorted on this column.
 	 * @throws IOException 
 	 */
-	public void collateCSVObjects(ProgressCallback<Void> progressCallback, String bucket, List<String> keysToCollate,
+	public void replaceCSVsWithCollatedCSV(ProgressCallback<Void> progressCallback, String bucket, List<String> keysToCollate,
 			String destinationKey, int sortColumnIndex) throws IOException;
 
 }

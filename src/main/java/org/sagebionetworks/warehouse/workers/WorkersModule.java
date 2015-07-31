@@ -13,7 +13,11 @@ import org.sagebionetworks.warehouse.workers.bucket.FolderLockingWorker;
 import org.sagebionetworks.warehouse.workers.bucket.LockedFolderRunner;
 import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketListenerStack;
 import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerStackConfig;
+import org.sagebionetworks.warehouse.workers.collate.CollateProvider;
+import org.sagebionetworks.warehouse.workers.collate.CollateProviderImpl;
 import org.sagebionetworks.warehouse.workers.collate.FolderCollateWorker;
+import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollator;
+import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollatorImpl;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
@@ -35,6 +39,8 @@ public class WorkersModule extends AbstractModule {
 		bind(BucketTopicPublisher.class).to(BucketTopicPublisherImpl.class);
 		bind(FileManager.class).to(FileManagerImpl.class);
 		bind(LockedFolderRunner.class).to(FolderCollateWorker.class);
+		bind(CollateProvider.class).to(CollateProviderImpl.class);
+		bind(S3ObjectCollator.class).to(S3ObjectCollatorImpl.class);
 	}
 
 	/**

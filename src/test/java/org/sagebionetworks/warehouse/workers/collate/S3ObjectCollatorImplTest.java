@@ -75,9 +75,9 @@ public class S3ObjectCollatorImplTest {
 	}
 
 	@Test
-	public void testCollateCSVObjects() throws IOException{
+	public void testReplaceCSVsWithCollatedCSV() throws IOException{
 		// call under test.
-		collator.collateCSVObjects(mockProgressCallback, bucket, keysToCollate, destinationKey, sortColumnIndex);
+		collator.replaceCSVsWithCollatedCSV(mockProgressCallback, bucket, keysToCollate, destinationKey, sortColumnIndex);
 		assertEquals("Four temp files should have been created.",4, mockFiles.size());
 		// The three input files should be down loaded.
 		verify(mockS3Client, times(3)).getObject(any(GetObjectRequest.class), any(File.class));
@@ -87,6 +87,30 @@ public class S3ObjectCollatorImplTest {
 		// the results should be pushed to S3 with the last file
 		verify(mockS3Client).putObject(bucket, destinationKey, mockFiles.get(mockFiles.size()-1));
 		// each file that is created should get deleted
+		for(File mockFile: mockFiles){
+			verify(mockFile).delete();
+		}
+		// all of the readers should be closed
+		for(CSVReader mockReader: mockReaders){
+			verify(mockReader).close();
+		}
+		// the writer should be closed
+		verify(mockWriter).close();		
+	}
+	
+	@Test
+	public void testReplaceCSVsWithCollatedCSVException() throws IOException{
+		// simulate an error
+		RuntimeException error = new RuntimeException("some error");
+		doThrow(error).when(mockS3Client).putObject(any(String.class), any(String.class), any(File.class));
+		// call under test.
+		try {
+			collator.replaceCSVsWithCollatedCSV(mockProgressCallback, bucket, keysToCollate, destinationKey, sortColumnIndex);
+			fail("Should have thrown an exception");
+		} catch (Exception e) {
+			assertEquals(error, e);
+		}
+		// All cleanup should still happen
 		for(File mockFile: mockFiles){
 			verify(mockFile).delete();
 		}

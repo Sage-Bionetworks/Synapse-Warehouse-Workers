@@ -34,12 +34,12 @@ public class S3ObjectCollatorImpl implements S3ObjectCollator {
 	 * @see org.sagebionetworks.warehouse.workers.S3ObjectCollator#collateCSVObjects(java.lang.String, java.util.List, java.lang.String, int)
 	 */
 	@Override
-	public void collateCSVObjects(ProgressCallback<Void> progressCallback, String bucket, List<String> keysToCollate,
+	public void replaceCSVsWithCollatedCSV(ProgressCallback<Void> progressCallback, String bucket, List<String> keysToCollate,
 			String destinationKey, int sortColumnIndex) throws IOException {
-		// The first step is to download each file
 		List<File> inputFiles = new LinkedList<File>();
 		File destination = null;
 		try{
+			// download each input file to a temporary file.
 			for(String key: keysToCollate){
 				File temp = collateProvider.createTempFile("inputCollate", ".csv.gz");
 				s3Client.getObject(new GetObjectRequest(bucket, key), temp);
@@ -80,10 +80,12 @@ public class S3ObjectCollatorImpl implements S3ObjectCollator {
 		List<CSVReader> readers = new LinkedList<CSVReader>();
 		CSVWriter writer = null;
 		try{
+			// Stream each input file to a CSVReader
 			for(File file: inputFiles){
 				CSVReader reader = collateProvider.createGzipReader(file);
 				readers.add(reader);
 			}
+			// Stream the output to a CSVWriter
 			writer = collateProvider.createGzipWriter(destination);
 			// This is where collation actually occurs.
 			collateProvider.mergeSortedStreams(progressCallback, readers, writer, sortColumnIndex);
