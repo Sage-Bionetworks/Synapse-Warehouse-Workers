@@ -8,8 +8,8 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.sagebionetworks.warehouse.workers.utils.Client;
-import org.sagebionetworks.warehouse.workers.utils.ProcessedAccessRecord;
+import org.sagebionetworks.warehouse.workers.model.Client;
+import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 
 public class ProcessedAccessRecordDaoImplTest {
 

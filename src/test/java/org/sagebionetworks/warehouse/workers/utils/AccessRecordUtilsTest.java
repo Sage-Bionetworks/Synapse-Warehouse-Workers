@@ -4,9 +4,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
+import org.sagebionetworks.warehouse.workers.model.Client;
+import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
-import org.sagebionetworks.warehouse.workers.utils.Client;
-import org.sagebionetworks.warehouse.workers.utils.ProcessedAccessRecord;
 
 public class AccessRecordUtilsTest {
 

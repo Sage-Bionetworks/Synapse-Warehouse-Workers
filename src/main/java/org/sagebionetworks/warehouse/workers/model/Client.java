@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.utils;
+package org.sagebionetworks.warehouse.workers.model;
 
 public enum Client {
 	R,

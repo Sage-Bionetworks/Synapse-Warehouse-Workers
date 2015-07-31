@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.sagebionetworks.repo.model.audit.AccessRecord;
+import org.sagebionetworks.warehouse.workers.model.Client;
+import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 
 public class AccessRecordUtils {
 
