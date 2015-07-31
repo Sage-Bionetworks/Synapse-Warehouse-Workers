@@ -2,6 +2,7 @@ package org.sagebionetworks.warehouse.workers.bucket;
 
 import org.sagebionetworks.aws.utils.s3.KeyData;
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
+import org.sagebionetworks.warehouse.workers.utils.WorkerMessageUtils;
 
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.google.inject.Inject;
@@ -22,29 +23,8 @@ public class BucketTopicPublisherImpl implements BucketTopicPublisher {
 	public void publishS3ObjectToTopic(String bucket, String key) {
 		KeyData keyData = KeyGeneratorUtil.parseKey(key);
 		String topicArn = topicProvider.getTopicArn(keyData.getType());
-		String message = generateMessage(bucket, key);
+		String message = WorkerMessageUtils.generateFileSubmitMessage(bucket, key);
 		snsClient.publish(topicArn, message);
 	}
 
-	/**
-	 * Generate a simple message to notify the topic that a file is ready to be processed.
-	 * 
-	 * @param bucket
-	 * @param key
-	 * @return
-	 */
-	private String generateMessage(String bucket, String key) {
-		SnapshotRecordMessage message = new SnapshotRecordMessage(bucket, key);
-		return XMLUtils.toXML(message, "message");
-	}
-
-	public class SnapshotRecordMessage {
-		String bucket;
-		String key;
-		public SnapshotRecordMessage(String bucket, String key) {
-			super();
-			this.bucket = bucket;
-			this.key = key;
-		}
-	}
 }
