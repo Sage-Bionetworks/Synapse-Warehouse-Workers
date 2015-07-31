@@ -13,15 +13,15 @@ import com.google.inject.Singleton;
 public class TopicDaoProviderImpl implements TopicDaoProvider {
 
 	private AmazonSNSClient snsClient;
-	private Configuration config;
 	private static final String TOPIC_NAME_PATTERN = "%1$s-%2$s-record-topic";
 	private Map<String, String> topicArnMap = new HashMap<String, String>();
+	private String stack;
 
 	@Inject
 	TopicDaoProviderImpl(AmazonSNSClient snsClient, Configuration config) {
 		super();
 		this.snsClient = snsClient;
-		this.config = config;
+		this.stack = config.getProperty("org.sagebionetworks.warehouse.worker.stack");
 	}
 
 	@Override
@@ -29,20 +29,9 @@ public class TopicDaoProviderImpl implements TopicDaoProvider {
 		if (topicArnMap.containsKey(type)) {
 			return topicArnMap.get(type);
 		}
-		String topicArn = snsClient.createTopic(getTopicName(type)).getTopicArn();
+		String topicName = String.format(TOPIC_NAME_PATTERN , this.stack, type);
+		String topicArn = snsClient.createTopic(topicName).getTopicArn();
 		topicArnMap.put(type, topicArn);
 		return topicArn;
 	}
-
-	/**
-	 * Generate the topic name from stack and type
-	 * 
-	 * @param type
-	 * @return
-	 */
-	private String getTopicName(String type) {
-		String stack = config.getProperty("org.sagebionetworks.warehouse.worker.stack");
-		return String.format(TOPIC_NAME_PATTERN , stack, type);
-	}
-
 }

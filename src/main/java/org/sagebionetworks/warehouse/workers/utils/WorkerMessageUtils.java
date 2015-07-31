@@ -1,6 +1,6 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
-import org.sagebionetworks.warehouse.workers.model.FileSubmissionMessage;
+import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
 
 
 public class WorkerMessageUtils {

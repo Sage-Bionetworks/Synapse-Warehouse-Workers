@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.model;
+package org.sagebionetworks.warehouse.workers.bucket;
 
 public class FileSubmissionMessage {
 
