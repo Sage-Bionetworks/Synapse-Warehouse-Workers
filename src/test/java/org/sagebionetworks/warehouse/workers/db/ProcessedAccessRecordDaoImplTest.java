@@ -45,6 +45,7 @@ public class ProcessedAccessRecordDaoImplTest {
 		unknownClient = dao.getUnknownClient();
 		// validate that there is one unknown client record
 		assertEquals(1, unknownClient.size());
+		assertEquals(par2, unknownClient.get(0));
 
 		par2.setClient(Client.R);
 		dao.insert(Arrays.asList(par2));
