@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.bucket;
+package org.sagebionetworks.warehouse.workers.utils;
 
 import java.io.StringReader;
 import java.io.StringWriter;

@@ -2,7 +2,7 @@ package org.sagebionetworks.warehouse.workers.db;
 
 import java.util.List;
 
-import org.sagebionetworks.warehouse.workers.utils.ProcessedAccessRecord;
+import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 
 public interface ProcessedAccessRecordDao {
 

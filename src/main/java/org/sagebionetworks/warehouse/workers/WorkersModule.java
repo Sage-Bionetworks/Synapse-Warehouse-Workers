@@ -10,10 +10,11 @@ import org.sagebionetworks.warehouse.workers.bucket.BucketScanningStack;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisherImpl;
 import org.sagebionetworks.warehouse.workers.bucket.FolderCollateWorker;
-import org.sagebionetworks.warehouse.workers.bucket.FolderLockingWorker;
 import org.sagebionetworks.warehouse.workers.bucket.LockedFolderRunner;
 import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketListenerStack;
 import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerStackConfig;
+import org.sagebionetworks.warehouse.workers.bucket.TopicDaoProvider;
+import org.sagebionetworks.warehouse.workers.bucket.TopicDaoProviderImpl;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
@@ -32,6 +33,7 @@ public class WorkersModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(BucketDaoProvider.class).to(BucketDaoProviderImpl.class);
+		bind(TopicDaoProvider.class).to(TopicDaoProviderImpl.class);
 		bind(BucketTopicPublisher.class).to(BucketTopicPublisherImpl.class);
 		bind(FileManager.class).to(FileManagerImpl.class);
 		bind(LockedFolderRunner.class).to(FolderCollateWorker.class);

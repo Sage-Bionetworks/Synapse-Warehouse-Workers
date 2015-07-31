@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.*;
-import static org.sagebionetworks.warehouse.workers.utils.Client.*;
+import static org.sagebionetworks.warehouse.workers.model.Client.*;
 
+import org.sagebionetworks.warehouse.workers.model.Client;
+import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
-import org.sagebionetworks.warehouse.workers.utils.Client;
-import org.sagebionetworks.warehouse.workers.utils.ProcessedAccessRecord;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
