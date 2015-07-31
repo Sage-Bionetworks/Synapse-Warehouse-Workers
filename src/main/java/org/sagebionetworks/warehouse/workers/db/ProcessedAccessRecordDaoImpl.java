@@ -92,7 +92,7 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 	}
 
 	/*
-	 * Map all columns to the dba.
+	 * Map all columns to the dbo.
 	 */
 	RowMapper<ProcessedAccessRecord> rowMapper = new RowMapper<ProcessedAccessRecord>() {
 
