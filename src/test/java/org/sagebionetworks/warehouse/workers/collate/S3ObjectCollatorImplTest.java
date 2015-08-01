@@ -86,6 +86,10 @@ public class S3ObjectCollatorImplTest {
 		verify(mockCollateProvider).mergeSortedStreams(mockProgressCallback, mockReaders, mockWriter, sortColumnIndex);
 		// the results should be pushed to S3 with the last file
 		verify(mockS3Client).putObject(bucket, destinationKey, mockFiles.get(mockFiles.size()-1));
+		// The input objects should be deleted in S3.
+		for(String key: keysToCollate){
+			verify(mockS3Client).deleteObject(bucket, key);
+		}
 		// each file that is created should get deleted
 		for(File mockFile: mockFiles){
 			verify(mockFile).delete();
@@ -119,6 +123,8 @@ public class S3ObjectCollatorImplTest {
 			verify(mockReader).close();
 		}
 		// the writer should be closed
-		verify(mockWriter).close();		
+		verify(mockWriter).close();	
+		// The input file should not have been deleted.
+		verify(mockS3Client, never()).deleteObject(anyString(), anyString());
 	}
 }

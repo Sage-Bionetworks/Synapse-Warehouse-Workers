@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers.collate;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +21,8 @@ import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
 import org.sagebionetworks.warehouse.workers.bucket.LockedFolderRunner;
+import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
+import org.sagebionetworks.warehouse.workers.db.FolderState;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
 public class FolderCollateWorker implements LockedFolderRunner{
@@ -40,12 +43,14 @@ public class FolderCollateWorker implements LockedFolderRunner{
 	BucketDaoProvider bucketDaoProvider;
 	S3ObjectCollator collator;
 	Map<String, Integer> bucketToSortColumnMap;
+	FolderMetadataDao folderMetadataDao;
 	
 	@Inject
-	public FolderCollateWorker(BucketDaoProvider bucketDaoProvider, S3ObjectCollator collator, BucketInfoList bucketList) {
+	public FolderCollateWorker(BucketDaoProvider bucketDaoProvider, S3ObjectCollator collator, BucketInfoList bucketList, FolderMetadataDao folderMetadataDao) {
 		super();
 		this.bucketDaoProvider = bucketDaoProvider;
 		this.collator = collator;
+		this.folderMetadataDao = folderMetadataDao;
 		// Map bucket name to sort index.
 		bucketToSortColumnMap = new HashMap<String, Integer>();
 		for(BucketInfo info: bucketList.getBucketList()){
@@ -98,12 +103,21 @@ public class FolderCollateWorker implements LockedFolderRunner{
 			try {
 				collator.replaceCSVsWithCollatedCSV(progressCallback, folder.getBucket(), keysToCollate, destinationKey, sortColumnIndex);
 			} catch (Exception e) {
+				wereAllFilesCollated = false;
 				// log the exception and the keys
 				log.error("Failed to collate: ", e);
 				for(String key: keysToCollate){
 					log.error("Failed to collate: "+key);
 				}
 			}
+		}
+		// If all files were collated set the state of the folder to be collated
+		if(wereAllFilesCollated){
+			FolderState state = new FolderState();
+			state.setBucket(folder.getBucket());
+			state.setPath(folder.getPath());
+			state.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
+			folderMetadataDao.createOrUpdateFolderState(state);
 		}
 	}
 	

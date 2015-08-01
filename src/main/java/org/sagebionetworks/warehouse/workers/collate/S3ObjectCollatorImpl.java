@@ -49,6 +49,10 @@ public class S3ObjectCollatorImpl implements S3ObjectCollator {
 			destination = collateProvider.createTempFile("resultCollate", ".csv.gz");
 			// collate the files.
 			collateCSVObjects(progressCallback, bucket, inputFiles, destination, destinationKey, sortColumnIndex);
+			// Collation was successful so delete the original files.
+			for(String toDelete: keysToCollate){
+				s3Client.deleteObject(bucket, toDelete);
+			}
 		}finally{
 			// unconditionally delete the temp files.
 			for(File file: inputFiles){
