@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.*;
-import static org.sagebionetworks.warehouse.workers.model.Client.*;
 
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
@@ -25,25 +24,27 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 	private static final String INSERT = "INSERT INTO "
 			+ TABLE_PROCESSED_ACCESS_RECORD
 			+ " ("
-			+ COL_SESSION_ID
+			+ COL_PROCESSED_ACCESS_RECORD_SESSION_ID
 			+ ","
-			+ COL_ENTITY_ID
+			+ COL_PROCESSED_ACCESS_RECORD_ENTITY_ID
 			+ ","
-			+ COL_CLIENT
+			+ COL_PROCESSED_ACCESS_RECORD_CLIENT
 			+ ","
-			+ COL_SYNAPSE_API
+			+ COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE
 			+ ") VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE "
-			+ COL_ENTITY_ID
+			+ COL_PROCESSED_ACCESS_RECORD_ENTITY_ID
 			+ " = ?, "
-			+ COL_CLIENT
+			+ COL_PROCESSED_ACCESS_RECORD_CLIENT
 			+ " = ?, "
-			+ COL_SYNAPSE_API
+			+ COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE
 			+ " = ?";
-	private static final String SQL_GET_UNKNOWN_CLIENT = "SELECT *"
-			+ " FROM " + TABLE_PROCESSED_ACCESS_RECORD
-			+ " WHERE " + COL_CLIENT + " = '" + UNKNOWN.name() + "'";
 
 	private static final String PROCESSED_ACCESS_RECORD_DDL_SQL = "ProcessedAccessRecord.ddl.sql";
+	private static final String SQL_GET = "SELECT * FROM "
+			+ TABLE_PROCESSED_ACCESS_RECORD
+			+ " WHERE "
+			+ COL_PROCESSED_ACCESS_RECORD_SESSION_ID
+			+ " = ?";
 
 	private JdbcTemplate template;
 
@@ -51,9 +52,10 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 	ProcessedAccessRecordDaoImpl(JdbcTemplate template) throws SQLException {
 		super();
 		this.template = template;
-		// Create the table
-		this.template.update(ClasspathUtils
-				.loadStringFromClassPath(PROCESSED_ACCESS_RECORD_DDL_SQL));
+		String[] queries = ClasspathUtils.loadStringFromClassPath(PROCESSED_ACCESS_RECORD_DDL_SQL).split(";");
+		for (String query : queries) {
+			this.template.update(query);
+		}
 	}
 
 	@Override
@@ -70,12 +72,12 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 					throws SQLException {
 				ProcessedAccessRecord par = batch.get(i);
 				ps.setString(1, par.getSessionId());
-				ps.setString(2, par.getEntityId());
+				ps.setLong(2, par.getEntityId());
 				ps.setString(3, par.getClient().name());
-				ps.setString(4, par.getSynapseApi());
-				ps.setString(5, par.getEntityId());
+				ps.setString(4, par.getNormalizedMethodSignature());
+				ps.setLong(5, par.getEntityId());
 				ps.setString(6, par.getClient().name());
-				ps.setString(7, par.getSynapseApi());
+				ps.setString(7, par.getNormalizedMethodSignature());
 			}
 			
 		});
@@ -87,8 +89,8 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 	}
 
 	@Override
-	public List<ProcessedAccessRecord> getUnknownClient() {
-		return template.query(SQL_GET_UNKNOWN_CLIENT, this.rowMapper);
+	public ProcessedAccessRecord get(String sessionId) {
+		return template.queryForObject(SQL_GET, this.rowMapper, sessionId);
 	}
 
 	/*
@@ -98,10 +100,10 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 
 		public ProcessedAccessRecord mapRow(ResultSet rs, int arg1) throws SQLException {
 			ProcessedAccessRecord par = new ProcessedAccessRecord();
-			par.setSessionId(rs.getString(COL_SESSION_ID));
-			par.setEntityId(rs.getString(COL_ENTITY_ID));
-			par.setClient(Client.valueOf(rs.getString(COL_CLIENT)));
-			par.setSynapseApi(rs.getString(COL_SYNAPSE_API));
+			par.setSessionId(rs.getString(COL_PROCESSED_ACCESS_RECORD_SESSION_ID));
+			par.setEntityId(rs.getLong(COL_PROCESSED_ACCESS_RECORD_ENTITY_ID));
+			par.setClient(Client.valueOf(rs.getString(COL_PROCESSED_ACCESS_RECORD_CLIENT)));
+			par.setNormalizedMethodSignature(rs.getString(COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE));
 			return par;
 		}
 	};

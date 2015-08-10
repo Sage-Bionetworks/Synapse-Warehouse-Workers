@@ -15,9 +15,9 @@ public interface ProcessedAccessRecordDao {
 
 	/**
 	 * 
-	 * @return all ProcessedAccessRecord that has CLIENT set to UNKNOWN
+	 * @return a ProcessedAccessRecord given the sessionId
 	 */
-	public List<ProcessedAccessRecord> getUnknownClient();
+	public ProcessedAccessRecord get(String sessionId);
 
 	/**
 	 * Truncate all of the data.
