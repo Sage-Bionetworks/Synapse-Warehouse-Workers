@@ -2,7 +2,7 @@ package org.sagebionetworks.warehouse.workers.bucket;
 
 import org.sagebionetworks.aws.utils.s3.KeyData;
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
-import org.sagebionetworks.warehouse.workers.utils.WorkerMessageUtils;
+import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.google.inject.Inject;
@@ -23,7 +23,8 @@ public class BucketTopicPublisherImpl implements BucketTopicPublisher {
 	public void publishS3ObjectToTopic(String bucket, String key) {
 		KeyData keyData = KeyGeneratorUtil.parseKey(key);
 		String topicArn = topicProvider.getTopicArn(keyData.getType());
-		String message = WorkerMessageUtils.generateFileSubmissionMessage(bucket, key);
+		FileSubmissionMessage dto = new FileSubmissionMessage(bucket, key);
+		String message = XMLUtils.toXML(dto, "Message");
 		snsClient.publish(topicArn, message);
 	}
 
