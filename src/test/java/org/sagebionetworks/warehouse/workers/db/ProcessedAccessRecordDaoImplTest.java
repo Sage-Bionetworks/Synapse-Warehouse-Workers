@@ -25,7 +25,7 @@ public class ProcessedAccessRecordDaoImplTest {
 	}
 
 	@Test
-	public void testInsertOnDuplicate() {
+	public void test() {
 		ProcessedAccessRecord par1 = new ProcessedAccessRecord();
 		par1.setSessionId("28a75682-f056-40f7-9a1e-416cb703bed5");
 		par1.setEntityId(2600225);
