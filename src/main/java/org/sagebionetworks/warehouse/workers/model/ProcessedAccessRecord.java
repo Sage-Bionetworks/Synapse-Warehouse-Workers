@@ -3,9 +3,9 @@ package org.sagebionetworks.warehouse.workers.model;
 public class ProcessedAccessRecord {
 
 	private String sessionId;
-	private String entityId;
+	private long entityId;
 	private Client client;
-	private String synapseAPI;
+	private String normalizedMethodSignature;
 
 	public String getSessionId() {
 		return sessionId;
@@ -13,41 +13,37 @@ public class ProcessedAccessRecord {
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
 	}
-	public String getEntityId() {
+	public long getEntityId() {
 		return entityId;
 	}
-	public void setEntityId(String entityId) {
+	public void setEntityId(long entityId) {
 		this.entityId = entityId;
 	}
 	public Client getClient() {
 		return client;
 	}
-	public void setClient(Client agent) {
-		this.client = agent;
+	public void setClient(Client client) {
+		this.client = client;
 	}
-	public String getSynapseApi() {
-		return synapseAPI;
+	public String getNormalizedMethodSignature() {
+		return normalizedMethodSignature;
 	}
-	public void setSynapseApi(String synapseApi) {
-		this.synapseAPI = synapseApi;
+	public void setNormalizedMethodSignature(String normalizedMethodSignature) {
+		this.normalizedMethodSignature = normalizedMethodSignature;
 	}
-	@Override
-	public String toString() {
-		return "ProcessedAccessRecord [sessionId=" + sessionId + ", entityId="
-				+ entityId + ", client=" + client + ", synapseApi="
-				+ synapseAPI + "]";
-	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((client == null) ? 0 : client.hashCode());
-		result = prime * result
-				+ ((entityId == null) ? 0 : entityId.hashCode());
+		result = prime * result + (int) (entityId ^ (entityId >>> 32));
+		result = prime
+				* result
+				+ ((normalizedMethodSignature == null) ? 0
+						: normalizedMethodSignature.hashCode());
 		result = prime * result
 				+ ((sessionId == null) ? 0 : sessionId.hashCode());
-		result = prime * result
-				+ ((synapseAPI == null) ? 0 : synapseAPI.hashCode());
 		return result;
 	}
 	@Override
@@ -61,21 +57,26 @@ public class ProcessedAccessRecord {
 		ProcessedAccessRecord other = (ProcessedAccessRecord) obj;
 		if (client != other.client)
 			return false;
-		if (entityId == null) {
-			if (other.entityId != null)
+		if (entityId != other.entityId)
+			return false;
+		if (normalizedMethodSignature == null) {
+			if (other.normalizedMethodSignature != null)
 				return false;
-		} else if (!entityId.equals(other.entityId))
+		} else if (!normalizedMethodSignature
+				.equals(other.normalizedMethodSignature))
 			return false;
 		if (sessionId == null) {
 			if (other.sessionId != null)
 				return false;
 		} else if (!sessionId.equals(other.sessionId))
 			return false;
-		if (synapseAPI == null) {
-			if (other.synapseAPI != null)
-				return false;
-		} else if (!synapseAPI.equals(other.synapseAPI))
-			return false;
 		return true;
+	}
+	@Override
+	public String toString() {
+		return "ProcessedAccessRecord [sessionId=" + sessionId + ", entityId="
+				+ entityId + ", client=" + client
+				+ ", normalizedMethodSignature=" + normalizedMethodSignature
+				+ "]";
 	}
 }
