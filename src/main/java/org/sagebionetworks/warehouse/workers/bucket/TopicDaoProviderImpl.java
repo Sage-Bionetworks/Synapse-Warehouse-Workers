@@ -7,9 +7,7 @@ import org.sagebionetworks.warehouse.workers.config.Configuration;
 
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
-@Singleton
 public class TopicDaoProviderImpl implements TopicDaoProvider {
 
 	private AmazonSNSClient snsClient;
