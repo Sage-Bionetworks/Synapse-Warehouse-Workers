@@ -70,10 +70,10 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 					throws SQLException {
 				ProcessedAccessRecord par = batch.get(i);
 				ps.setString(1, par.getSessionId());
-				try {
+				if (par.getEntityId() != null) {
 					ps.setLong(2, par.getEntityId());
 					ps.setLong(5, par.getEntityId());
-				} catch (NullPointerException e) {
+				} else {
 					ps.setNull(2, Types.BIGINT);
 					ps.setNull(5, Types.BIGINT);
 				}
@@ -103,10 +103,9 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 		public ProcessedAccessRecord mapRow(ResultSet rs, int arg1) throws SQLException {
 			ProcessedAccessRecord par = new ProcessedAccessRecord();
 			par.setSessionId(rs.getString(COL_PROCESSED_ACCESS_RECORD_SESSION_ID));
-			try {
-				par.setEntityId(Long.parseLong(rs.getString(COL_PROCESSED_ACCESS_RECORD_ENTITY_ID)));
-			} catch (NumberFormatException e) {
-				par.setEntityId(null);
+			long entityId = rs.getLong(COL_PROCESSED_ACCESS_RECORD_ENTITY_ID);
+			if (!rs.wasNull()) {
+				par.setEntityId(entityId);
 			}
 			par.setClient(Client.valueOf(rs.getString(COL_PROCESSED_ACCESS_RECORD_CLIENT)));
 			par.setNormalizedMethodSignature(rs.getString(COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE));
