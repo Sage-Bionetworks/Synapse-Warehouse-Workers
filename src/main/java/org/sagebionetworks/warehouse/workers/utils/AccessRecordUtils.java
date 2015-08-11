@@ -100,4 +100,25 @@ public class AccessRecordUtils {
 		if (userAgent.indexOf(ELB_CLIENT) >= 0) return Client.ELB_HEALTHCHECKER;
 		return Client.UNKNOWN;
 	}
+
+	/**
+	 * 
+	 * @param ar - the access record to validate
+	 * @return true if all NOT NULL fields have valid values,
+	 *         false otherwise.
+	 */
+	public static boolean isValidated(AccessRecord ar) {
+		if (ar.getSessionId() 		== null) return false;
+		if (ar.getElapseMS() 		== null) return false;
+		if (ar.getTimestamp() 		== null) return false;
+		if (ar.getThreadId() 		== null) return false;
+		if (ar.getDate() 			== null) return false;
+		if (ar.getMethod() 			== null) return false;
+		if (ar.getVmId() 			== null) return false;
+		if (ar.getInstance()		== null) return false;
+		if (ar.getStack()			== null) return false;
+		if (ar.getSuccess()			== null) return false;
+		if (ar.getResponseStatus()	== null) return false;
+		return true;
+	}
 }
