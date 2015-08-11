@@ -9,6 +9,9 @@ import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 
 public class AccessRecordUtils {
 
+	private static final String AUTH_V1 = "/auth/v1";
+	private static final String FILE_V1 = "/file/v1";
+	private static final String REPO_V1 = "/repo/v1";
 	private static final String R_CLIENT = "synapseRClient";
 	private static final String PYTHON_CLIENT = "python-requests";
 	private static final String WEB_CLIENT = "Synapse-Web-Client";
@@ -16,8 +19,8 @@ public class AccessRecordUtils {
 	private static final String COMMAND_LINE_CLIENT = "synapsecommandlineclient";
 	private static final String ELB_CLIENT = "ELB-HealthChecker";
 
-	private static final Pattern ENTITY_PATTERN = Pattern.compile("/entity/(syn\\d+|\\d+)", Pattern.CASE_INSENSITIVE);
-	private static final Pattern NUMERIC_PARAM_PATTERN = Pattern.compile("/(syn\\d+|\\d+)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern ENTITY_PATTERN = Pattern.compile("/entity/(syn\\d+|\\d+)");
+	private static final Pattern NUMERIC_PARAM_PATTERN = Pattern.compile("/(syn\\d+|\\d+)");
 	private static final String NUMBER_REPLACEMENT = "/#";
 
 	/**
@@ -43,7 +46,8 @@ public class AccessRecordUtils {
 	 * @return
 	 */
 	public static String normalizeMethodSignature(String requestURL, String method) {
-		if (requestURL.startsWith("/repo/v1") || requestURL.startsWith("/file/v1") || requestURL.startsWith("/auth/v1")) {
+		requestURL = requestURL.toLowerCase();
+		if (requestURL.startsWith(REPO_V1) || requestURL.startsWith(FILE_V1) || requestURL.startsWith(AUTH_V1)) {
 			requestURL = requestURL.substring(8);
 		}
 		Matcher matcher = NUMERIC_PARAM_PATTERN.matcher(requestURL);
@@ -61,13 +65,14 @@ public class AccessRecordUtils {
 	 * @param requestURL
 	 * @return
 	 */
-	public static long getEntityId(String requestURL) {
+	public static Long getEntityId(String requestURL) {
+		requestURL = requestURL.toLowerCase();
 		Matcher matcher = ENTITY_PATTERN.matcher(requestURL);
         if (!matcher.find()) {
-        	return -1L;
+        	return null;
         }
         String entityId = matcher.group(1);
-        if (entityId.toLowerCase().startsWith("syn")) {
+        if (entityId.startsWith("syn")) {
         	entityId = entityId.substring(3);
         }
         return Long.parseLong(entityId);

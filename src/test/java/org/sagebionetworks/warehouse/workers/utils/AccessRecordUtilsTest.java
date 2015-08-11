@@ -1,6 +1,7 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
@@ -53,32 +54,33 @@ public class AccessRecordUtilsTest {
 	 */
 	@Test
 	public void entityIdWithPrefixTest() {
-		assertEquals(4623841, AccessRecordUtils.getEntityId("/repo/v1/entity/syn4623841/bundle"));
+		Long entityId = 4623841L;
+		assertEquals(entityId, AccessRecordUtils.getEntityId("/repo/v1/entity/syn4623841/bundle"));
 	}
 
 	@Test
 	public void entityIdWithUperCasePrefixTest() {
-		assertEquals(4623841, AccessRecordUtils.getEntityId("/repo/v1/entity/SYN4623841/bundle"));
+		assertEquals((Long)4623841L, AccessRecordUtils.getEntityId("/repo/v1/entity/SYN4623841/bundle"));
 	}
 
 	@Test
 	public void entityIdWithProperCasePrefixTest() {
-		assertEquals(4623841, AccessRecordUtils.getEntityId("/repo/v1/entity/Syn4623841/bundle"));
+		assertEquals((Long)4623841L, AccessRecordUtils.getEntityId("/repo/v1/entity/Syn4623841/bundle"));
 	}
 
 	@Test
 	public void entityIdWithoutPrefixTest() {
-		assertEquals(4623841, AccessRecordUtils.getEntityId("/repo/v1/entity/4623841/bundle"));
+		assertEquals((Long)4623841L, AccessRecordUtils.getEntityId("/repo/v1/entity/4623841/bundle"));
 	}
 
 	@Test
 	public void endingEntityIdTest() {
-		assertEquals(4623841, AccessRecordUtils.getEntityId("/repo/v1/entity/syn4623841"));
+		assertEquals((Long)4623841L, AccessRecordUtils.getEntityId("/repo/v1/entity/syn4623841"));
 	}
 
 	@Test
 	public void nullEntityIdTest() {
-		assertEquals(-1L, AccessRecordUtils.getEntityId("/repo/v1/version"));
+		assertNull(AccessRecordUtils.getEntityId("/repo/v1/version"));
 	}
 
 	/*
@@ -86,7 +88,7 @@ public class AccessRecordUtilsTest {
 	 */
 	@Test
 	public void urlWithoutParameters() {
-		assertEquals("POST /certifiedUserTestResponse", AccessRecordUtils.normalizeMethodSignature("/repo/v1/certifiedUserTestResponse", "POST"));
+		assertEquals("POST /certifiedusertestresponse", AccessRecordUtils.normalizeMethodSignature("/repo/v1/certifiedUserTestResponse", "POST"));
 	}
 
 	@Test
@@ -116,7 +118,7 @@ public class AccessRecordUtilsTest {
 
 	@Test
 	public void urlStartWithFileV1() {
-		assertEquals("POST /createChunkedFileUploadChunkURL", AccessRecordUtils.normalizeMethodSignature("/file/v1/createChunkedFileUploadChunkURL", "POST"));
+		assertEquals("POST /createchunkedfileuploadchunkurl", AccessRecordUtils.normalizeMethodSignature("/file/v1/createChunkedFileUploadChunkURL", "POST"));
 	}
 
 	@Test
@@ -125,10 +127,10 @@ public class AccessRecordUtilsTest {
 	}
 
 	/*
-	 * categorize() Test
+	 * processAccessRecord() Test
 	 */
 	@Test
-	public void categorizeTest() {
+	public void processAccessRecordTest() {
 		AccessRecord ar = new AccessRecord();
 		ar.setUserAgent("Synpase-Java-Client/64.0  Synapse-Web-Client/67.0");
 		ar.setMethod("GET");
@@ -137,7 +139,7 @@ public class AccessRecordUtilsTest {
 
 		ProcessedAccessRecord expected = new ProcessedAccessRecord();
 		expected.setSessionId("28a75682-f056-40f7-9a1e-416cb703bed5");
-		expected.setEntityId(2600225);
+		expected.setEntityId(2600225L);
 		expected.setClient(Client.WEB);
 		expected.setNormalizedMethodSignature("GET /entity/#/descendants");
 
