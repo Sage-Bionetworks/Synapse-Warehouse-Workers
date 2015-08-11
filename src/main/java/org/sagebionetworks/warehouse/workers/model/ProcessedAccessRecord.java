@@ -3,7 +3,7 @@ package org.sagebionetworks.warehouse.workers.model;
 public class ProcessedAccessRecord {
 
 	private String sessionId;
-	private long entityId;
+	private Long entityId;
 	private Client client;
 	private String normalizedMethodSignature;
 
@@ -13,10 +13,10 @@ public class ProcessedAccessRecord {
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
 	}
-	public long getEntityId() {
+	public Long getEntityId() {
 		return entityId;
 	}
-	public void setEntityId(long entityId) {
+	public void setEntityId(Long entityId) {
 		this.entityId = entityId;
 	}
 	public Client getClient() {
@@ -37,7 +37,8 @@ public class ProcessedAccessRecord {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((client == null) ? 0 : client.hashCode());
-		result = prime * result + (int) (entityId ^ (entityId >>> 32));
+		result = prime * result
+				+ ((entityId == null) ? 0 : entityId.hashCode());
 		result = prime
 				* result
 				+ ((normalizedMethodSignature == null) ? 0
@@ -57,7 +58,10 @@ public class ProcessedAccessRecord {
 		ProcessedAccessRecord other = (ProcessedAccessRecord) obj;
 		if (client != other.client)
 			return false;
-		if (entityId != other.entityId)
+		if (entityId == null) {
+			if (other.entityId != null)
+				return false;
+		} else if (!entityId.equals(other.entityId))
 			return false;
 		if (normalizedMethodSignature == null) {
 			if (other.normalizedMethodSignature != null)
