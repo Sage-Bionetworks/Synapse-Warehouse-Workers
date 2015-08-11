@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
@@ -47,13 +48,13 @@ public class FolderCollateWorkerTest {
 		bucketList = new BucketInfoList(Arrays.asList(bucketInfo));
 		folder = new FolderDto();
 		folder.setBucket(bucketInfo.getBucketName());
-		folder.setPath("somePath");
+		folder.setPath("123/2015-07-28");
 		
 		keysInBucket = Arrays.asList(
-				"bucket/123/2015-07-28/16-40-30-522-uuid.csv.gz",
-				"bucket/123/2015-07-28/16-40-30-522-uuid-rolling.csv.gz",
-				"bucket/123/2015-07-28/16-42-30-522-uuid-rolling.csv.gz",
-				"bucket/123/2015-07-28/16-47-30-521-uuid-rolling.csv.gz"
+				"123/2015-07-28/16-40-30-522-uuid.csv.gz",
+				"123/2015-07-28/16-40-30-522-uuid-rolling.csv.gz",
+				"123/2015-07-28/16-42-30-522-uuid-rolling.csv.gz",
+				"123/2015-07-28/16-47-30-521-uuid-rolling.csv.gz"
 		);
 		
 		
@@ -67,6 +68,8 @@ public class FolderCollateWorkerTest {
 	public void testRunWhileHoldingLock(){
 		// call under test
 		worker.runWhileHoldingLock(mockProgressCallback, folder);
+		ArgumentCaptor<ProgressCallback<Void>> callbackCapture = ArgumentCaptor.forClass(ProgressCallback.class);
+		verify(mockCollator).replaceCSVsWithCollatedCSV(progressCallback, bucket, keysToCollate, destinationKey, sortColumnIndex);
 	}
 	
 	@Test

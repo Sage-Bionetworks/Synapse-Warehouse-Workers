@@ -99,9 +99,10 @@ public class FolderCollateWorker implements LockedFolderRunner{
 		// Collate each group
 		for(String hourMinutesGroup: toCollateGroups.keySet()){
 			List<String> keysToCollate = toCollateGroups.get(hourMinutesGroup);
-			String destinationKey = folder.getPath()+"/"+hourMinutesGroup+"-"+UUID.randomUUID().toString()+".csv.gz";
+			String destinationKey = createDestinationKey(folder.getPath(), hourMinutesGroup);
 			try {
 				collator.replaceCSVsWithCollatedCSV(progressCallback, folder.getBucket(), keysToCollate, destinationKey, sortColumnIndex);
+				log.info("Collated :"+keysToCollate.size()+" files into: "+destinationKey);
 			} catch (Exception e) {
 				wereAllFilesCollated = false;
 				// log the exception and the keys
@@ -134,6 +135,16 @@ public class FolderCollateWorker implements LockedFolderRunner{
 		int minute = cal.get(Calendar.MINUTE);
 		int minutePeriod = (minute/intervalMins)*intervalMins;
 		return String.format(TEMPLATE_HOURS_OF_DAY_MIN_INTERVAL, hourOfDay, minutePeriod);
+	}
+	
+	/**
+	 * Create a new key for a collation destination file.
+	 * @param path The 
+	 * @param hourMinutesGroup
+	 * @return
+	 */
+	public static String createDestinationKey(String path, String hourMinutesGroup){
+		return path+"/"+hourMinutesGroup+"-"+UUID.randomUUID().toString()+".csv.gz";
 	}
 
 }
