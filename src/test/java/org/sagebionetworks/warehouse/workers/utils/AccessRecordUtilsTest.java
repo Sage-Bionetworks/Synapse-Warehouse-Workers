@@ -150,100 +150,84 @@ public class AccessRecordUtilsTest {
 	 */
 	@Test
 	public void validatedARTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		assertTrue(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullSessionIdTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setSessionId(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullElapseMsTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setElapseMS(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullTimestampTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setTimestamp(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullThreadIdTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setThreadId(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullDateTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setDate(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullMethodTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setMethod(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullVmIdTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setVmId(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullInstanceTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setInstance(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullStackTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setStack(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullSuccessTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setSuccess(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
 	}
 
 	@Test
 	public void nullResponseStatusTest() {
-		AccessRecord ar = createValidatedAccessRecord();
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setResponseStatus(null);
 		assertFalse(AccessRecordUtils.isValidated(ar));
-	}
-
-	private AccessRecord createValidatedAccessRecord() {
-		AccessRecord ar = new AccessRecord();
-		ar.setSessionId("036f8cda-9a08-46ec-a06e-29f08dad44f6");
-		ar.setElapseMS(110L);
-		ar.setTimestamp(1428067735912L);
-		ar.setThreadId(7968L);
-		ar.setDate("2015-04-03");
-		ar.setMethod("POST");
-		ar.setVmId("1d4067ff518ed7a4:-3e005a0b:14c713c8d92:-7ffd");
-		ar.setInstance("84");
-		ar.setStack("prod");
-		ar.setSuccess(true);
-		ar.setResponseStatus(201L);
-		return ar;
 	}
 }
