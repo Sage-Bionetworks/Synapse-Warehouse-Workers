@@ -112,6 +112,7 @@ public class AccessRecordUtils {
 		if (ar.getElapseMS() 		== null) return false;
 		if (ar.getTimestamp() 		== null) return false;
 		if (ar.getThreadId() 		== null) return false;
+		if (ar.getRequestURL()		== null) return false;
 		if (ar.getDate() 			== null) return false;
 		if (ar.getMethod() 			== null) return false;
 		if (ar.getVmId() 			== null) return false;

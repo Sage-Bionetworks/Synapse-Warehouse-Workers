@@ -183,6 +183,13 @@ public class AccessRecordUtilsTest {
 	}
 
 	@Test
+	public void nullRequestUrlTest() {
+		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
+		ar.setRequestURL(null);
+		assertFalse(AccessRecordUtils.isValidated(ar));
+	}
+
+	@Test
 	public void nullDateTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setDate(null);
