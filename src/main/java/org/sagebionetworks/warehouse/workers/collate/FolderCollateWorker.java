@@ -94,6 +94,7 @@ public class FolderCollateWorker implements LockedFolderRunner{
 				}
 			}
 		}
+		// get the sort column for this bucket.
 		int sortColumnIndex = bucketToSortColumnMap.get(folder.getBucket());
 		
 		// Collate each group
@@ -117,6 +118,7 @@ public class FolderCollateWorker implements LockedFolderRunner{
 			FolderState state = new FolderState();
 			state.setBucket(folder.getBucket());
 			state.setPath(folder.getPath());
+			state.setState(FolderState.State.COLLATED);
 			state.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
 			folderMetadataDao.createOrUpdateFolderState(state);
 		}
