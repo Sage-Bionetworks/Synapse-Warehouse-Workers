@@ -3,6 +3,7 @@ package org.sagebionetworks.warehouse.workers.db;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.*;
@@ -52,10 +53,7 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 	ProcessedAccessRecordDaoImpl(JdbcTemplate template) throws SQLException {
 		super();
 		this.template = template;
-		String[] queries = ClasspathUtils.loadStringFromClassPath(PROCESSED_ACCESS_RECORD_DDL_SQL).split(";");
-		for (String query : queries) {
-			this.template.update(query);
-		}
+		this.template.update(ClasspathUtils.loadStringFromClassPath(PROCESSED_ACCESS_RECORD_DDL_SQL));
 	}
 
 	@Override
@@ -72,14 +70,18 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 					throws SQLException {
 				ProcessedAccessRecord par = batch.get(i);
 				ps.setString(1, par.getSessionId());
-				ps.setLong(2, par.getEntityId());
+				try {
+					ps.setLong(2, par.getEntityId());
+					ps.setLong(5, par.getEntityId());
+				} catch (NullPointerException e) {
+					ps.setNull(2, Types.BIGINT);
+					ps.setNull(5, Types.BIGINT);
+				}
 				ps.setString(3, par.getClient().name());
 				ps.setString(4, par.getNormalizedMethodSignature());
-				ps.setLong(5, par.getEntityId());
 				ps.setString(6, par.getClient().name());
 				ps.setString(7, par.getNormalizedMethodSignature());
 			}
-			
 		});
 	}
 
@@ -101,7 +103,11 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 		public ProcessedAccessRecord mapRow(ResultSet rs, int arg1) throws SQLException {
 			ProcessedAccessRecord par = new ProcessedAccessRecord();
 			par.setSessionId(rs.getString(COL_PROCESSED_ACCESS_RECORD_SESSION_ID));
-			par.setEntityId(rs.getLong(COL_PROCESSED_ACCESS_RECORD_ENTITY_ID));
+			try {
+				par.setEntityId(Long.parseLong(rs.getString(COL_PROCESSED_ACCESS_RECORD_ENTITY_ID)));
+			} catch (NumberFormatException e) {
+				par.setEntityId(null);
+			}
 			par.setClient(Client.valueOf(rs.getString(COL_PROCESSED_ACCESS_RECORD_CLIENT)));
 			par.setNormalizedMethodSignature(rs.getString(COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE));
 			return par;
