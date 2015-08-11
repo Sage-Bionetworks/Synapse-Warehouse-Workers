@@ -9,6 +9,9 @@ import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 
 public class AccessRecordUtils {
 
+	private static final String AUTH_V1 = "/auth/v1";
+	private static final String FILE_V1 = "/file/v1";
+	private static final String REPO_V1 = "/repo/v1";
 	private static final String R_CLIENT = "synapseRClient";
 	private static final String PYTHON_CLIENT = "python-requests";
 	private static final String WEB_CLIENT = "Synapse-Web-Client";
@@ -16,8 +19,8 @@ public class AccessRecordUtils {
 	private static final String COMMAND_LINE_CLIENT = "synapsecommandlineclient";
 	private static final String ELB_CLIENT = "ELB-HealthChecker";
 
-	private static final String ENTITY_PATTERN = "/entity/(syn\\d+|\\d+)";
-	private static final String NUMERIC_PARAM_PATTERN = "/(syn\\d+|\\d+)";
+	private static final Pattern ENTITY_PATTERN = Pattern.compile("/entity/(syn\\d+|\\d+)");
+	private static final Pattern NUMERIC_PARAM_PATTERN = Pattern.compile("/(syn\\d+|\\d+)");
 	private static final String NUMBER_REPLACEMENT = "/#";
 
 	/**
@@ -26,12 +29,12 @@ public class AccessRecordUtils {
 	 * @param accessRecord
 	 * @return processedAccessRecord
 	 */
-	public static ProcessedAccessRecord categorize(AccessRecord accessRecord) {
+	public static ProcessedAccessRecord processAccessRecord(AccessRecord accessRecord) {
 		ProcessedAccessRecord processed = new ProcessedAccessRecord();
 		processed.setSessionId(accessRecord.getSessionId());
 		processed.setClient(getClient(accessRecord.getUserAgent()));
 		processed.setEntityId(getEntityId(accessRecord.getRequestURL()));
-		processed.setSynapseApi(getSynapseAPI(accessRecord.getRequestURL(), accessRecord.getMethod()));
+		processed.setNormalizedMethodSignature(normalizeMethodSignature(accessRecord.getRequestURL(), accessRecord.getMethod()));
 		return processed;
 	}
 
@@ -42,11 +45,12 @@ public class AccessRecordUtils {
 	 * @param method
 	 * @return
 	 */
-	public static String getSynapseAPI(String requestURL, String method) {
-		if (requestURL.startsWith("/repo/v1")) {
+	public static String normalizeMethodSignature(String requestURL, String method) {
+		requestURL = requestURL.toLowerCase();
+		if (requestURL.startsWith(REPO_V1) || requestURL.startsWith(FILE_V1) || requestURL.startsWith(AUTH_V1)) {
 			requestURL = requestURL.substring(8);
 		}
-		Matcher matcher = Pattern.compile(NUMERIC_PARAM_PATTERN).matcher(requestURL);
+		Matcher matcher = NUMERIC_PARAM_PATTERN.matcher(requestURL);
 		StringBuffer buffer = new StringBuffer();
 		while (matcher.find()) {
 			matcher.appendReplacement(buffer, NUMBER_REPLACEMENT);
@@ -61,9 +65,9 @@ public class AccessRecordUtils {
 	 * @param requestURL
 	 * @return
 	 */
-	public static String getEntityId(String requestURL) {
-		Pattern pattern = Pattern.compile(ENTITY_PATTERN);
-        Matcher matcher = pattern.matcher(requestURL);
+	public static Long getEntityId(String requestURL) {
+		requestURL = requestURL.toLowerCase();
+		Matcher matcher = ENTITY_PATTERN.matcher(requestURL);
         if (!matcher.find()) {
         	return null;
         }
@@ -71,7 +75,7 @@ public class AccessRecordUtils {
         if (entityId.startsWith("syn")) {
         	entityId = entityId.substring(3);
         }
-        return entityId;
+        return Long.parseLong(entityId);
 	}
 
 	/**

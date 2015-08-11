@@ -23,9 +23,9 @@ public class Sql {
 	public static final String COL_FOLDER_STATE_UPDATED_ON = 	"UPDATED_ON";
 
 	// PROCESSED_ACCESS_RECORD
-	public static final String TABLE_PROCESSED_ACCESS_RECORD = 	"PROCESSED_ACCESS_RECORD";
-	public static final String COL_SESSION_ID = 				"SESSION_ID";
-	public static final String COL_ENTITY_ID = 					"ENTITY_ID";
-	public static final String COL_CLIENT = 					"CLIENT";
-	public static final String COL_SYNAPSE_API = 				"SYNAPSE_API";
+	public static final String TABLE_PROCESSED_ACCESS_RECORD = 								"PROCESSED_ACCESS_RECORD";
+	public static final String COL_PROCESSED_ACCESS_RECORD_SESSION_ID = 					"SESSION_ID";
+	public static final String COL_PROCESSED_ACCESS_RECORD_ENTITY_ID = 						"ENTITY_ID";
+	public static final String COL_PROCESSED_ACCESS_RECORD_CLIENT = 						"CLIENT";
+	public static final String COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE = 	"NORMALIZED_METHOD_SIGNATURE";
 }
