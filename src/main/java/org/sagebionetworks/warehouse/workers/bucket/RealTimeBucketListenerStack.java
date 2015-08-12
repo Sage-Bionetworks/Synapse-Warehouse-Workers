@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.sagebionetworks.aws.utils.s3.BucketListener;
 import org.sagebionetworks.aws.utils.s3.BucketListenerConfiguration;
 import org.sagebionetworks.database.semaphore.CountingSemaphore;
+import org.sagebionetworks.warehouse.workers.SemaphoreKey;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfiguration;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenWorkerStack;
@@ -33,7 +34,7 @@ public class RealTimeBucketListenerStack implements WorkerStackConfigurationProv
 
 		// ensure a listener is setup for each bucket
 		BucketListenerConfiguration listenerConfig = new BucketListenerConfiguration();
-		listenerConfig.setConfigName("realtimeBucketListenerConfig");
+		listenerConfig.setConfigName(SemaphoreKey.REALTIME_BUCKET_LISTENER_WORKER.name());
 		listenerConfig.setEvent(S3Event.ObjectCreated);
 		listenerConfig.setTopicName(config.getTopicName());
 		for (BucketInfo info : bucketList.getBucketList()) {

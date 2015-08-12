@@ -11,7 +11,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
 import static org.mockito.Mockito.*;
+
+import org.sagebionetworks.warehouse.workers.collate.StreamingCollateUtils;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
 import au.com.bytecode.opencsv.CSVReader;
