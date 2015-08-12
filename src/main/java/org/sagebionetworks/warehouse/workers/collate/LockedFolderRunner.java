@@ -1,5 +1,6 @@
-package org.sagebionetworks.warehouse.workers.bucket;
+package org.sagebionetworks.warehouse.workers.collate;
 
+import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
 /**

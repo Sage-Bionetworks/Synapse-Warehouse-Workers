@@ -20,12 +20,11 @@ import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
-import org.sagebionetworks.warehouse.workers.bucket.LockedFolderRunner;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
 import org.sagebionetworks.warehouse.workers.db.FolderState;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
-public class FolderCollateWorker implements LockedFolderRunner{
+public class FolderCollateWorker implements LockedFolderRunner {
 	
 	static private Logger log = LogManager.getLogger(FolderCollateWorker.class);
 	

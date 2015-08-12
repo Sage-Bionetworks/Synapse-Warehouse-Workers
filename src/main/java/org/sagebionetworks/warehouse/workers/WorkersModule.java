@@ -9,19 +9,26 @@ import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.bucket.BucketScanningStack;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisherImpl;
-import org.sagebionetworks.warehouse.workers.bucket.FolderLockingWorker;
-import org.sagebionetworks.warehouse.workers.bucket.LockedFolderRunner;
 import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketListenerStack;
 import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerStackConfig;
+import org.sagebionetworks.warehouse.workers.collate.CollateFolderStack;
+import org.sagebionetworks.warehouse.workers.collate.CollateMessageQueue;
 import org.sagebionetworks.warehouse.workers.collate.CollateProvider;
 import org.sagebionetworks.warehouse.workers.collate.CollateProviderImpl;
 import org.sagebionetworks.warehouse.workers.collate.FolderCollateWorker;
+import org.sagebionetworks.warehouse.workers.collate.FolderLockingWorker;
+import org.sagebionetworks.warehouse.workers.collate.LockedFolderRunner;
+import org.sagebionetworks.warehouse.workers.collate.PeriodicRollingFolderStack;
 import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollator;
 import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollatorImpl;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
+import org.sagebionetworks.workers.util.aws.message.MessageQueueConfiguration;
+import org.sagebionetworks.workers.util.aws.message.MessageQueueImpl;
 
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -84,6 +91,8 @@ public class WorkersModule extends AbstractModule {
 		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
 		list.add(RealTimeBucketListenerStack.class);
 		list.add(BucketScanningStack.class);
+		list.add(PeriodicRollingFolderStack.class);
+		list.add(CollateFolderStack.class);
 		return list;
 	}
 	
@@ -102,4 +111,14 @@ public class WorkersModule extends AbstractModule {
 	public SemaphoreGatedRunnerProvider createSemaphoreGatedRunnerProvider(CountingSemaphore semaphore){
 		return new SemaphoreGatedRunnerProviderImpl(semaphore);
 	}
+	
+	@Provides
+	public CollateMessageQueue createCollateMessageQueue(AmazonSQSClient awsSQSClient, AmazonSNSClient awsSNSClient, Configuration config){
+		MessageQueueConfiguration messageConfig = new MessageQueueConfiguration();
+		messageConfig.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.collate.worker.queue.name"));
+		messageConfig.setDefaultMessageVisibilityTimeoutSec(60);
+		MessageQueueImpl queue = new MessageQueueImpl(awsSQSClient, awsSNSClient, messageConfig);
+		return new CollateMessageQueue(queue);
+	}
 }
+

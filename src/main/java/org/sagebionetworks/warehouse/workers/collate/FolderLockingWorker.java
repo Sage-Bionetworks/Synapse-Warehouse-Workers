@@ -1,6 +1,8 @@
-package org.sagebionetworks.warehouse.workers.bucket;
+package org.sagebionetworks.warehouse.workers.collate;
 
 import org.sagebionetworks.warehouse.workers.SemaphoreGatedRunnerProvider;
+import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
+import org.sagebionetworks.warehouse.workers.bucket.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;

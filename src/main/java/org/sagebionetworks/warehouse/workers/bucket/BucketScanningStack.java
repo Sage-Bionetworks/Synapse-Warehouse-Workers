@@ -1,6 +1,7 @@
 package org.sagebionetworks.warehouse.workers.bucket;
 
 import org.sagebionetworks.database.semaphore.CountingSemaphore;
+import org.sagebionetworks.warehouse.workers.SemaphoreKey;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfiguration;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
 import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedWorkerStack;
@@ -23,7 +24,7 @@ public class BucketScanningStack implements WorkerStackConfigurationProvider {
 		super();
 		SemaphoreGatedWorkerStackConfiguration config = new SemaphoreGatedWorkerStackConfiguration();
 		config.setProgressingRunner(worker);
-		config.setSemaphoreLockKey("bucketScanningWorker");
+		config.setSemaphoreLockKey(SemaphoreKey.BUCKET_SCANNING_WORKER.name());
 		config.setSemaphoreLockTimeoutSec(30);
 		config.setSemaphoreMaxLockCount(1);
 		Runnable mainRunner = new SemaphoreGatedWorkerStack(semaphore, config);
