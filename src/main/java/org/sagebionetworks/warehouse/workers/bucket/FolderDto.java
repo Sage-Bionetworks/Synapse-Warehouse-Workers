@@ -1,5 +1,7 @@
 package org.sagebionetworks.warehouse.workers.bucket;
 
+import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
+
 /**
  * A data transfer object for a folder.
  * 

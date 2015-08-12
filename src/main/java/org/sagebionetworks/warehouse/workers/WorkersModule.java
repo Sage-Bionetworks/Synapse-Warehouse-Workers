@@ -11,12 +11,13 @@ import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisherImpl;
 import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketListenerStack;
 import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerStackConfig;
+import org.sagebionetworks.warehouse.workers.bucket.TopicDaoProvider;
+import org.sagebionetworks.warehouse.workers.bucket.TopicDaoProviderImpl;
 import org.sagebionetworks.warehouse.workers.collate.CollateFolderStack;
 import org.sagebionetworks.warehouse.workers.collate.CollateMessageQueue;
 import org.sagebionetworks.warehouse.workers.collate.CollateProvider;
 import org.sagebionetworks.warehouse.workers.collate.CollateProviderImpl;
 import org.sagebionetworks.warehouse.workers.collate.FolderCollateWorker;
-import org.sagebionetworks.warehouse.workers.collate.FolderLockingWorker;
 import org.sagebionetworks.warehouse.workers.collate.LockedFolderRunner;
 import org.sagebionetworks.warehouse.workers.collate.PeriodicRollingFolderStack;
 import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollator;
@@ -43,6 +44,7 @@ public class WorkersModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(BucketDaoProvider.class).to(BucketDaoProviderImpl.class);
+		bind(TopicDaoProvider.class).to(TopicDaoProviderImpl.class);
 		bind(BucketTopicPublisher.class).to(BucketTopicPublisherImpl.class);
 		bind(FileManager.class).to(FileManagerImpl.class);
 		bind(LockedFolderRunner.class).to(FolderCollateWorker.class);

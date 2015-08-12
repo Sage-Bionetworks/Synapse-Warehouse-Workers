@@ -1,9 +1,11 @@
-package org.sagebionetworks.warehouse.workers.bucket;
+package org.sagebionetworks.warehouse.workers.utils;
 
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sagebionetworks.warehouse.workers.bucket.TestDto;
+import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 
 public class XMLUtilsTest {
 	

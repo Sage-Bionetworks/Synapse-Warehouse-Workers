@@ -8,18 +8,24 @@ public class Sql {
 
 	// FILE_STATE
 	public static final String TABLE_FILE_STATE = 				"FILE_STATE";
-	public static final String COL_TABLE_STATE_BUCKET = 		"S3_BUCKET";
-	public static final String COL_TABLE_STATE_KEY = 			"S3_KEY";
-	public static final String COL_TABLE_STATE_STATE = 			"STATE";
-	public static final String COL_TABLE_STATE_UPDATED_ON =		"UPDATED_ON";
-	public static final String COL_TABLE_STATE_ERROR = 			"ERROR_MESSAGE";
-	public static final String COL_TABLE_STATE_ERROR_DETAILS = 	"ERROR_DETAILS";
-	
+	public static final String COL_FILE_STATE_BUCKET = 			"S3_BUCKET";
+	public static final String COL_FILE_STATE_KEY = 			"S3_KEY";
+	public static final String COL_FILE_STATE_STATE = 			"STATE";
+	public static final String COL_FILE_STATE_UPDATED_ON = 		"UPDATED_ON";
+	public static final String COL_FILE_STATE_ERROR = 			"ERROR_MESSAGE";
+	public static final String COL_FILE_STATE_ERROR_DETAILS = 	"ERROR_DETAILS";
+
 	// FOLDER_STATE
 	public static final String TABLE_FOLDER_STATE = 			"FOLDER_STATE";
 	public static final String COL_FOLDER_STATE_BUCKET = 		"S3_BUCKET";
 	public static final String COL_FOLDER_STATE_PATH = 			"S3_PATH";
 	public static final String COL_FOLDER_STATE_STATE = 		"STATE";
-	public static final String COL_FOLDER_STATE_UPDATED_ON =	"UPDATED_ON";
+	public static final String COL_FOLDER_STATE_UPDATED_ON = 	"UPDATED_ON";
 
+	// PROCESSED_ACCESS_RECORD
+	public static final String TABLE_PROCESSED_ACCESS_RECORD = 								"PROCESSED_ACCESS_RECORD";
+	public static final String COL_PROCESSED_ACCESS_RECORD_SESSION_ID = 					"SESSION_ID";
+	public static final String COL_PROCESSED_ACCESS_RECORD_ENTITY_ID = 						"ENTITY_ID";
+	public static final String COL_PROCESSED_ACCESS_RECORD_CLIENT = 						"CLIENT";
+	public static final String COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE = 	"NORMALIZED_METHOD_SIGNATURE";
 }

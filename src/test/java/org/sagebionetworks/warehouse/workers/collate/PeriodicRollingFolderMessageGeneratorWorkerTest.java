@@ -14,10 +14,10 @@ import org.mockito.Mockito;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
-import org.sagebionetworks.warehouse.workers.bucket.XMLUtils;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
 import org.sagebionetworks.warehouse.workers.db.FolderState;
 import org.sagebionetworks.warehouse.workers.db.FolderState.State;
+import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageQueue;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
