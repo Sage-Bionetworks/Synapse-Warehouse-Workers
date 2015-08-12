@@ -8,7 +8,7 @@ import java.sql.Timestamp;
  */
 public class FolderState {
 	
-	enum State {
+	public enum State {
 		// A rolling folder contains non-collated files.
 		ROLLING,
 		// All files in this folder are collated.

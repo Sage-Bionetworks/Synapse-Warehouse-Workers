@@ -9,6 +9,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import org.sagebionetworks.warehouse.workers.SemaphoreGatedRunnerProvider;
+import org.sagebionetworks.warehouse.workers.collate.FolderLockingWorker;
+import org.sagebionetworks.warehouse.workers.collate.LockedFolderRunner;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 import org.sagebionetworks.workers.util.progress.ProgressingRunner;
 import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedRunner;

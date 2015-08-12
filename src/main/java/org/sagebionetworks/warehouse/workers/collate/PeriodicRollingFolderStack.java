@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.bucket;
+package org.sagebionetworks.warehouse.workers.collate;
 
 import org.sagebionetworks.database.semaphore.CountingSemaphore;
 import org.sagebionetworks.warehouse.workers.SemaphoreKey;
@@ -10,35 +10,38 @@ import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedWorkerStackConfi
 import com.google.inject.Inject;
 
 /**
- * This worker stack will scan all buckets to find files and folders that have
- * not been discovered by the real time process.  This worker's primary task is to back-fill
- * all S3 objects that existed before the stack start.
+ * This stack runs as a singleton on a timer. The stack will find all folders
+ * with a state of 'rolling' For each folder found a message will be pushed to
+ * the collate worker queue.
+ * 
+ * @author John
  * 
  */
-public class BucketScanningStack implements WorkerStackConfigurationProvider {
-	
-	final WorkerStackConfiguration config;
+public class PeriodicRollingFolderStack implements
+		WorkerStackConfigurationProvider {
+
+	WorkerStackConfiguration config;
 	
 	@Inject
-	public BucketScanningStack(CountingSemaphore semaphore, BucketScanningWorker worker) {
-		super();
+	public PeriodicRollingFolderStack(CountingSemaphore semaphore, PeriodicRollingFolderMessageGeneratorWorker worker){
 		SemaphoreGatedWorkerStackConfiguration config = new SemaphoreGatedWorkerStackConfiguration();
 		config.setProgressingRunner(worker);
-		config.setSemaphoreLockKey(SemaphoreKey.BUCKET_SCANNING_WORKER.name());
+		config.setSemaphoreLockKey(SemaphoreKey.PERIODIC_ROLLING_FOLDER_MESSAGE_GENERATOR.name());
 		config.setSemaphoreLockTimeoutSec(30);
+		// This is singleton.
 		config.setSemaphoreMaxLockCount(1);
 		Runnable mainRunner = new SemaphoreGatedWorkerStack(semaphore, config);
 		this.config = new WorkerStackConfiguration();
 		this.config.setRunner(mainRunner);
-		this.config.setStartDelayMs(2987);
-		// run once per minute.
-		this.config.setPeriodMS(60*1000);
-		this.config.setWorkerName(BucketScanningStack.class.getName());
+		this.config.setStartDelayMs(3);
+		// This worker only runs every 20 mins.
+		this.config.setPeriodMS(60*1000*20);
+		this.config.setWorkerName(PeriodicRollingFolderStack.class.getName());
 	}
 
 	@Override
 	public WorkerStackConfiguration getWorkerConfiguration() {
-		return this.config;
+		return config;
 	}
 
 }
