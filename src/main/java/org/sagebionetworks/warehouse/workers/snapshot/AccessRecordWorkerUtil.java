@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers;
+package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.FileInputStream;
