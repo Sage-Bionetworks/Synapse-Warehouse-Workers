@@ -29,7 +29,7 @@ public class RealTimeBucketListenerStack implements WorkerStackConfigurationProv
 	public RealTimeBucketListenerStack(CountingSemaphore semaphore,
 			AmazonSQSClient awsSQSClient, AmazonS3Client awsS3Client,
 			AmazonSNSClient awsSNClient, BucketInfoList bucketList,
-			RealtimeBucketListenerStackConfig config,
+			RealtimeBucketListenerTopicBucketInfo config,
 			RealTimeBucketWorker worker) {
 
 		// ensure a listener is setup for each bucket
@@ -48,7 +48,7 @@ public class RealTimeBucketListenerStack implements WorkerStackConfigurationProv
 		mdwsc.setTopicNamesToSubscribe(Arrays.asList(config.getTopicName()));
 		mdwsc.setRunner(worker);
 		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(60);
-		mdwsc.setSemaphoreLockKey("bucketListenerWorker");
+		mdwsc.setSemaphoreLockKey(SemaphoreKey.REALTIME_BUCKET_LISTENER_WORKER.name());
 		mdwsc.setSemaphoreMaxLockCount(4);
 		Runnable mainRunner = new MessageDrivenWorkerStack(semaphore, awsSQSClient,
 				awsSNClient, mdwsc);

@@ -10,7 +10,7 @@ import org.sagebionetworks.warehouse.workers.bucket.BucketScanningStack;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisherImpl;
 import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketListenerStack;
-import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerStackConfig;
+import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.TopicDaoProvider;
 import org.sagebionetworks.warehouse.workers.bucket.TopicDaoProviderImpl;
 import org.sagebionetworks.warehouse.workers.collate.CollateFolderStack;
@@ -75,8 +75,8 @@ public class WorkersModule extends AbstractModule {
 	}
 	
 	@Provides
-	public RealtimeBucketListenerStackConfig getBucketListenerConfig(Configuration config){
-		RealtimeBucketListenerStackConfig rtbls = new RealtimeBucketListenerStackConfig();
+	public RealtimeBucketListenerTopicBucketInfo getBucketListenerConfig(Configuration config){
+		RealtimeBucketListenerTopicBucketInfo rtbls = new RealtimeBucketListenerTopicBucketInfo();
 		rtbls.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.all.bucket.events"));
 		rtbls.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.all.bucket.events"));
 		return rtbls;
