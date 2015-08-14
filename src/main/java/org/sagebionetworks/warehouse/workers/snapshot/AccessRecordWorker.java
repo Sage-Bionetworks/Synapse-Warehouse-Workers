@@ -57,7 +57,7 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
 			ObjectCSVReader<AccessRecord> reader = new ObjectCSVReader<AccessRecord>(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), AccessRecord.class);
 
-			writeAccessRecord(reader, dao);
+			writeAccessRecord(reader, dao, BATCH_SIZE);
 
 			reader.close();
 		} finally {
@@ -73,8 +73,8 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 	 * @param dao
 	 * @throws IOException
 	 */
-	public static void writeAccessRecord(ObjectCSVReader<AccessRecord> reader, AccessRecordDao dao)
-			throws IOException {
+	public static void writeAccessRecord(ObjectCSVReader<AccessRecord> reader,
+			AccessRecordDao dao, int batchSize) throws IOException {
 		AccessRecord record = reader.next();
 		List<AccessRecord> batch = new ArrayList<AccessRecord>();
 
@@ -84,7 +84,7 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 				continue;
 			}
 			batch.add(record);
-			if (batch.size() == BATCH_SIZE) {
+			if (batch.size() == batchSize) {
 				dao.insert(batch);
 				batch = new ArrayList<AccessRecord>();
 			}
