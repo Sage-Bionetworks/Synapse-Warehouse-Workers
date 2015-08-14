@@ -3,6 +3,8 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.db.ProcessedAccessRecordDao;
@@ -22,6 +24,7 @@ import com.google.inject.Inject;
  */
 public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 
+	private Logger log = LogManager.getLogger(ProcessAccessRecordWorker.class);
 	private AmazonS3Client s3Client;
 	private ProcessedAccessRecordDao dao;
 
@@ -40,6 +43,10 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 		List<ProcessedAccessRecord> batch = new ArrayList<ProcessedAccessRecord>();
 
 		while (record != null) {
+			if (!AccessRecordUtils.isValidAccessRecord(record)) {
+				log.error("Invalid Access Record: " + record.toString());
+				continue;
+			}
 			batch.add(AccessRecordUtils.processAccessRecord(record));
 			if (batch.size() == 1000) {
 				dao.insert(batch);
