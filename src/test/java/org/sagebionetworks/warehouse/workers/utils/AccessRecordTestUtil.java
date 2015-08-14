@@ -1,5 +1,7 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
+import java.util.UUID;
+
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 
 public class AccessRecordTestUtil {
@@ -12,9 +14,9 @@ public class AccessRecordTestUtil {
 	public static AccessRecord createValidatedAccessRecord() {
 		AccessRecord ar = new AccessRecord();
 		// required fields
-		ar.setSessionId("036f8cda-9a08-46ec-a06e-29f08dad44f6");
+		ar.setSessionId(UUID.randomUUID().toString());
 		ar.setElapseMS(110L);
-		ar.setTimestamp(1428067735912L);
+		ar.setTimestamp(System.currentTimeMillis());
 		ar.setThreadId(7968L);
 		ar.setRequestURL("/auth/v1/session");
 		ar.setDate("2015-04-03");
