@@ -27,8 +27,8 @@ public class AccessRecordDaoImplTest {
 
 	@Test
 	public void test() {
-		AccessRecord ar1 = AccessRecordTestUtil.createValidatedAccessRecord();
-		AccessRecord ar2 = AccessRecordTestUtil.createValidatedAccessRecord();
+		AccessRecord ar1 = AccessRecordTestUtil.createValidAccessRecord();
+		AccessRecord ar2 = AccessRecordTestUtil.createValidAccessRecord();
 		String sessionId1 = ar1.getSessionId();
 		String sessionId2 = ar2.getSessionId();
 
@@ -37,7 +37,7 @@ public class AccessRecordDaoImplTest {
 		assertEquals(ar2, dao.get(sessionId2));
 
 		// insert another record with sessionId2, db should ignore
-		AccessRecord ar3 = AccessRecordTestUtil.createValidatedAccessRecord();
+		AccessRecord ar3 = AccessRecordTestUtil.createValidAccessRecord();
 		ar3.setSessionId(sessionId2);
 		dao.insert(Arrays.asList(ar3));
 		assertEquals(ar2, dao.get(sessionId2));

@@ -11,7 +11,7 @@ public class AccessRecordTestUtil {
 	 * 
 	 * @return a validated AccessRecord
 	 */
-	public static AccessRecord createValidatedAccessRecord() {
+	public static AccessRecord createValidAccessRecord() {
 		AccessRecord ar = new AccessRecord();
 		// required fields
 		ar.setSessionId(UUID.randomUUID().toString());
@@ -31,4 +31,5 @@ public class AccessRecordTestUtil {
 		ar.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36");
 		return ar;
 	}
+
 }
