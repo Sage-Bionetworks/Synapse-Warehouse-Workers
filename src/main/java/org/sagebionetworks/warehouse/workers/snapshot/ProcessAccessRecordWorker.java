@@ -33,7 +33,8 @@ import com.google.inject.Inject;
  */
 public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 
-	private Logger log = LogManager.getLogger(ProcessAccessRecordWorker.class);
+	private static final int BATCH_SIZE = 1000;
+	private static Logger log = LogManager.getLogger(ProcessAccessRecordWorker.class);
 	private AmazonS3Client s3Client;
 	private ProcessedAccessRecordDao dao;
 
@@ -58,30 +59,43 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
 			ObjectCSVReader<AccessRecord> reader = new ObjectCSVReader<AccessRecord>(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), AccessRecord.class);
 
-			AccessRecord record = reader.next();
-			List<ProcessedAccessRecord> batch = new ArrayList<ProcessedAccessRecord>();
-	
-			while (record != null) {
-				if (!AccessRecordUtils.isValidAccessRecord(record)) {
-					log.error("Invalid Access Record: " + record.toString());
-					continue;
-				}
-				batch.add(AccessRecordUtils.processAccessRecord(record));
-				if (batch.size() == 1000) {
-					dao.insert(batch);
-					batch = new ArrayList<ProcessedAccessRecord>();
-				}
-				record = reader.next();
-			}
-	
-			if (batch.size() > 0) {
-				dao.insert(batch);
-			}
+			writeProcessedAcessRecord(reader, dao);
 
 			reader.close();
 		} finally {
 			if (file != null)
 				file.delete();
+		}
+	}
+
+	/**
+	 * Read access records from reader, process them, and write the processed
+	 * access records to PROCESSED_ACCESS_RECORD table using dao
+	 * 
+	 * @param reader
+	 * @param dao
+	 * @throws IOException
+	 */
+	public static void writeProcessedAcessRecord(ObjectCSVReader<AccessRecord> reader, ProcessedAccessRecordDao dao)
+			throws IOException {
+		AccessRecord record = reader.next();
+		List<ProcessedAccessRecord> batch = new ArrayList<ProcessedAccessRecord>();
+
+		while (record != null) {
+			if (!AccessRecordUtils.isValidAccessRecord(record)) {
+				log.error("Invalid Access Record: " + record.toString());
+				continue;
+			}
+			batch.add(AccessRecordUtils.processAccessRecord(record));
+			if (batch.size() == BATCH_SIZE) {
+				dao.insert(batch);
+				batch = new ArrayList<ProcessedAccessRecord>();
+			}
+			record = reader.next();
+		}
+
+		if (batch.size() > 0) {
+			dao.insert(batch);
 		}
 	}
 
