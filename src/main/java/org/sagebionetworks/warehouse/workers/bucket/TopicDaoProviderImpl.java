@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 public class TopicDaoProviderImpl implements TopicDaoProvider {
 
 	private AmazonSNSClient snsClient;
-	private static final String TOPIC_NAME_PATTERN = "%1$s-%2$s-record-topic";
+	private static final String TOPIC_NAME_PATTERN = "%1$s-%2$s-snapshot-topic";
 	private Map<String, String> topicArnMap = new HashMap<String, String>();
 	private String stack;
 
