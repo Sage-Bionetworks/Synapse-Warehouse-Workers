@@ -151,90 +151,90 @@ public class AccessRecordUtilsTest {
 	@Test
 	public void validatedARTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
-		assertTrue(AccessRecordUtils.isValidated(ar));
+		assertTrue(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullSessionIdTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setSessionId(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullElapseMsTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setElapseMS(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullTimestampTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setTimestamp(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullThreadIdTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setThreadId(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullRequestUrlTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setRequestURL(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullDateTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setDate(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullMethodTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setMethod(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullVmIdTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setVmId(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullInstanceTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setInstance(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullStackTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setStack(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullSuccessTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setSuccess(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
 	@Test
 	public void nullResponseStatusTest() {
 		AccessRecord ar = AccessRecordTestUtil.createValidatedAccessRecord();
 		ar.setResponseStatus(null);
-		assertFalse(AccessRecordUtils.isValidated(ar));
+		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 }
