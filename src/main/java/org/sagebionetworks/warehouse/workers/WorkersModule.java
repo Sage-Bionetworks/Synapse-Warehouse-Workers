@@ -25,6 +25,8 @@ import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollatorImpl;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
+import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.ProcessAccessRecordTopicBucketInfo;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueConfiguration;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueImpl;
 
@@ -81,7 +83,23 @@ public class WorkersModule extends AbstractModule {
 		rtbls.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.all.bucket.events"));
 		return rtbls;
 	}
-	
+
+	@Provides
+	public AccessRecordTopicBucketInfo getAccessRecordConfig(Configuration config){
+		AccessRecordTopicBucketInfo info = new AccessRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.accessrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.accessrecord.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public ProcessAccessRecordTopicBucketInfo getProcessedAccessRecordConfig(Configuration config){
+		ProcessAccessRecordTopicBucketInfo info = new ProcessAccessRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.processaccessrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.processaccessrecord.snapshot"));
+		return info;
+	}
+
 	/**
 	 * This the binding for all workers stacks. To add a new worker stack to the the application
 	 * its class must be added to this list.
