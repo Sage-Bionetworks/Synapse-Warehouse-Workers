@@ -30,7 +30,7 @@ public class S3ObjectCollatorImplTest {
 	
 	ProgressCallback<Void> mockProgressCallback;
 	AmazonS3Client mockS3Client;
-	CollateProvider mockCollateProvider;
+	StreamResourceProvider mockCollateProvider;
 	S3ObjectCollatorImpl collator;
 	List<File> mockFiles;
 	List<CSVReader> mockReaders;
@@ -44,7 +44,7 @@ public class S3ObjectCollatorImplTest {
 	@Before
 	public void before(){
 		mockS3Client = Mockito.mock(AmazonS3Client.class);
-		mockCollateProvider = Mockito.mock(CollateProvider.class);
+		mockCollateProvider = Mockito.mock(StreamResourceProvider.class);
 		mockProgressCallback = Mockito.mock(ProgressCallback.class);
 		bucket = "SomeBucket";
 		keysToCollate = Arrays.asList("a","b","c");

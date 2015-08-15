@@ -19,10 +19,10 @@ import com.google.inject.Inject;
 public class S3ObjectCollatorImpl implements S3ObjectCollator {
 	
 	AmazonS3Client s3Client;
-	CollateProvider collateProvider;
+	StreamResourceProvider collateProvider;
 	
 	@Inject
-	public S3ObjectCollatorImpl(AmazonS3Client s3Client, CollateProvider collateProvider) {
+	public S3ObjectCollatorImpl(AmazonS3Client s3Client, StreamResourceProvider collateProvider) {
 		super();
 		this.s3Client = s3Client;
 		this.collateProvider = collateProvider;
