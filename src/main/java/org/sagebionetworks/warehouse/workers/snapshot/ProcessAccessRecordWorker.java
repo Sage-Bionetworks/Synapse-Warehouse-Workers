@@ -1,12 +1,9 @@
 package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +11,7 @@ import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
 import org.sagebionetworks.aws.utils.sns.MessageUtil;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
+import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.ProcessedAccessRecordDao;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
@@ -37,17 +35,22 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 	private static Logger log = LogManager.getLogger(ProcessAccessRecordWorker.class);
 	private AmazonS3Client s3Client;
 	private ProcessedAccessRecordDao dao;
+	private StreamResourceProvider streamResourceProvider;
 
 	@Inject
-	public ProcessAccessRecordWorker(AmazonS3Client s3Client, ProcessedAccessRecordDao dao) {
+	public ProcessAccessRecordWorker(AmazonS3Client s3Client, ProcessedAccessRecordDao dao,
+			StreamResourceProvider streamResourceProvider) {
 		super();
 		this.s3Client = s3Client;
 		this.dao = dao;
+		this.streamResourceProvider = streamResourceProvider;
 	}
 
 	@Override
 	public void run(ProgressCallback<Message> callback, Message message)
 			throws RecoverableMessageException, IOException {
+		callback.progressMade(message);
+
 		// extract the bucket and key from the message
 		String xml = MessageUtil.extractMessageBodyAsString(message);
 		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, "Message");
@@ -55,9 +58,9 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 		// read the file as a stream
 		File file = null;
 		try {
-			File.createTempFile("collatedAccessRecords", ".csv.gz");
+			file = streamResourceProvider.createTempFile("collatedAccessRecords", ".csv.gz");
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
-			ObjectCSVReader<AccessRecord> reader = new ObjectCSVReader<AccessRecord>(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), AccessRecord.class);
+			ObjectCSVReader<AccessRecord> reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class);
 
 			writeProcessedAcessRecord(reader, dao, BATCH_SIZE);
 
@@ -85,6 +88,7 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 		while (record != null) {
 			if (!AccessRecordUtils.isValidAccessRecord(record)) {
 				log.error("Invalid Access Record: " + record.toString());
+				record = reader.next();
 				continue;
 			}
 			batch.add(AccessRecordUtils.processAccessRecord(record));

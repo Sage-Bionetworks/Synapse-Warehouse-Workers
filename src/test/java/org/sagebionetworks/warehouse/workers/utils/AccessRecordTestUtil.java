@@ -1,5 +1,7 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.sagebionetworks.repo.model.audit.AccessRecord;
@@ -8,6 +10,7 @@ public class AccessRecordTestUtil {
 
 
 	/**
+	 * Create a unique valid access record.
 	 * 
 	 * @return a validated AccessRecord
 	 */
@@ -32,4 +35,26 @@ public class AccessRecordTestUtil {
 		return ar;
 	}
 
+	/**
+	 * 
+	 * @return an invalid access record that contains a null timestamp
+	 */
+	public static AccessRecord createInvalidAccessRecordWithNullTimestamp() {
+		AccessRecord ar = createValidAccessRecord();
+		ar.setTimestamp(null);
+		return ar;
+	}
+
+	/**
+	 * 
+	 * @param numberOfRecords
+	 * @return a list of numberOfRecords valid access records
+	 */
+	public static List<AccessRecord> createValidAccessRecordBatch(long numberOfRecords) {
+		List<AccessRecord> batch = new ArrayList<AccessRecord>();
+		for (int i = 0; i < numberOfRecords; i++) {
+			batch.add(createValidAccessRecord());
+		}
+		return batch;
+	}
 }
