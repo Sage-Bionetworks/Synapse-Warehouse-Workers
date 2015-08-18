@@ -56,7 +56,7 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 			+ TABLE_NODE_SNAPSHOT
 			+ " WHERE "
 			+ COL_NODE_SNAPSHOT_TIMESTAMP
-			+ " = ? AND"
+			+ " = ? AND "
 			+ COL_NODE_SNAPSHOT_ID
 			+ " = ?";
 
