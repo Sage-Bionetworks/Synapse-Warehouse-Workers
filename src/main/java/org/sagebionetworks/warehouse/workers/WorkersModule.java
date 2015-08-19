@@ -26,7 +26,12 @@ import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.AclRecordSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.NodeSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.ProcessAccessRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotTopicBucketInfo;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueConfiguration;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueImpl;
 
@@ -97,6 +102,46 @@ public class WorkersModule extends AbstractModule {
 		ProcessAccessRecordTopicBucketInfo info = new ProcessAccessRecordTopicBucketInfo();
 		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.processaccessrecord.snapshot"));
 		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.processaccessrecord.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public NodeSnapshotTopicBucketInfo getNodeSnapshotConfig(Configuration config){
+		NodeSnapshotTopicBucketInfo info = new NodeSnapshotTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.node.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.node.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public TeamSnapshotTopicBucketInfo getTeamSnapshotConfig(Configuration config){
+		TeamSnapshotTopicBucketInfo info = new TeamSnapshotTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.team.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.team.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public TeamMemberSnapshotTopicBucketInfo getTeamMemberSnapshotConfig(Configuration config){
+		TeamMemberSnapshotTopicBucketInfo info = new TeamMemberSnapshotTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.teammember.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.teammember.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public UserProfileSnapshotTopicBucketInfo getUserProfileSnapshotConfig(Configuration config){
+		UserProfileSnapshotTopicBucketInfo info = new UserProfileSnapshotTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.userprofile.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.userprofile.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public AclRecordSnapshotTopicBucketInfo getAclRecordSnapshotConfig(Configuration config){
+		AclRecordSnapshotTopicBucketInfo info = new AclRecordSnapshotTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.aclrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.aclrecord.snapshot"));
 		return info;
 	}
 
