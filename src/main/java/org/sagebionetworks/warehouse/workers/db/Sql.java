@@ -67,4 +67,15 @@ public class Sql {
 	public static final String COL_NODE_SNAPSHOT_VERSION_NUMBER = 	"VERSION_NUMBER";
 	public static final String COL_NODE_SNAPSHOT_FILE_HANDLE_ID = 	"FILE_HANDLE_ID";
 	public static final String COL_NODE_SNAPSHOT_NAME = 			"NAME";
+
+	// TEAM_SNAPSHOT
+	public static final String TABLE_TEAM_SNAPSHOT =					"TEAM_SNAPSHOT";
+	public static final String COL_TEAM_SNAPSHOT_TIMESTAMP = 			"TIMESTAMP";
+	public static final String COL_TEAM_SNAPSHOT_ID = 					"ID";
+	public static final String COL_TEAM_SNAPSHOT_CREATED_ON = 			"CREATED_ON";
+	public static final String COL_TEAM_SNAPSHOT_CREATED_BY = 			"CREATED_BY";
+	public static final String COL_TEAM_SNAPSHOT_MODIFIED_ON = 			"MODIFIED_ON";
+	public static final String COL_TEAM_SNAPSHOT_MODIFIED_BY = 			"MODIFIED_BY";
+	public static final String COL_TEAM_SNAPSHOT_NAME = 				"NAME";
+	public static final String COL_TEAM_SNAPSHOT_CAN_PUBLIC_JOIN = 		"CAN_PUBLIC_JOIN";
 }
