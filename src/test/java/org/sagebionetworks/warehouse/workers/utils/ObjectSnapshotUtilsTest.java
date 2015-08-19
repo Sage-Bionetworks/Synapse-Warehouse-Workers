@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
+import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 
 public class ObjectSnapshotUtilsTest {
 
@@ -64,5 +65,63 @@ public class ObjectSnapshotUtilsTest {
 		NodeSnapshot snapshot = ObjectSnapshotTestUtil.createValidNodeSnapshot();
 		snapshot.setModifiedByPrincipalId(null);
 		assertFalse(ObjectSnapshotUtils.isValidNodeSnapshot(snapshot));
+	}
+
+	/*
+	 * isValidTeamSnapshot()
+	 */
+	@Test
+	public void validTeamSnapshotTest() {
+		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
+		assertTrue(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamSnapshotWithNullTimestampTest() {
+		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
+		snapshot.setTimestamp(null);
+		assertFalse(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamSnapshotWithNullIdTest() {
+		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
+		snapshot.setId(null);
+		assertFalse(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamSnapshotWithNullCreatedOnTest() {
+		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
+		snapshot.setCreatedOn(null);
+		assertFalse(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamSnapshotWithNullCreatedByTest() {
+		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
+		snapshot.setCreatedBy(null);
+		assertFalse(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamSnapshotWithNullModifiedOnTest() {
+		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
+		snapshot.setModifiedOn(null);
+		assertFalse(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamSnapshotWithNullModifiedByTest() {
+		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
+		snapshot.setModifiedBy(null);
+		assertFalse(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamSnapshotWithNullCanPublicJoinTest() {
+		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
+		snapshot.setCanPublicJoin(null);
+		assertFalse(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
 	}
 }
