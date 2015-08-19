@@ -3,7 +3,9 @@ package org.sagebionetworks.warehouse.workers.utils;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.sagebionetworks.repo.model.UserGroupHeader;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
+import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 
 public class ObjectSnapshotUtilsTest {
@@ -68,7 +70,7 @@ public class ObjectSnapshotUtilsTest {
 	}
 
 	/*
-	 * isValidTeamSnapshot()
+	 * isValidTeamSnapshot() tests
 	 */
 	@Test
 	public void validTeamSnapshotTest() {
@@ -123,5 +125,42 @@ public class ObjectSnapshotUtilsTest {
 		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
 		snapshot.setCanPublicJoin(null);
 		assertFalse(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
+	}
+
+	/*
+	 * isValidTeamMemberSnapshot() tests
+	 */
+	@Test
+	public void validTeamMemberSnapshotTest() {
+		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
+		assertTrue(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamMemberSnapshotWithNullTimestamp() {
+		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
+		snapshot.setTimestamp(null);
+		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamMemberSnapshotWithNullTeamId() {
+		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
+		snapshot.setTeamId(null);
+		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamMemberSnapshotWithNullMember() {
+		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
+		snapshot.setMember(null);
+		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidTeamMemberSnapshotWithNullMemberId() {
+		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
+		snapshot.setMember(new UserGroupHeader());
+		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
 	}
 }
