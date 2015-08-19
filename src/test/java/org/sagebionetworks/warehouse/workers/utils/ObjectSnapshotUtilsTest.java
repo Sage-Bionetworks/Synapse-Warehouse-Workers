@@ -3,7 +3,6 @@ package org.sagebionetworks.warehouse.workers.utils;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.sagebionetworks.repo.model.UserGroupHeader;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -151,16 +150,9 @@ public class ObjectSnapshotUtilsTest {
 	}
 
 	@Test
-	public void invalidTeamMemberSnapshotWithNullMember() {
-		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
-		snapshot.setMember(null);
-		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
-	}
-
-	@Test
 	public void invalidTeamMemberSnapshotWithNullMemberId() {
 		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
-		snapshot.setMember(new UserGroupHeader());
+		snapshot.setMemberId(null);
 		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
 	}
 }

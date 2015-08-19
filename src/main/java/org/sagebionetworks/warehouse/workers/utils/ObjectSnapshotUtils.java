@@ -47,10 +47,9 @@ public class ObjectSnapshotUtils {
 	 *         false otherwise.
 	 */
 	public static boolean isValidTeamMemberSnapshot(TeamMemberSnapshot snapshot) {
-		if (snapshot.getTimestamp() 				== null) return false;
-		if (snapshot.getTeamId() 					== null) return false;
-		if (snapshot.getMember() 					== null) return false;
-		if (snapshot.getMember().getOwnerId() 		== null) return false;
+		if (snapshot.getTimestamp() 	== null) return false;
+		if (snapshot.getTeamId() 		== null) return false;
+		if (snapshot.getMemberId() 		== null) return false;
 		return true;
 	}
 }
