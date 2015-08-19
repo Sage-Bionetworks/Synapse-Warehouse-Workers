@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
+import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
 
 public class ObjectSnapshotUtilsTest {
 
@@ -136,23 +137,53 @@ public class ObjectSnapshotUtilsTest {
 	}
 
 	@Test
-	public void invalidTeamMemberSnapshotWithNullTimestamp() {
+	public void invalidTeamMemberSnapshotWithNullTimestampTest() {
 		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
 		snapshot.setTimestamp(null);
 		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
 	}
 
 	@Test
-	public void invalidTeamMemberSnapshotWithNullTeamId() {
+	public void invalidTeamMemberSnapshotWithNullTeamIdTest() {
 		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
 		snapshot.setTeamId(null);
 		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
 	}
 
 	@Test
-	public void invalidTeamMemberSnapshotWithNullMemberId() {
+	public void invalidTeamMemberSnapshotWithNullMemberIdTest() {
 		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
 		snapshot.setMemberId(null);
 		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
+	}
+
+	/*
+	 * isValidUserProfileSnapshot() tests
+	 */
+	@Test
+	public void validUserProfileSnapshotTest() {
+		UserProfileSnapshot snapshot = ObjectSnapshotTestUtil.createValidUserProfileSnapshot();
+		assertTrue(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidUserProfileSnapshotWithNullTimestampTest() {
+		UserProfileSnapshot snapshot = ObjectSnapshotTestUtil.createValidUserProfileSnapshot();
+		snapshot.setTimestamp(null);
+		assertFalse(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidUserProfileSnapshotWithNullIdTest() {
+		UserProfileSnapshot snapshot = ObjectSnapshotTestUtil.createValidUserProfileSnapshot();
+		snapshot.setOwnerId(null);
+		assertFalse(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidUserProfileSnapshotWithNullUserNameTest() {
+		UserProfileSnapshot snapshot = ObjectSnapshotTestUtil.createValidUserProfileSnapshot();
+		snapshot.setUserName(null);
+		assertFalse(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
 	}
 }
