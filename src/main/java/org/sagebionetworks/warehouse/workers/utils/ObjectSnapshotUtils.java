@@ -61,7 +61,7 @@ public class ObjectSnapshotUtils {
 	 *         false otherwise.
 	 */
 	public static boolean isValidUserProfileSnapshot(UserProfileSnapshot snapshot) {
-		if (snapshot.getTeamName() 		== null) return false;
+		if (snapshot.getTimestamp() 	== null) return false;
 		if (snapshot.getOwnerId() 		== null) return false;
 		if (snapshot.getUserName() 		== null) return false;
 		return true;
