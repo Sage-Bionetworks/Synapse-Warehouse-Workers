@@ -2,7 +2,15 @@ package org.sagebionetworks.warehouse.workers.utils;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
+
 import org.junit.Test;
+import org.sagebionetworks.repo.model.EntityType;
+import org.sagebionetworks.repo.model.Node;
+import org.sagebionetworks.repo.model.Team;
+import org.sagebionetworks.repo.model.audit.ObjectRecord;
+import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
+import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -204,5 +212,67 @@ public class ObjectSnapshotUtilsTest {
 		UserProfileSnapshot snapshot = ObjectSnapshotTestUtil.createValidUserProfileSnapshot();
 		snapshot.setUserName(null);
 		assertFalse(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
+	}
+
+	/*
+	 * getNodeSnapshot() tests
+	 */
+	@Test
+	public void wrongTypeNameGetNodeSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Team team = new Team();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(team));
+		record.setJsonClassName(Team.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getNodeSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeGetNodeSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Team team = new Team();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(team));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(new NodeSnapshot(), snapshot);
+	}
+
+	@Test
+	public void getNodeSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		node.setId("id");
+		node.setBenefactorId("benefactorId");
+		node.setProjectId("projectId");
+		node.setParentId("parentId");
+		node.setNodeType(EntityType.file);
+		node.setCreatedOn(new Date(0));
+		node.setCreatedByPrincipalId(1L);
+		node.setModifiedOn(new Date());
+		node.setModifiedByPrincipalId(2L);
+		node.setVersionNumber(3L);
+		node.setFileHandleId("fileHandleId");
+		node.setName("name");
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(timestamp, snapshot.getTimestamp());
+		assertEquals(node.getId(), snapshot.getId());
+		assertEquals(node.getBenefactorId(), snapshot.getBenefactorId());
+		assertEquals(node.getProjectId(), snapshot.getProjectId());
+		assertEquals(node.getParentId(), snapshot.getParentId());
+		assertEquals(node.getCreatedOn(), snapshot.getCreatedOn());
+		assertEquals(node.getCreatedByPrincipalId(), snapshot.getCreatedByPrincipalId());
+		assertEquals(node.getModifiedOn(), snapshot.getModifiedOn());
+		assertEquals(node.getModifiedByPrincipalId(), snapshot.getModifiedByPrincipalId());
+		assertEquals(node.getNodeType(), snapshot.getNodeType());
+		assertEquals(node.getVersionNumber(), snapshot.getVersionNumber());
+		assertEquals(node.getFileHandleId(), node.getFileHandleId());
+		assertEquals(node.getName(), snapshot.getName());
 	}
 }

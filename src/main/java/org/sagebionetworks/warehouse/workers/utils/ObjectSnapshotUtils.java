@@ -1,6 +1,9 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
+import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
+import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
+import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -72,8 +75,36 @@ public class ObjectSnapshotUtils {
 		return true;
 	}
 
+	/**
+	 * Extract node's information and build NodeSnapshot from the captured record
+	 * 
+	 * @param record
+	 * @return the NodeSnapshot,
+	 *         or null if fails to get the snapshot
+	 */
 	public static NodeSnapshot getNodeSnapshot(ObjectRecord record) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!record.getJsonClassName().equals(Node.class.getSimpleName().toLowerCase())) {
+			return null;
+		}
+		try {
+			Node node = EntityFactory.createEntityFromJSONString(record.getJsonString(), Node.class);
+			NodeSnapshot snapshot = new NodeSnapshot();
+			snapshot.setTimestamp(record.getTimestamp());
+			snapshot.setId(node.getId());
+			snapshot.setBenefactorId(node.getBenefactorId());
+			snapshot.setProjectId(node.getProjectId());
+			snapshot.setParentId(node.getParentId());
+			snapshot.setNodeType(node.getNodeType());
+			snapshot.setCreatedOn(node.getCreatedOn());
+			snapshot.setCreatedByPrincipalId(node.getCreatedByPrincipalId());
+			snapshot.setModifiedOn(node.getModifiedOn());
+			snapshot.setModifiedByPrincipalId(node.getModifiedByPrincipalId());
+			snapshot.setVersionNumber(node.getVersionNumber());
+			snapshot.setFileHandleId(node.getFileHandleId());
+			snapshot.setName(node.getName());
+			return snapshot;
+		} catch (JSONObjectAdapterException e) {
+			return null;
+		}
 	}
 }
