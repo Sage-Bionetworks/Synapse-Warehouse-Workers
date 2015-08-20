@@ -71,7 +71,8 @@ public class PropertyLinker {
 		log.info("Linking: "+key+" = "+startValue);
 		// cycle check
 		if(visitedKeys.contains(key)){
-			throw new IllegalArgumentException("Cycles are not allowed");
+			log.info("Cycle detected for: "+key+" = "+startValue+" value will not be replaced.");
+			return "cycle-error";
 		}else{
 			visitedKeys.add(key);
 		}
