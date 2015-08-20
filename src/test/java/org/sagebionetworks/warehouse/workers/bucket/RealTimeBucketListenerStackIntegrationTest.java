@@ -21,7 +21,7 @@ public class RealTimeBucketListenerStackIntegrationTest {
 	
 	private static long MAX_WAIT_MS = 2*60*1000;
 	
-	static WorkerStack stack = TestContext.findWorkerStackByName(RealTimeBucketListenerStack.class.getName());
+	static WorkerStack stack = TestContext.findWorkerStackByName(RealTimeBucketListenerConfigurationProvider.class.getName());
 
 	FileMetadataDao dao = TestContext.singleton().getInstance(FileMetadataDao.class);
 	BucketInfoList bucketList = TestContext.singleton().getInstance(BucketInfoList.class);

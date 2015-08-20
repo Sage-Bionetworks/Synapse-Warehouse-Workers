@@ -6,20 +6,20 @@ import java.util.List;
 import org.sagebionetworks.database.semaphore.CountingSemaphore;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
-import org.sagebionetworks.warehouse.workers.bucket.BucketScanningStack;
+import org.sagebionetworks.warehouse.workers.bucket.BucketScanningConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisherImpl;
-import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketListenerStack;
+import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketListenerConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.TopicDaoProvider;
 import org.sagebionetworks.warehouse.workers.bucket.TopicDaoProviderImpl;
-import org.sagebionetworks.warehouse.workers.collate.CollateFolderStack;
+import org.sagebionetworks.warehouse.workers.collate.CollateFolderConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.collate.CollateMessageQueue;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProviderImpl;
 import org.sagebionetworks.warehouse.workers.collate.FolderCollateWorker;
 import org.sagebionetworks.warehouse.workers.collate.LockedFolderRunner;
-import org.sagebionetworks.warehouse.workers.collate.PeriodicRollingFolderStack;
+import org.sagebionetworks.warehouse.workers.collate.PeriodicRollingFolderConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollator;
 import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollatorImpl;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
@@ -154,10 +154,10 @@ public class WorkersModule extends AbstractModule {
 	@Provides
 	public WorkerStackConfigurationProviderList getWorkerStackConfigurationProviderList(){
 		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
-		list.add(RealTimeBucketListenerStack.class);
-		list.add(BucketScanningStack.class);
-		list.add(PeriodicRollingFolderStack.class);
-		list.add(CollateFolderStack.class);
+		list.add(RealTimeBucketListenerConfigurationProvider.class);
+		list.add(BucketScanningConfigurationProvider.class);
+		list.add(PeriodicRollingFolderConfigurationProvider.class);
+		list.add(CollateFolderConfigurationProvider.class);
 		return list;
 	}
 	

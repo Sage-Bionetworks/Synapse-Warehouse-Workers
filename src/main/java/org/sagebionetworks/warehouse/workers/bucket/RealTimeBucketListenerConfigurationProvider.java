@@ -21,12 +21,12 @@ import com.google.inject.Inject;
  * This stack listens to the real-time events of each configured bucket.
  * 
  */
-public class RealTimeBucketListenerStack implements WorkerStackConfigurationProvider {
+public class RealTimeBucketListenerConfigurationProvider implements WorkerStackConfigurationProvider {
 
 	final WorkerStackConfiguration config;
 
 	@Inject
-	public RealTimeBucketListenerStack(CountingSemaphore semaphore,
+	public RealTimeBucketListenerConfigurationProvider(CountingSemaphore semaphore,
 			AmazonSQSClient awsSQSClient, AmazonS3Client awsS3Client,
 			AmazonSNSClient awsSNClient, BucketInfoList bucketList,
 			RealtimeBucketListenerTopicBucketInfo config,
@@ -57,7 +57,7 @@ public class RealTimeBucketListenerStack implements WorkerStackConfigurationProv
 		this.config.setRunner(mainRunner);
 		this.config.setStartDelayMs(987);
 		this.config.setPeriodMS(10*1000);
-		this.config.setWorkerName(RealTimeBucketListenerStack.class.getName());
+		this.config.setWorkerName(RealTimeBucketListenerConfigurationProvider.class.getName());
 	}
 
 	@Override
