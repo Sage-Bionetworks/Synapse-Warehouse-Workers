@@ -51,4 +51,20 @@ public class Sql {
 	public static final String COL_ACCESS_RECORD_STACK = 				"STACK";
 	public static final String COL_ACCESS_RECORD_SUCCESS = 				"SUCCESS";
 	public static final String COL_ACCESS_RECORD_RESPONSE_STATUS = 		"RESPONSE_STATUS";
+
+	// NODE_SNAPSHOT
+	public static final String TABLE_NODE_SNAPSHOT = 				"NODE_SNAPSHOT";
+	public static final String COL_NODE_SNAPSHOT_TIMESTAMP = 		"TIMESTAMP";
+	public static final String COL_NODE_SNAPSHOT_ID = 				"ID";
+	public static final String COL_NODE_SNAPSHOT_BENEFACTOR_ID = 	"BENEFACTOR_ID";
+	public static final String COL_NODE_SNAPSHOT_PROJECT_ID = 		"PROJECT_ID";
+	public static final String COL_NODE_SNAPSHOT_PARENT_ID = 		"PARENT_ID";
+	public static final String COL_NODE_SNAPSHOT_NODE_TYPE = 		"NODE_TYPE";
+	public static final String COL_NODE_SNAPSHOT_CREATED_ON = 		"CREATED_ON";
+	public static final String COL_NODE_SNAPSHOT_CREATED_BY = 		"CREATED_BY";
+	public static final String COL_NODE_SNAPSHOT_MODIFIED_ON = 		"MODIFIED_ON";
+	public static final String COL_NODE_SNAPSHOT_MODIFIED_BY = 		"MODIFIED_BY";
+	public static final String COL_NODE_SNAPSHOT_VERSION_NUMBER = 	"VERSION_NUMBER";
+	public static final String COL_NODE_SNAPSHOT_FILE_HANDLE_ID = 	"FILE_HANDLE_ID";
+	public static final String COL_NODE_SNAPSHOT_NAME = 			"NAME";
 }
