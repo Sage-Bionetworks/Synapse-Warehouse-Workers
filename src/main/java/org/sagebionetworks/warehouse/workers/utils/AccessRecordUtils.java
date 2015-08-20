@@ -107,7 +107,7 @@ public class AccessRecordUtils {
 	 * @return true if all NOT NULL fields have valid values,
 	 *         false otherwise.
 	 */
-	public static boolean isValidated(AccessRecord ar) {
+	public static boolean isValidAccessRecord(AccessRecord ar) {
 		if (ar.getSessionId() 		== null) return false;
 		if (ar.getElapseMS() 		== null) return false;
 		if (ar.getTimestamp() 		== null) return false;

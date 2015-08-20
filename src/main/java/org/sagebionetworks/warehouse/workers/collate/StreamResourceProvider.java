@@ -4,16 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
+import org.sagebionetworks.aws.utils.s3.ObjectCSVWriter;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
 /**
- * Abstraction for the creation of resources used by file collation.
+ * Abstraction for the creation of stream resources.
  *
  */
-public interface CollateProvider {
+public interface StreamResourceProvider {
 
 	/**
 	 * Create a temporary file.
@@ -36,6 +38,20 @@ public interface CollateProvider {
 	 * @return
 	 */
 	public CSVWriter createGzipWriter(File file);
+	
+	/**
+	 * Create a ObjectCSVReader for the given file.
+	 * @param file
+	 * @return
+	 */
+	public ObjectCSVReader createObjectCSVReader(File file, Class clazz);
+	
+	/**
+	 * Create a ObjectCSVWritter for the given file.
+	 * @param file
+	 * @return
+	 */
+	public ObjectCSVWriter createObjectCSVWriter(File file, Class clazz);
 	
 	/**
 	 * Collate the passed input readers into the passed writer.

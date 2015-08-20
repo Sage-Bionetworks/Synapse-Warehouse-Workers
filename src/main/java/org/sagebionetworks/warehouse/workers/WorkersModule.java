@@ -10,13 +10,13 @@ import org.sagebionetworks.warehouse.workers.bucket.BucketScanningStack;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisherImpl;
 import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketListenerStack;
-import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerStackConfig;
+import org.sagebionetworks.warehouse.workers.bucket.RealtimeBucketListenerTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.TopicDaoProvider;
 import org.sagebionetworks.warehouse.workers.bucket.TopicDaoProviderImpl;
 import org.sagebionetworks.warehouse.workers.collate.CollateFolderStack;
 import org.sagebionetworks.warehouse.workers.collate.CollateMessageQueue;
-import org.sagebionetworks.warehouse.workers.collate.CollateProvider;
-import org.sagebionetworks.warehouse.workers.collate.CollateProviderImpl;
+import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
+import org.sagebionetworks.warehouse.workers.collate.StreamResourceProviderImpl;
 import org.sagebionetworks.warehouse.workers.collate.FolderCollateWorker;
 import org.sagebionetworks.warehouse.workers.collate.LockedFolderRunner;
 import org.sagebionetworks.warehouse.workers.collate.PeriodicRollingFolderStack;
@@ -25,6 +25,8 @@ import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollatorImpl;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
+import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.ProcessAccessRecordTopicBucketInfo;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueConfiguration;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueImpl;
 
@@ -48,7 +50,7 @@ public class WorkersModule extends AbstractModule {
 		bind(BucketTopicPublisher.class).to(BucketTopicPublisherImpl.class);
 		bind(FileManager.class).to(FileManagerImpl.class);
 		bind(LockedFolderRunner.class).to(FolderCollateWorker.class);
-		bind(CollateProvider.class).to(CollateProviderImpl.class);
+		bind(StreamResourceProvider.class).to(StreamResourceProviderImpl.class);
 		bind(S3ObjectCollator.class).to(S3ObjectCollatorImpl.class);
 	}
 
@@ -75,13 +77,29 @@ public class WorkersModule extends AbstractModule {
 	}
 	
 	@Provides
-	public RealtimeBucketListenerStackConfig getBucketListenerConfig(Configuration config){
-		RealtimeBucketListenerStackConfig rtbls = new RealtimeBucketListenerStackConfig();
+	public RealtimeBucketListenerTopicBucketInfo getBucketListenerConfig(Configuration config){
+		RealtimeBucketListenerTopicBucketInfo rtbls = new RealtimeBucketListenerTopicBucketInfo();
 		rtbls.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.all.bucket.events"));
 		rtbls.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.all.bucket.events"));
 		return rtbls;
 	}
-	
+
+	@Provides
+	public AccessRecordTopicBucketInfo getAccessRecordConfig(Configuration config){
+		AccessRecordTopicBucketInfo info = new AccessRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.accessrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.accessrecord.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public ProcessAccessRecordTopicBucketInfo getProcessedAccessRecordConfig(Configuration config){
+		ProcessAccessRecordTopicBucketInfo info = new ProcessAccessRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.processaccessrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.processaccessrecord.snapshot"));
+		return info;
+	}
+
 	/**
 	 * This the binding for all workers stacks. To add a new worker stack to the the application
 	 * its class must be added to this list.

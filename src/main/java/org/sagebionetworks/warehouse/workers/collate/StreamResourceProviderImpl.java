@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
+import org.sagebionetworks.aws.utils.s3.ObjectCSVWriter;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -19,7 +21,7 @@ import au.com.bytecode.opencsv.CSVWriter;
  * A simple wrapper for resource generation.
  * 
  */
-public class CollateProviderImpl implements CollateProvider {
+public class StreamResourceProviderImpl implements StreamResourceProvider {
 
 	/*
 	 * (non-Javadoc)
@@ -71,6 +73,32 @@ public class CollateProviderImpl implements CollateProvider {
 		// This is where collation actually occurs.
 		StreamingCollateUtils.mergeSortedStreams(progressCallback, readers,
 				writer, sortColumnIndex);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider#createObjectCSVReader(java.io.File, java.lang.Class)
+	 */
+	@Override
+	public ObjectCSVReader createObjectCSVReader(File file, Class clazz) {
+		try {
+			return new ObjectCSVReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), clazz);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider#createObjectCSVWriter(java.io.File, java.lang.Class)
+	 */
+	@Override
+	public ObjectCSVWriter createObjectCSVWriter(File file, Class clazz) {
+		try {
+			return new ObjectCSVWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(file)), "UTF-8"), clazz);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
