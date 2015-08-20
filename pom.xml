@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.sagebionetworks</groupId>
 	<artifactId>synapse-warehouse-workers</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>develop-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>synapse-warehouse-workers</name>
 	<description>Workers that maintain analytical data related to Synapse</description>
@@ -226,7 +226,25 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	<distributionManagement>
+		<repository>
+			<id>sagebionetworks</id>
+			<name>sagebionetworks-releases</name>
+			<url>http://sagebionetworks.artifactoryonline.com/sagebionetworks/libs-releases-local
+			</url>
+		</repository>
+		<snapshotRepository>
+			<id>sagebionetworks</id>
+			<name>sagebionetworks-snapshots</name>
+			<url>http://sagebionetworks.artifactoryonline.com/sagebionetworks/libs-snapshots-local
+			</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+		<site>
+			<id>site-stage</id>
+			<url>file:///${project.basedir}/target/staging/</url>
+		</site>
+	</distributionManagement>
 	<properties>
 		<spring.version>4.1.6.RELEASE</spring.version>
 		<synapse.version>99.0</synapse.version>
