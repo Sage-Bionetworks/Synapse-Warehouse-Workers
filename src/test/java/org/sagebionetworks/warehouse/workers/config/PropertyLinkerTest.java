@@ -44,12 +44,10 @@ public class PropertyLinkerTest {
 		input.put("prop.one", "${prop.two}");
 		input.put("prop.two", "${prop.one}");
 		Properties output;
-		try {
-			output = PropertyLinker.linkAndReplace(input);
-			fail("Should have failed");
-		} catch (IllegalArgumentException e) {
-			assertTrue(e.getMessage().contains("Cycles are not allowed"));
-		}
+		// This should not lead to a stack overflow.
+		output = PropertyLinker.linkAndReplace(input);
+		assertEquals("cycle-error", output.getProperty("prop.one"));
+		assertEquals("cycle-error", output.getProperty("prop.two"));
 	}
 
 }
