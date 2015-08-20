@@ -78,21 +78,19 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 	 */
 	public static void writeAccessRecord(ObjectCSVReader<AccessRecord> reader,
 			AccessRecordDao dao, int batchSize) throws IOException {
-		AccessRecord record = reader.next();
-		List<AccessRecord> batch = new ArrayList<AccessRecord>();
+		AccessRecord record = null;
+		List<AccessRecord> batch = new ArrayList<AccessRecord>(batchSize);
 
-		while (record != null) {
+		while ((record = reader.next()) != null) {
 			if (!AccessRecordUtils.isValidAccessRecord(record)) {
 				log.error("Invalid Access Record: " + record.toString());
-				record = reader.next();
 				continue;
 			}
 			batch.add(record);
-			if (batch.size() == batchSize) {
+			if (batch.size() >= batchSize) {
 				dao.insert(batch);
-				batch = new ArrayList<AccessRecord>();
+				batch .clear();
 			}
-			record = reader.next();
 		}
 
 		if (batch.size() > 0) {
