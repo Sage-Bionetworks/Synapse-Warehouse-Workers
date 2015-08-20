@@ -98,7 +98,8 @@ public class ProcessAccessRecordWorkerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void writeInvalidRecordTest() throws IOException {
-		AccessRecord invalidRecord = AccessRecordTestUtil.createInvalidAccessRecordWithNullTimestamp();
+		AccessRecord invalidRecord = AccessRecordTestUtil.createValidAccessRecord();
+		invalidRecord.setTimestamp(null);
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, invalidRecord, null);
 		ProcessAccessRecordWorker.writeProcessedAcessRecord(mockObjectCSVReader, mockDao, 2);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<ProcessedAccessRecord>) Mockito.any());

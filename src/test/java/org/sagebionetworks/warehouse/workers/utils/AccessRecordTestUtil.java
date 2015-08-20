@@ -37,16 +37,6 @@ public class AccessRecordTestUtil {
 
 	/**
 	 * 
-	 * @return an invalid access record that contains a null timestamp
-	 */
-	public static AccessRecord createInvalidAccessRecordWithNullTimestamp() {
-		AccessRecord ar = createValidAccessRecord();
-		ar.setTimestamp(null);
-		return ar;
-	}
-
-	/**
-	 * 
 	 * @param numberOfRecords
 	 * @return a list of numberOfRecords valid access records
 	 */
