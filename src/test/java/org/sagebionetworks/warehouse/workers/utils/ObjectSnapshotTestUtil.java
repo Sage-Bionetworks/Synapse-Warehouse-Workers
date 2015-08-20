@@ -5,6 +5,7 @@ import java.util.Random;
 
 import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
+import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 
 public class ObjectSnapshotTestUtil {
@@ -39,6 +40,18 @@ public class ObjectSnapshotTestUtil {
 		snapshot.setModifiedBy("" + random.nextLong());
 		snapshot.setModifiedOn(new Date());
 		snapshot.setCanPublicJoin(true);
+		return snapshot;
+	}
+
+	/**
+	 * 
+	 * @return a unique valid TeamMemberSnapshot
+	 */
+	public static TeamMemberSnapshot createValidTeamMemberSnapshot() {
+		TeamMemberSnapshot snapshot = new TeamMemberSnapshot();
+		snapshot.setTimestamp(System.currentTimeMillis());
+		snapshot.setTeamId(random.nextLong());
+		snapshot.setMemberId(random.nextLong());
 		return snapshot;
 	}
 }

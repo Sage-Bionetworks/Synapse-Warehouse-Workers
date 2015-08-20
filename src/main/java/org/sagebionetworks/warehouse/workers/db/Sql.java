@@ -78,4 +78,11 @@ public class Sql {
 	public static final String COL_TEAM_SNAPSHOT_MODIFIED_BY = 			"MODIFIED_BY";
 	public static final String COL_TEAM_SNAPSHOT_NAME = 				"NAME";
 	public static final String COL_TEAM_SNAPSHOT_CAN_PUBLIC_JOIN = 		"CAN_PUBLIC_JOIN";
+
+	// TEAM_MEMBER_SNAPSHOT
+	public static final String TABLE_TEAM_MEMBER_SNAPSHOT =				"TEAM_MEMBER_SNAPSHOT";
+	public static final String COL_TEAM_MEMBER_SNAPSHOT_TIMESTAMP = 	"TIMESTAMP";
+	public static final String COL_TEAM_MEMBER_SNAPSHOT_TEAM_ID = 		"TEAM_ID";
+	public static final String COL_TEAM_MEMBER_SNAPSHOT_MEMBER_ID = 	"MEMBER_ID";
+	public static final String COL_TEAM_MEMBER_SNAPSHOT_IS_ADMIN = 		"IS_ADMIN";
 }

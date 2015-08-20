@@ -1,6 +1,7 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
+import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 
 public class ObjectSnapshotUtils {
@@ -36,6 +37,19 @@ public class ObjectSnapshotUtils {
 		if (snapshot.getModifiedOn()		== null) return false;
 		if (snapshot.getModifiedBy() 		== null) return false;
 		if (snapshot.getCanPublicJoin() 	== null) return false;
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param snapshot - the snapshot of a Synapse TeamMember object
+	 * @return true is the snapshot contains not null values for required fields
+	 *         false otherwise.
+	 */
+	public static boolean isValidTeamMemberSnapshot(TeamMemberSnapshot snapshot) {
+		if (snapshot.getTimestamp() 	== null) return false;
+		if (snapshot.getTeamId() 		== null) return false;
+		if (snapshot.getMemberId() 		== null) return false;
 		return true;
 	}
 }
