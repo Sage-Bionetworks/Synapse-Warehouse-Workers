@@ -1,6 +1,7 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
 import org.sagebionetworks.repo.model.Node;
+import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
@@ -83,7 +84,11 @@ public class ObjectSnapshotUtils {
 	 *         or null if fails to get the snapshot
 	 */
 	public static NodeSnapshot getNodeSnapshot(ObjectRecord record) {
-		if (!record.getJsonClassName().equals(Node.class.getSimpleName().toLowerCase())) {
+		if (record == null || 
+				record.getTimestamp() == null ||
+				record.getJsonString() == null ||
+				record.getJsonClassName() == null || 
+				!record.getJsonClassName().equals(Node.class.getSimpleName().toLowerCase())) {
 			return null;
 		}
 		try {
@@ -102,6 +107,37 @@ public class ObjectSnapshotUtils {
 			snapshot.setVersionNumber(node.getVersionNumber());
 			snapshot.setFileHandleId(node.getFileHandleId());
 			snapshot.setName(node.getName());
+			return snapshot;
+		} catch (JSONObjectAdapterException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Extract team's information and build TeamSnapshot from the captured record
+	 * 
+	 * @param record
+	 * @return
+	 */
+	public static TeamSnapshot getTeamSnapshot(ObjectRecord record) {
+		if (record == null || 
+				record.getTimestamp() == null ||
+				record.getJsonString() == null ||
+				record.getJsonClassName() == null || 
+				!record.getJsonClassName().equals(Team.class.getSimpleName().toLowerCase())) {
+			return null;
+		}
+		try {
+			Team team = EntityFactory.createEntityFromJSONString(record.getJsonString(), Team.class);
+			TeamSnapshot snapshot = new TeamSnapshot();
+			snapshot.setTimestamp(record.getTimestamp());
+			snapshot.setId(team.getId());
+			snapshot.setCreatedOn(team.getCreatedOn());
+			snapshot.setCreatedBy(team.getCreatedBy());
+			snapshot.setModifiedOn(team.getModifiedOn());
+			snapshot.setModifiedBy(team.getModifiedBy());
+			snapshot.setName(team.getName());
+			snapshot.setCanPublicJoin(team.getCanPublicJoin());
 			return snapshot;
 		} catch (JSONObjectAdapterException e) {
 			return null;
