@@ -6,6 +6,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * A utility to link property values that contain property keys to the values of the referenced key.
  * For example, given the following properties:
@@ -30,6 +33,8 @@ import java.util.regex.Pattern;
  *
  */
 public class PropertyLinker {
+	
+	private static final Logger log = LogManager.getLogger(PropertyLinker.class);
 	
 	 private static Pattern pattern = Pattern.compile("\\$\\{[-a-zA-Z0-9._]+\\}");
 	
@@ -63,9 +68,11 @@ public class PropertyLinker {
 		if(startValue == null){
 			throw new IllegalArgumentException("Referenced key: '"+key+"' was not found in the input Properties");
 		}
+		log.info("Linking: "+key+" = "+startValue);
 		// cycle check
 		if(visitedKeys.contains(key)){
-			throw new IllegalArgumentException("Cycles are not allowed");
+			log.info("Cycle detected for: "+key+" = "+startValue+" value will not be replaced.");
+			return "cycle-error";
 		}else{
 			visitedKeys.add(key);
 		}
