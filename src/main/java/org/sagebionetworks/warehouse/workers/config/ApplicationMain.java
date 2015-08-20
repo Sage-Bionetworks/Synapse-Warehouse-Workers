@@ -37,16 +37,21 @@ public class ApplicationMain {
 	 * Called when the application starts.
 	 */
 	public void startup(){
-		log.info("Starting worker application...");
-		if(injector == null){
-			log.error("Injector is null.  Cannot start the application.");
-			return;
-		}
-		// Get all of the worker stacks and start them.
-		stacks = injector.getInstance(WorkerStackList.class).getList();
-		for(WorkerStack stack: stacks){
-			log.info("Starting stack: "+stack.getWorketName()+"...");
-			stack.start();
+		try {
+			log.info("Starting worker application...");
+			if(injector == null){
+				log.error("Injector is null.  Cannot start the application.");
+				return;
+			}
+			// Get all of the worker stacks and start them.
+			stacks = injector.getInstance(WorkerStackList.class).getList();
+			for(WorkerStack stack: stacks){
+				log.info("Starting stack: "+stack.getWorketName()+"...");
+				stack.start();
+			}
+		} catch (Exception e) {
+			log.error("Failed to start application: "+e.getMessage(), e);
+			throw new RuntimeException(e);
 		}
 	}
 	
