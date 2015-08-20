@@ -2,6 +2,8 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -99,12 +101,12 @@ public class AccessRecordWorkerTest {
 		Mockito.verify(mockDao, Mockito.never()).insert((List<AccessRecord>) Mockito.any());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void writeLessThanBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), null);
 		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 5);
-		Mockito.verify(mockDao, Mockito.times(1)).insert((List<AccessRecord>) Mockito.any());
+		List<AccessRecord> expected = new ArrayList<AccessRecord>(Arrays.asList(batch.get(0), batch.get(1), batch.get(2), batch.get(3)));
+		Mockito.verify(mockDao, Mockito.times(1)).insert(expected);
 	}
 
 	@SuppressWarnings("unchecked")
