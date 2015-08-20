@@ -85,4 +85,16 @@ public class Sql {
 	public static final String COL_TEAM_MEMBER_SNAPSHOT_TEAM_ID = 		"TEAM_ID";
 	public static final String COL_TEAM_MEMBER_SNAPSHOT_MEMBER_ID = 	"MEMBER_ID";
 	public static final String COL_TEAM_MEMBER_SNAPSHOT_IS_ADMIN = 		"IS_ADMIN";
+
+	// USER_PROFILE_SNAPSHOT
+	public static final String TABLE_USER_PROFILE_SNAPSHOT = 			"USER_PROFILE_SNAPSHOT";
+	public static final String COL_USER_PROFILE_SNAPSHOT_TIMESTAMP = 	"TIMESTAMP";
+	public static final String COL_USER_PROFILE_SNAPSHOT_ID = 			"ID";
+	public static final String COL_USER_PROFILE_SNAPSHOT_USER_NAME = 	"USER_NAME";
+	public static final String COL_USER_PROFILE_SNAPSHOT_FIRST_NAME = 	"FIRST_NAME";
+	public static final String COL_USER_PROFILE_SNAPSHOT_LAST_NAME = 	"LAST_NAME";
+	public static final String COL_USER_PROFILE_SNAPSHOT_EMAIL = 		"EMAIL";
+	public static final String COL_USER_PROFILE_SNAPSHOT_LOCATION = 	"LOCATION";
+	public static final String COL_USER_PROFILE_SNAPSHOT_COMPANY = 		"COMPANY";
+	public static final String COL_USER_PROFILE_SNAPSHOT_POSITION = 	"POSITION";
 }
