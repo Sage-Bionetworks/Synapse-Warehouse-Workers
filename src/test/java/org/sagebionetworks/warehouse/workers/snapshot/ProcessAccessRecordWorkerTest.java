@@ -16,6 +16,7 @@ import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.sqs.model.Message;
@@ -30,9 +31,10 @@ public class ProcessAccessRecordWorkerTest {
 	String messageBody;
 	StreamResourceProvider mockStreamResourceProvider;
 	File mockFile;
-	ObjectCSVReader mockObjectCSVReader;
+	ObjectCSVReader<AccessRecord> mockObjectCSVReader;
 	List<AccessRecord> batch;
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void before() {
 		mockS3Client = Mockito.mock(AmazonS3Client.class);
@@ -62,16 +64,44 @@ public class ProcessAccessRecordWorkerTest {
 		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq("collatedAccessRecords"), Mockito.eq(".csv.gz"));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
 		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, AccessRecord.class);
+		Mockito.verify(mockFile).delete();
+		Mockito.verify(mockObjectCSVReader).close();
 	}
 
 	@Test
-	public void writeInvalidRecordTest() throws IOException {
-		AccessRecord invalidRecord = AccessRecordTestUtil.createInvalidAccessRecordWithNullTimestamp();
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, null);
+	public void deleteFileTest() throws RecoverableMessageException, IOException {
+		Mockito.when(mockS3Client.getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile))).thenThrow(new AmazonClientException(""));
+		try {
+			worker.run(mockCallback, message);
+		} catch (AmazonClientException e) {
+			// expected
+		}
+		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq("collatedAccessRecords"), Mockito.eq(".csv.gz"));
+		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
+		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, AccessRecord.class);
+		Mockito.verify(mockFile).delete();
+		Mockito.verify(mockObjectCSVReader, Mockito.never()).close();
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void writeEmptyListTest() throws IOException {
+		Mockito.when(mockObjectCSVReader.next()).thenReturn(null);
 		ProcessAccessRecordWorker.writeProcessedAcessRecord(mockObjectCSVReader, mockDao, 2);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<ProcessedAccessRecord>) Mockito.any());
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void writeInvalidRecordTest() throws IOException {
+		AccessRecord invalidRecord = AccessRecordTestUtil.createInvalidAccessRecordWithNullTimestamp();
+		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, invalidRecord, null);
+		ProcessAccessRecordWorker.writeProcessedAcessRecord(mockObjectCSVReader, mockDao, 2);
+		Mockito.verify(mockDao, Mockito.never()).insert((List<ProcessedAccessRecord>) Mockito.any());
+	}
+
+	@SuppressWarnings("unchecked")
 	@Test
 	public void writeLessThanBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), null);
@@ -79,6 +109,7 @@ public class ProcessAccessRecordWorkerTest {
 		Mockito.verify(mockDao, Mockito.times(1)).insert((List<ProcessedAccessRecord>) Mockito.any());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void writeBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
@@ -86,6 +117,7 @@ public class ProcessAccessRecordWorkerTest {
 		Mockito.verify(mockDao, Mockito.times(1)).insert((List<ProcessedAccessRecord>) Mockito.any());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void writeOverBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);

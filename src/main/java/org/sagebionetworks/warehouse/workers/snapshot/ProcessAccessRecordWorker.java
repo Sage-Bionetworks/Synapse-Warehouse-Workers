@@ -57,17 +57,17 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 
 		// read the file as a stream
 		File file = null;
+		ObjectCSVReader<AccessRecord> reader = null;
 		try {
 			file = streamResourceProvider.createTempFile("collatedAccessRecords", ".csv.gz");
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
-			ObjectCSVReader<AccessRecord> reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class);
+			reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class);
 
 			writeProcessedAcessRecord(reader, dao, BATCH_SIZE);
 
-			reader.close();
 		} finally {
-			if (file != null)
-				file.delete();
+			if (reader != null) 	reader.close();
+			if (file != null) 		file.delete();
 		}
 	}
 
