@@ -100,7 +100,7 @@ public class WorkersModule extends AbstractModule {
 	@Provides
 	public ProcessAccessRecordTopicBucketInfo getProcessedAccessRecordConfig(Configuration config){
 		ProcessAccessRecordTopicBucketInfo info = new ProcessAccessRecordTopicBucketInfo();
-		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.processaccessrecord.snapshot"));
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.accessrecord.snapshot"));
 		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.processaccessrecord.snapshot"));
 		return info;
 	}
