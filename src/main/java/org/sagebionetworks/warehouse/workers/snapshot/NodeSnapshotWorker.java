@@ -84,7 +84,7 @@ public class NodeSnapshotWorker implements MessageDrivenRunner {
 		while ((record = reader.next()) != null) {
 			NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
 			if (!ObjectSnapshotUtils.isValidNodeSnapshot(snapshot)) {
-				log.error("Invalid Node Snapshot: " + snapshot.toString() + " from Record: " + record.toString());
+				log.error("Invalid Node Snapshot from Record: " + record.toString());
 				continue;
 			}
 			batch.add(snapshot);
