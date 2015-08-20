@@ -1,9 +1,15 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import org.sagebionetworks.repo.model.EntityType;
+import org.sagebionetworks.repo.model.Node;
+import org.sagebionetworks.repo.model.audit.ObjectRecord;
+import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
+import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -66,5 +72,39 @@ public class ObjectSnapshotTestUtil {
 		snapshot.setOwnerId("" + random.nextLong());
 		snapshot.setUserName("username");
 		return snapshot;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws JSONObjectAdapterException
+	 */
+	public static ObjectRecord createValidNodeObjectRecord() throws JSONObjectAdapterException {
+		Node node = new Node();
+		node.setId("" + random.nextLong());
+		node.setNodeType(EntityType.values()[random.nextInt(5)]);
+		node.setCreatedByPrincipalId(random.nextLong());
+		node.setCreatedOn(new Date());
+		node.setModifiedByPrincipalId(random.nextLong());
+		node.setModifiedOn(new Date());
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		return record;
+	}
+
+	/**
+	 * 
+	 * @param size
+	 * @return a batch of size valid NodeSnapshots
+	 * @throws JSONObjectAdapterException 
+	 */
+	public static List<ObjectRecord> createValidNodeSnapshotBatch(int size) throws JSONObjectAdapterException {
+		List<ObjectRecord> batch = new ArrayList<ObjectRecord>();
+		for (int i = 0; i < size; i++) {
+			batch.add(createValidNodeObjectRecord());
+		}
+		return batch;
 	}
 }
