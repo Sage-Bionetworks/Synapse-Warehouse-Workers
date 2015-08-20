@@ -13,6 +13,10 @@ public class ObjectSnapshotUtilsTest {
 	/*
 	 * isValidNodeSnapshot() tests
 	 */
+	@Test
+	public void nullNodeSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidNodeSnapshot(null));
+	}
 
 	@Test
 	public void validNodeSnapshotTest() {
@@ -73,6 +77,11 @@ public class ObjectSnapshotUtilsTest {
 	 * isValidTeamSnapshot() tests
 	 */
 	@Test
+	public void nullTeamSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidTeamSnapshot(null));
+	}
+
+	@Test
 	public void validTeamSnapshotTest() {
 		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
 		assertTrue(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
@@ -131,6 +140,11 @@ public class ObjectSnapshotUtilsTest {
 	 * isValidTeamMemberSnapshot() tests
 	 */
 	@Test
+	public void nullTeamMemberSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(null));
+	}
+
+	@Test
 	public void validTeamMemberSnapshotTest() {
 		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
 		assertTrue(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
@@ -160,6 +174,11 @@ public class ObjectSnapshotUtilsTest {
 	/*
 	 * isValidUserProfileSnapshot() tests
 	 */
+	@Test
+	public void nullUserProfileSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidUserProfileSnapshot(null));
+	}
+
 	@Test
 	public void validUserProfileSnapshotTest() {
 		UserProfileSnapshot snapshot = ObjectSnapshotTestUtil.createValidUserProfileSnapshot();

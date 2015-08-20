@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
+import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -14,6 +15,7 @@ public class ObjectSnapshotUtils {
 	 *         false otherwise.
 	 */
 	public static boolean isValidNodeSnapshot(NodeSnapshot snapshot) {
+		if (snapshot 							== null) return false;
 		if (snapshot.getTimestamp() 			== null) return false;
 		if (snapshot.getId() 					== null) return false;
 		if (snapshot.getNodeType() 				== null) return false;
@@ -31,6 +33,7 @@ public class ObjectSnapshotUtils {
 	 *         false otherwise.
 	 */
 	public static boolean isValidTeamSnapshot(TeamSnapshot snapshot) {
+		if (snapshot 						== null) return false;
 		if (snapshot.getTimestamp() 		== null) return false;
 		if (snapshot.getId() 				== null) return false;
 		if (snapshot.getCreatedOn() 		== null) return false;
@@ -48,6 +51,7 @@ public class ObjectSnapshotUtils {
 	 *         false otherwise.
 	 */
 	public static boolean isValidTeamMemberSnapshot(TeamMemberSnapshot snapshot) {
+		if (snapshot 					== null) return false;
 		if (snapshot.getTimestamp() 	== null) return false;
 		if (snapshot.getTeamId() 		== null) return false;
 		if (snapshot.getMemberId() 		== null) return false;
@@ -61,9 +65,15 @@ public class ObjectSnapshotUtils {
 	 *         false otherwise.
 	 */
 	public static boolean isValidUserProfileSnapshot(UserProfileSnapshot snapshot) {
+		if (snapshot 					== null) return false;
 		if (snapshot.getTimestamp() 	== null) return false;
 		if (snapshot.getOwnerId() 		== null) return false;
 		if (snapshot.getUserName() 		== null) return false;
 		return true;
+	}
+
+	public static NodeSnapshot getNodeSnapshot(ObjectRecord record) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
