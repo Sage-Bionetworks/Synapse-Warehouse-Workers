@@ -7,6 +7,7 @@ import java.util.Random;
 
 import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.repo.model.Node;
+import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
@@ -106,5 +107,39 @@ public class ObjectSnapshotTestUtil {
 			batch.add(createValidNodeObjectRecord());
 		}
 		return batch;
+	}
+
+	/**
+	 * 
+	 * @param size
+	 * @return
+	 * @throws JSONObjectAdapterException 
+	 */
+	public static List<ObjectRecord> createValidTeamSnapshotBatch(int size) throws JSONObjectAdapterException {
+		List<ObjectRecord> batch = new ArrayList<ObjectRecord>();
+		for (int i = 0; i < size; i++) {
+			batch.add(createValidTeamObjectRecord());
+		}
+		return batch;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws JSONObjectAdapterException
+	 */
+	public static ObjectRecord createValidTeamObjectRecord() throws JSONObjectAdapterException {
+		Team team = new Team();
+		team.setId("" + random.nextLong());
+		team.setCreatedBy("" + random.nextLong());
+		team.setCreatedOn(new Date());
+		team.setModifiedBy("" + random.nextLong());
+		team.setModifiedOn(new Date());
+		team.setCanPublicJoin(true);
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(Team.class.getSimpleName().toLowerCase());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(team));
+		return record;
 	}
 }
