@@ -51,7 +51,7 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 
 		// extract the bucket and key from the message
 		String xml = MessageUtil.extractMessageBodyAsString(message);
-		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, "Message");
+		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, FileSubmissionMessage.ALIAS);
 
 		// read the file as a stream
 		File file = null;
