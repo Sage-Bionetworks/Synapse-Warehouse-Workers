@@ -53,7 +53,7 @@ public class AccessRecordWorkerTest {
 
 		mockFile = Mockito.mock(File.class);
 		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
-		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq("collatedAccessRecords"), Mockito.eq(".csv.gz"))).thenReturn(mockFile);
+		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
 		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, AccessRecord.class)).thenReturn(mockObjectCSVReader);
 
 		batch = AccessRecordTestUtil.createValidAccessRecordBatch(5);
@@ -62,7 +62,7 @@ public class AccessRecordWorkerTest {
 	@Test
 	public void runTest() throws RecoverableMessageException, IOException {
 		worker.run(mockCallback, message);
-		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq("collatedAccessRecords"), Mockito.eq(".csv.gz"));
+		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
 		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, AccessRecord.class);
 		Mockito.verify(mockFile).delete();
@@ -77,7 +77,7 @@ public class AccessRecordWorkerTest {
 		} catch (AmazonClientException e) {
 			// expected
 		}
-		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq("collatedAccessRecords"), Mockito.eq(".csv.gz"));
+		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
 		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, AccessRecord.class);
 		Mockito.verify(mockFile).delete();

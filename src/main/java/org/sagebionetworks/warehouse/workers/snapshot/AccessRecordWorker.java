@@ -29,6 +29,8 @@ import com.google.inject.Inject;
  */
 public class AccessRecordWorker implements MessageDrivenRunner {
 
+	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecords";
+	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
 	private static final int BATCH_SIZE = 1000;
 	private static Logger log = LogManager.getLogger(AccessRecordWorker.class);
 	private AmazonS3Client s3Client;
@@ -57,7 +59,7 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 		File file = null;
 		ObjectCSVReader<AccessRecord> reader = null;
 		try {
-			file = streamResourceProvider.createTempFile("collatedAccessRecords", ".csv.gz");
+			file = streamResourceProvider.createTempFile(TEMP_FILE_NAME_PREFIX, TEMP_FILE_NAME_SUFFIX);
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
 			reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class);
 
