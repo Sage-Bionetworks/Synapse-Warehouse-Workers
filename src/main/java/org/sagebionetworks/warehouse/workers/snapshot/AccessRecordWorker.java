@@ -29,6 +29,8 @@ import com.google.inject.Inject;
  */
 public class AccessRecordWorker implements MessageDrivenRunner {
 
+	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecords";
+	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
 	private static final int BATCH_SIZE = 1000;
 	private static Logger log = LogManager.getLogger(AccessRecordWorker.class);
 	private AmazonS3Client s3Client;
@@ -51,21 +53,21 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 
 		// extract the bucket and key from the message
 		String xml = MessageUtil.extractMessageBodyAsString(message);
-		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, "Message");
+		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, FileSubmissionMessage.ALIAS);
 
 		// read the file as a stream
 		File file = null;
+		ObjectCSVReader<AccessRecord> reader = null;
 		try {
-			file = streamResourceProvider.createTempFile("collatedAccessRecords", ".csv.gz");
+			file = streamResourceProvider.createTempFile(TEMP_FILE_NAME_PREFIX, TEMP_FILE_NAME_SUFFIX);
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
-			ObjectCSVReader<AccessRecord> reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class);
+			reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class);
 
 			writeAccessRecord(reader, dao, BATCH_SIZE);
 
-			reader.close();
 		} finally {
-			if (file != null)
-				file.delete();
+			if (reader != null) 	reader.close();
+			if (file != null) 		file.delete();
 		}
 	}
 
@@ -78,21 +80,19 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 	 */
 	public static void writeAccessRecord(ObjectCSVReader<AccessRecord> reader,
 			AccessRecordDao dao, int batchSize) throws IOException {
-		AccessRecord record = reader.next();
-		List<AccessRecord> batch = new ArrayList<AccessRecord>();
+		AccessRecord record = null;
+		List<AccessRecord> batch = new ArrayList<AccessRecord>(batchSize);
 
-		while (record != null) {
+		while ((record = reader.next()) != null) {
 			if (!AccessRecordUtils.isValidAccessRecord(record)) {
 				log.error("Invalid Access Record: " + record.toString());
-				record = reader.next();
 				continue;
 			}
 			batch.add(record);
-			if (batch.size() == batchSize) {
+			if (batch.size() >= batchSize) {
 				dao.insert(batch);
-				batch = new ArrayList<AccessRecord>();
+				batch .clear();
 			}
-			record = reader.next();
 		}
 
 		if (batch.size() > 0) {

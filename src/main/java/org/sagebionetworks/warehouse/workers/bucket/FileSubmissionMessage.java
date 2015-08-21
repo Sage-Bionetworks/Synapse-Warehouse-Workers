@@ -2,6 +2,7 @@ package org.sagebionetworks.warehouse.workers.bucket;
 
 public class FileSubmissionMessage {
 
+	public static final String ALIAS = "Message";
 	String bucket;
 	String key;
 

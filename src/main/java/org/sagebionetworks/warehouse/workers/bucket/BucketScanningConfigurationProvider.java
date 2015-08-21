@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.collate;
+package org.sagebionetworks.warehouse.workers.bucket;
 
 import org.sagebionetworks.database.semaphore.CountingSemaphore;
 import org.sagebionetworks.warehouse.workers.SemaphoreKey;
@@ -10,38 +10,35 @@ import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedWorkerStackConfi
 import com.google.inject.Inject;
 
 /**
- * This stack runs as a singleton on a timer. The stack will find all folders
- * with a state of 'rolling' For each folder found a message will be pushed to
- * the collate worker queue.
- * 
- * @author John
+ * This worker stack will scan all buckets to find files and folders that have
+ * not been discovered by the real time process.  This worker's primary task is to back-fill
+ * all S3 objects that existed before the stack start.
  * 
  */
-public class PeriodicRollingFolderStack implements
-		WorkerStackConfigurationProvider {
-
-	WorkerStackConfiguration config;
+public class BucketScanningConfigurationProvider implements WorkerStackConfigurationProvider {
+	
+	final WorkerStackConfiguration config;
 	
 	@Inject
-	public PeriodicRollingFolderStack(CountingSemaphore semaphore, PeriodicRollingFolderMessageGeneratorWorker worker){
+	public BucketScanningConfigurationProvider(CountingSemaphore semaphore, BucketScanningWorker worker) {
+		super();
 		SemaphoreGatedWorkerStackConfiguration config = new SemaphoreGatedWorkerStackConfiguration();
 		config.setProgressingRunner(worker);
-		config.setSemaphoreLockKey(SemaphoreKey.PERIODIC_ROLLING_FOLDER_MESSAGE_GENERATOR.name());
+		config.setSemaphoreLockKey(SemaphoreKey.BUCKET_SCANNING_WORKER.name());
 		config.setSemaphoreLockTimeoutSec(30);
-		// This is singleton.
 		config.setSemaphoreMaxLockCount(1);
 		Runnable mainRunner = new SemaphoreGatedWorkerStack(semaphore, config);
 		this.config = new WorkerStackConfiguration();
 		this.config.setRunner(mainRunner);
-		this.config.setStartDelayMs(3);
-		// This worker only runs every 20 mins.
-		this.config.setPeriodMS(60*1000*20);
-		this.config.setWorkerName(PeriodicRollingFolderStack.class.getName());
+		this.config.setStartDelayMs(2987);
+		// run once per minute.
+		this.config.setPeriodMS(60*1000);
+		this.config.setWorkerName(BucketScanningConfigurationProvider.class.getName());
 	}
 
 	@Override
 	public WorkerStackConfiguration getWorkerConfiguration() {
-		return config;
+		return this.config;
 	}
 
 }

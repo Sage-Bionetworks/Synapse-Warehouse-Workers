@@ -2,6 +2,8 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -15,6 +17,7 @@ import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.sqs.model.Message;
@@ -29,9 +32,10 @@ public class AccessRecordWorkerTest {
 	String messageBody;
 	StreamResourceProvider mockStreamResourceProvider;
 	File mockFile;
-	ObjectCSVReader mockObjectCSVReader;
+	ObjectCSVReader<AccessRecord> mockObjectCSVReader;
 	List<AccessRecord> batch;
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void before() {
 		mockS3Client = Mockito.mock(AmazonS3Client.class);
@@ -49,7 +53,7 @@ public class AccessRecordWorkerTest {
 
 		mockFile = Mockito.mock(File.class);
 		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
-		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq("collatedAccessRecords"), Mockito.eq(".csv.gz"))).thenReturn(mockFile);
+		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
 		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, AccessRecord.class)).thenReturn(mockObjectCSVReader);
 
 		batch = AccessRecordTestUtil.createValidAccessRecordBatch(5);
@@ -58,15 +62,42 @@ public class AccessRecordWorkerTest {
 	@Test
 	public void runTest() throws RecoverableMessageException, IOException {
 		worker.run(mockCallback, message);
-		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq("collatedAccessRecords"), Mockito.eq(".csv.gz"));
+		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
 		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, AccessRecord.class);
+		Mockito.verify(mockFile).delete();
+		Mockito.verify(mockObjectCSVReader).close();
 	}
 
 	@Test
+	public void deleteFileTest() throws RecoverableMessageException, IOException {
+		Mockito.when(mockS3Client.getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile))).thenThrow(new AmazonClientException(""));
+		try {
+			worker.run(mockCallback, message);
+		} catch (AmazonClientException e) {
+			// expected
+		}
+		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
+		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
+		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, AccessRecord.class);
+		Mockito.verify(mockFile).delete();
+		Mockito.verify(mockObjectCSVReader, Mockito.never()).close();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void writeEmptyListTest() throws IOException {
+		Mockito.when(mockObjectCSVReader.next()).thenReturn(null);
+		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 2);
+		Mockito.verify(mockDao, Mockito.never()).insert((List<AccessRecord>) Mockito.any());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
 	public void writeInvalidRecordTest() throws IOException {
-		AccessRecord invalidRecord = AccessRecordTestUtil.createInvalidAccessRecordWithNullTimestamp();
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, null);
+		AccessRecord invalidRecord = AccessRecordTestUtil.createValidAccessRecord();
+		invalidRecord.setTimestamp(null);
+		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, invalidRecord, null);
 		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 2);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<AccessRecord>) Mockito.any());
 	}
@@ -75,9 +106,11 @@ public class AccessRecordWorkerTest {
 	public void writeLessThanBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), null);
 		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 5);
-		Mockito.verify(mockDao, Mockito.times(1)).insert((List<AccessRecord>) Mockito.any());
+		List<AccessRecord> expected = new ArrayList<AccessRecord>(Arrays.asList(batch.get(0), batch.get(1), batch.get(2), batch.get(3)));
+		Mockito.verify(mockDao, Mockito.times(1)).insert(expected);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void writeBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
@@ -85,6 +118,7 @@ public class AccessRecordWorkerTest {
 		Mockito.verify(mockDao, Mockito.times(1)).insert((List<AccessRecord>) Mockito.any());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void writeOverBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);

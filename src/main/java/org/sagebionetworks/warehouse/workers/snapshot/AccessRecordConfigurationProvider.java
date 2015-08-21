@@ -13,30 +13,30 @@ import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.google.inject.Inject;
 
-public class ProcessAccessRecordWorkerStack implements WorkerStackConfigurationProvider {
+public class AccessRecordConfigurationProvider implements WorkerStackConfigurationProvider {
 
 	final WorkerStackConfiguration config;
 
 	@Inject
-	public ProcessAccessRecordWorkerStack (CountingSemaphore semaphore,
+	public AccessRecordConfigurationProvider (CountingSemaphore semaphore,
 			AmazonSQSClient awsSQSClient, AmazonSNSClient awsSNClient,
-			ProcessAccessRecordWorker worker, ProcessAccessRecordTopicBucketInfo config) {
+			AccessRecordWorker worker, AccessRecordTopicBucketInfo config) {
 
 		MessageDrivenWorkerStackConfiguration mdwsc = new MessageDrivenWorkerStackConfiguration();
 		mdwsc.setQueueName(config.getQueueName());
 		mdwsc.setTopicNamesToSubscribe(Arrays.asList(config.getTopicName()));
 		mdwsc.setRunner(worker);
 		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(60);
-		mdwsc.setSemaphoreLockKey(SemaphoreKey.PROCESS_ACCESS_RECORD_WORKER.name());
+		mdwsc.setSemaphoreLockKey(SemaphoreKey.ACCESS_RECORD_WORKER.name());
 		mdwsc.setSemaphoreMaxLockCount(4);
 
 		Runnable runner = new MessageDrivenWorkerStack(semaphore, awsSQSClient,
 				awsSNClient, mdwsc);
 		this.config = new WorkerStackConfiguration();
 		this.config.setRunner(runner);
-		this.config.setStartDelayMs(317);
+		this.config.setStartDelayMs(311);
 		this.config.setPeriodMS(10*1000);
-		this.config.setWorkerName(AccessRecordWorkerStack.class.getName());
+		this.config.setWorkerName(AccessRecordWorker.class.getName());
 	}
 
 	@Override

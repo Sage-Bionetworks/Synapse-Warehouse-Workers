@@ -9,7 +9,7 @@ import java.util.Properties;
 
 import org.jdom.JDOMException;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
-import org.sagebionetworks.warehouse.workers.bucket.BucketScanningStack;
+import org.sagebionetworks.warehouse.workers.bucket.BucketScanningConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.db.FileState;
 
 import com.google.inject.Singleton;
@@ -80,7 +80,7 @@ public class ConfigurationImpl implements Configuration {
 	public List<Class<? extends WorkerStackConfigurationProvider>> listAllWorkerStackInterfaces() {
 		List<Class<? extends WorkerStackConfigurationProvider>> list = new ArrayList<Class<? extends WorkerStackConfigurationProvider>>();
 		// Finds all access record files that need to be processed.
-		list.add(BucketScanningStack.class);
+		list.add(BucketScanningConfigurationProvider.class);
 		return list;
 	}
 

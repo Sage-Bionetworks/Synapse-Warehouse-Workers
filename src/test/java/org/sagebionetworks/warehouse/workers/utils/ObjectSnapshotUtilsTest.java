@@ -2,7 +2,18 @@ package org.sagebionetworks.warehouse.workers.utils;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
+
 import org.junit.Test;
+import org.sagebionetworks.repo.model.EntityType;
+import org.sagebionetworks.repo.model.Node;
+import org.sagebionetworks.repo.model.Team;
+import org.sagebionetworks.repo.model.TeamMember;
+import org.sagebionetworks.repo.model.UserGroupHeader;
+import org.sagebionetworks.repo.model.UserProfile;
+import org.sagebionetworks.repo.model.audit.ObjectRecord;
+import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
+import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -13,6 +24,10 @@ public class ObjectSnapshotUtilsTest {
 	/*
 	 * isValidNodeSnapshot() tests
 	 */
+	@Test
+	public void nullNodeSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidNodeSnapshot(null));
+	}
 
 	@Test
 	public void validNodeSnapshotTest() {
@@ -73,6 +88,11 @@ public class ObjectSnapshotUtilsTest {
 	 * isValidTeamSnapshot() tests
 	 */
 	@Test
+	public void nullTeamSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidTeamSnapshot(null));
+	}
+
+	@Test
 	public void validTeamSnapshotTest() {
 		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
 		assertTrue(ObjectSnapshotUtils.isValidTeamSnapshot(snapshot));
@@ -131,6 +151,11 @@ public class ObjectSnapshotUtilsTest {
 	 * isValidTeamMemberSnapshot() tests
 	 */
 	@Test
+	public void nullTeamMemberSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidTeamMemberSnapshot(null));
+	}
+
+	@Test
 	public void validTeamMemberSnapshotTest() {
 		TeamMemberSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamMemberSnapshot();
 		assertTrue(ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot));
@@ -161,6 +186,11 @@ public class ObjectSnapshotUtilsTest {
 	 * isValidUserProfileSnapshot() tests
 	 */
 	@Test
+	public void nullUserProfileSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidUserProfileSnapshot(null));
+	}
+
+	@Test
 	public void validUserProfileSnapshotTest() {
 		UserProfileSnapshot snapshot = ObjectSnapshotTestUtil.createValidUserProfileSnapshot();
 		assertTrue(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
@@ -186,4 +216,321 @@ public class ObjectSnapshotUtilsTest {
 		snapshot.setUserName(null);
 		assertFalse(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
 	}
+
+	/*
+	 * getNodeSnapshot() tests
+	 */
+	@Test
+	public void nullTimstampGetNodeSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getNodeSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonStringGetNodeSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getNodeSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonClassNameGetNodeSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		assertNull(ObjectSnapshotUtils.getNodeSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeNameGetNodeSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(Team.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getNodeSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeGetNodeSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Team team = new Team();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(team));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(new NodeSnapshot(), snapshot);
+	}
+
+	@Test
+	public void getNodeSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		node.setId("id");
+		node.setBenefactorId("benefactorId");
+		node.setProjectId("projectId");
+		node.setParentId("parentId");
+		node.setNodeType(EntityType.file);
+		node.setCreatedOn(new Date(0));
+		node.setCreatedByPrincipalId(1L);
+		node.setModifiedOn(new Date());
+		node.setModifiedByPrincipalId(2L);
+		node.setVersionNumber(3L);
+		node.setFileHandleId("fileHandleId");
+		node.setName("name");
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(timestamp, snapshot.getTimestamp());
+		assertEquals(node.getId(), snapshot.getId());
+		assertEquals(node.getBenefactorId(), snapshot.getBenefactorId());
+		assertEquals(node.getProjectId(), snapshot.getProjectId());
+		assertEquals(node.getParentId(), snapshot.getParentId());
+		assertEquals(node.getCreatedOn(), snapshot.getCreatedOn());
+		assertEquals(node.getCreatedByPrincipalId(), snapshot.getCreatedByPrincipalId());
+		assertEquals(node.getModifiedOn(), snapshot.getModifiedOn());
+		assertEquals(node.getModifiedByPrincipalId(), snapshot.getModifiedByPrincipalId());
+		assertEquals(node.getNodeType(), snapshot.getNodeType());
+		assertEquals(node.getVersionNumber(), snapshot.getVersionNumber());
+		assertEquals(node.getFileHandleId(), node.getFileHandleId());
+		assertEquals(node.getName(), snapshot.getName());
+	}
+
+	/*
+	 * getTeamSnapshot() tests
+	 */
+	@Test
+	public void nullTimstampGetTeamSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Team team = new Team();
+		record.setJsonString(EntityFactory.createJSONStringForEntity(team));
+		record.setJsonClassName(Team.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getTeamSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonStringGetTeamSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(Team.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getTeamSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonClassNameGetTeamSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Team team = new Team();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(team));
+		assertNull(ObjectSnapshotUtils.getTeamSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeNameGetTeamSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Team team = new Team();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(team));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getTeamSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeGetTeamSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(Team.class.getSimpleName().toLowerCase());
+		TeamSnapshot snapshot = ObjectSnapshotUtils.getTeamSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(new TeamSnapshot(), snapshot);
+	}
+
+	@Test
+	public void getTeamSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Team team = new Team();
+		team.setId("id");
+		team.setCreatedOn(new Date(0));
+		team.setCreatedBy("1");
+		team.setModifiedOn(new Date());
+		team.setModifiedBy("2");
+		team.setName("name");
+		team.setCanPublicJoin(true);
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(team));
+		record.setJsonClassName(Team.class.getSimpleName().toLowerCase());
+		TeamSnapshot snapshot = ObjectSnapshotUtils.getTeamSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(timestamp, snapshot.getTimestamp());
+		assertEquals(team.getId(), snapshot.getId());
+		assertEquals(team.getCreatedOn(), snapshot.getCreatedOn());
+		assertEquals(team.getCreatedBy(), snapshot.getCreatedBy());
+		assertEquals(team.getModifiedOn(), snapshot.getModifiedOn());
+		assertEquals(team.getModifiedBy(), snapshot.getModifiedBy());
+		assertEquals(team.getName(), snapshot.getName());
+		assertEquals(team.getCanPublicJoin(), snapshot.getCanPublicJoin());
+	}
+
+	/*
+	 * getTeamMemberSnapshot() tests
+	 */
+	@Test
+	public void nullTimstampGetTeamMemberSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		TeamMember teamMember = new TeamMember();
+		record.setJsonString(EntityFactory.createJSONStringForEntity(teamMember));
+		record.setJsonClassName(TeamMember.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getTeamMemberSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonStringGetTeamMemberSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(TeamMember.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getTeamMemberSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonClassNameGetTeamMemberSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		TeamMember teamMember = new TeamMember();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(teamMember));
+		assertNull(ObjectSnapshotUtils.getTeamMemberSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeNameGetTeamMemberSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		TeamMember teamMember = new TeamMember();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(teamMember));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getTeamMemberSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeGetTeamMemberSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(TeamMember.class.getSimpleName().toLowerCase());
+		TeamMemberSnapshot snapshot = ObjectSnapshotUtils.getTeamMemberSnapshot(record);
+		assertNull(snapshot);
+	}
+
+	@Test
+	public void getTeamMemberSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserGroupHeader member = new UserGroupHeader();
+		member.setOwnerId("2");
+		TeamMember teamMember = new TeamMember();
+		teamMember.setTeamId("1");
+		teamMember.setMember(member);
+		teamMember.setIsAdmin(false);
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(teamMember));
+		record.setJsonClassName(TeamMember.class.getSimpleName().toLowerCase());
+		TeamMemberSnapshot snapshot = ObjectSnapshotUtils.getTeamMemberSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(timestamp, snapshot.getTimestamp());
+		assertEquals(teamMember.getTeamId(), snapshot.getTeamId().toString());
+		assertEquals(teamMember.getMember().getOwnerId(), snapshot.getMemberId().toString());
+		assertEquals(teamMember.getIsAdmin(), snapshot.getIsAdmin());
+	}
+
+	/*
+	 * getUserProfileSnapshot() tests
+	 */
+	@Test
+	public void nullTimstampGetUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserProfile profile = new UserProfile();
+		record.setJsonString(EntityFactory.createJSONStringForEntity(profile));
+		record.setJsonClassName(UserProfile.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getUserProfileSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonStringGetUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(UserProfile.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getUserProfileSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonClassNameGetUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserProfile profile = new UserProfile();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(profile));
+		assertNull(ObjectSnapshotUtils.getUserProfileSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeNameGetUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserProfile profile = new UserProfile();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(profile));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getUserProfileSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeGetUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(UserProfile.class.getSimpleName().toLowerCase());
+		UserProfileSnapshot snapshot = ObjectSnapshotUtils.getUserProfileSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(new UserProfileSnapshot(), snapshot);
+	}
+
+	@Test
+	public void getUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserProfile profile = new UserProfile();
+		profile.setOwnerId("1");
+		profile.setUserName("userName");
+		profile.setFirstName("firstName");
+		profile.setLastName("lastName");
+		profile.setEmail("email");
+		profile.setLocation("location");
+		profile.setCompany("company");
+		profile.setPosition("position");
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(profile));
+		record.setJsonClassName(UserProfile.class.getSimpleName().toLowerCase());
+		UserProfileSnapshot snapshot = ObjectSnapshotUtils.getUserProfileSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(timestamp, snapshot.getTimestamp());
+		assertEquals(profile.getOwnerId(), snapshot.getOwnerId());
+		assertEquals(profile.getUserName(), snapshot.getUserName());
+		assertEquals(profile.getFirstName(), snapshot.getFirstName());
+		assertEquals(profile.getLastName(), snapshot.getLastName());
+		assertEquals(profile.getEmail(), snapshot.getEmail());
+		assertEquals(profile.getLocation(), snapshot.getLocation());
+		assertEquals(profile.getCompany(), snapshot.getCompany());
+		assertEquals(profile.getPosition(), snapshot.getPosition());
+	}	
 }

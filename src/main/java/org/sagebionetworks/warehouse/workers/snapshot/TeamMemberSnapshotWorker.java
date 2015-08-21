@@ -9,12 +9,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
 import org.sagebionetworks.aws.utils.sns.MessageUtil;
-import org.sagebionetworks.repo.model.audit.AccessRecord;
+import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.ProcessedAccessRecordDao;
-import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
-import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
+import org.sagebionetworks.warehouse.workers.db.TeamMemberSnapshotDao;
+import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
+import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -25,22 +25,18 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.google.inject.Inject;
 
-/**
- * This worker reader a collated access record file from S3, processes it,
- * and write the processed data to PROCESSED_ACCESS_RECORD table.
- */
-public class ProcessAccessRecordWorker implements MessageDrivenRunner {
+public class TeamMemberSnapshotWorker implements MessageDrivenRunner {
 
-	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecords";
+	public static final String TEMP_FILE_NAME_PREFIX = "collatedTeamMemberSnapshot";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
 	private static final int BATCH_SIZE = 1000;
-	private static Logger log = LogManager.getLogger(ProcessAccessRecordWorker.class);
+	private static Logger log = LogManager.getLogger(TeamMemberSnapshotWorker.class);
 	private AmazonS3Client s3Client;
-	private ProcessedAccessRecordDao dao;
+	private TeamMemberSnapshotDao dao;
 	private StreamResourceProvider streamResourceProvider;
 
 	@Inject
-	public ProcessAccessRecordWorker(AmazonS3Client s3Client, ProcessedAccessRecordDao dao,
+	public TeamMemberSnapshotWorker(AmazonS3Client s3Client, TeamMemberSnapshotDao dao,
 			StreamResourceProvider streamResourceProvider) {
 		super();
 		this.s3Client = s3Client;
@@ -59,13 +55,13 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 
 		// read the file as a stream
 		File file = null;
-		ObjectCSVReader<AccessRecord> reader = null;
+		ObjectCSVReader<ObjectRecord> reader = null;
 		try {
 			file = streamResourceProvider.createTempFile(TEMP_FILE_NAME_PREFIX, TEMP_FILE_NAME_SUFFIX);
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
-			reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class);
+			reader = streamResourceProvider.createObjectCSVReader(file, ObjectRecord.class);
 
-			writeProcessedAcessRecord(reader, dao, BATCH_SIZE);
+			writeTeamMemberSnapshot(reader, dao, BATCH_SIZE);
 
 		} finally {
 			if (reader != null) 	reader.close();
@@ -74,28 +70,27 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 	}
 
 	/**
-	 * Read access records from reader, process them, and write the processed
-	 * access records to PROCESSED_ACCESS_RECORD table using dao
+	 * Read TeamMember snapshot records from reader, and write them to TEAM_MEMBER_SNAPSHOT table using dao
 	 * 
 	 * @param reader
 	 * @param dao
-	 * @param batchSize
 	 * @throws IOException
 	 */
-	public static void writeProcessedAcessRecord(ObjectCSVReader<AccessRecord> reader,
-			ProcessedAccessRecordDao dao, int batchSize) throws IOException {
-		AccessRecord record = null;
-		List<ProcessedAccessRecord> batch = new ArrayList<ProcessedAccessRecord>(batchSize);
+	public static void writeTeamMemberSnapshot(ObjectCSVReader<ObjectRecord> reader,
+			TeamMemberSnapshotDao dao, int batchSize) throws IOException {
+		ObjectRecord record = null;
+		List<TeamMemberSnapshot> batch = new ArrayList<TeamMemberSnapshot>(batchSize);
 
 		while ((record = reader.next()) != null) {
-			if (!AccessRecordUtils.isValidAccessRecord(record)) {
-				log.error("Invalid Access Record: " + record.toString());
+			TeamMemberSnapshot snapshot = ObjectSnapshotUtils.getTeamMemberSnapshot(record);
+			if (!ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot)) {
+				log.error("Invalid Team Snapshot from Record: " + record.toString());
 				continue;
 			}
-			batch.add(AccessRecordUtils.processAccessRecord(record));
+			batch.add(snapshot);
 			if (batch.size() >= batchSize) {
 				dao.insert(batch);
-				batch.clear();
+				batch .clear();
 			}
 		}
 
@@ -103,5 +98,4 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 			dao.insert(batch);
 		}
 	}
-
 }

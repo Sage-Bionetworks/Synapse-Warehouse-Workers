@@ -44,14 +44,14 @@ public interface StreamResourceProvider {
 	 * @param file
 	 * @return
 	 */
-	public ObjectCSVReader createObjectCSVReader(File file, Class clazz);
+	public <T> ObjectCSVReader<T> createObjectCSVReader(File file, Class<T> clazz);
 	
 	/**
 	 * Create a ObjectCSVWritter for the given file.
 	 * @param file
 	 * @return
 	 */
-	public ObjectCSVWriter createObjectCSVWriter(File file, Class clazz);
+	public <T> ObjectCSVWriter<T> createObjectCSVWriter(File file, Class<T> clazz);
 	
 	/**
 	 * Collate the passed input readers into the passed writer.

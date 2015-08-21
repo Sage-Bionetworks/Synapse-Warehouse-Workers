@@ -80,9 +80,9 @@ public class StreamResourceProviderImpl implements StreamResourceProvider {
 	 * @see org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider#createObjectCSVReader(java.io.File, java.lang.Class)
 	 */
 	@Override
-	public ObjectCSVReader createObjectCSVReader(File file, Class clazz) {
+	public <T> ObjectCSVReader<T> createObjectCSVReader(File file, Class<T> clazz) {
 		try {
-			return new ObjectCSVReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), clazz);
+			return new ObjectCSVReader<T>(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), clazz);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -93,9 +93,9 @@ public class StreamResourceProviderImpl implements StreamResourceProvider {
 	 * @see org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider#createObjectCSVWriter(java.io.File, java.lang.Class)
 	 */
 	@Override
-	public ObjectCSVWriter createObjectCSVWriter(File file, Class clazz) {
+	public <T> ObjectCSVWriter<T> createObjectCSVWriter(File file, Class<T> clazz) {
 		try {
-			return new ObjectCSVWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(file)), "UTF-8"), clazz);
+			return new ObjectCSVWriter<T>(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(file)), "UTF-8"), clazz);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

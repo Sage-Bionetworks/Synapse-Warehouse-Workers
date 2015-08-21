@@ -15,12 +15,12 @@ import com.google.inject.Inject;
  * Setup for a message driven worker stack that will process folder collation messages.
  *
  */
-public class CollateFolderStack implements WorkerStackConfigurationProvider {
+public class CollateFolderConfigurationProvider implements WorkerStackConfigurationProvider {
 	
 	WorkerStackConfiguration config;
 
 	@Inject
-	public CollateFolderStack(CountingSemaphore semaphore, AmazonSQSClient awsSQSClient, AmazonSNSClient awsSNSClient, CollateMessageQueue queue, FolderLockingWorker worker){
+	public CollateFolderConfigurationProvider(CountingSemaphore semaphore, AmazonSQSClient awsSQSClient, AmazonSNSClient awsSNSClient, CollateMessageQueue queue, FolderLockingWorker worker){
 		MessageDrivenWorkerStackConfiguration messageConfig = new MessageDrivenWorkerStackConfiguration();
 		messageConfig.setQueueName(queue.getMessageQueue().getQueueName());
 		messageConfig.setRunner(worker);
@@ -33,7 +33,7 @@ public class CollateFolderStack implements WorkerStackConfigurationProvider {
 		config.setPeriodMS(1000*2);
 		config.setRunner(stack);
 		config.setStartDelayMs(1333);
-		config.setWorkerName(CollateFolderStack.class.getName());
+		config.setWorkerName(CollateFolderConfigurationProvider.class.getName());
 	}
 	
 	@Override
