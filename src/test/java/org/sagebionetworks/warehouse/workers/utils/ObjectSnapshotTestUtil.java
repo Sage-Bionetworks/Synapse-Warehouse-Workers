@@ -8,6 +8,8 @@ import java.util.Random;
 import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.Team;
+import org.sagebionetworks.repo.model.TeamMember;
+import org.sagebionetworks.repo.model.UserGroupHeader;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
@@ -17,7 +19,7 @@ import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
 
 public class ObjectSnapshotTestUtil {
-	private static Random random = new Random();
+	private static Random random = new Random(1);
 
 	/**
 	 * 
@@ -141,5 +143,38 @@ public class ObjectSnapshotTestUtil {
 		record.setJsonClassName(Team.class.getSimpleName().toLowerCase());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(team));
 		return record;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws JSONObjectAdapterException
+	 */
+	public static ObjectRecord createValidTeamMemberObjectRecord() throws JSONObjectAdapterException {
+		TeamMember teamMember = new TeamMember();
+		UserGroupHeader member = new UserGroupHeader();
+		member.setOwnerId("" + random.nextLong());
+		teamMember.setMember(member);
+		teamMember.setTeamId("" + random.nextLong());
+		teamMember.setIsAdmin(false);
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(TeamMember.class.getSimpleName().toLowerCase());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(teamMember));
+		return record;
+	}
+
+	/**
+	 * 
+	 * @param size
+	 * @return
+	 * @throws JSONObjectAdapterException
+	 */
+	public static List<ObjectRecord> createValidTeamMemberSnapshotBatch(int size) throws JSONObjectAdapterException {
+		List<ObjectRecord> batch = new ArrayList<ObjectRecord>();
+		for (int i = 0; i < size; i++) {
+			batch.add(createValidTeamMemberObjectRecord());
+		}
+		return batch;
 	}
 }
