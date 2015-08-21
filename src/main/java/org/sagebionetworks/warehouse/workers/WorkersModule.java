@@ -25,9 +25,11 @@ import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollatorImpl;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
+import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.AclRecordSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.NodeSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.ProcessAccessRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.ProcessAccessRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotTopicBucketInfo;
@@ -158,6 +160,8 @@ public class WorkersModule extends AbstractModule {
 		list.add(BucketScanningConfigurationProvider.class);
 		list.add(PeriodicRollingFolderConfigurationProvider.class);
 		list.add(CollateFolderConfigurationProvider.class);
+		list.add(AccessRecordConfigurationProvider.class);
+		list.add(ProcessAccessRecordConfigurationProvider.class);
 		return list;
 	}
 	
