@@ -8,6 +8,8 @@ import java.sql.Timestamp;
  */
 public class FolderState {
 	
+	public static final String DTO_ALIAS = "FolderState";
+	
 	public enum State {
 		// A rolling folder contains non-collated files.
 		ROLLING,

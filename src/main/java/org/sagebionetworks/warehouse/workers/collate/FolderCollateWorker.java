@@ -19,7 +19,6 @@ import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
-import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
 import org.sagebionetworks.warehouse.workers.db.FolderState;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
@@ -60,7 +59,7 @@ public class FolderCollateWorker implements LockedFolderRunner {
 
 	@Override
 	public void runWhileHoldingLock(ProgressCallback<Void> progressCallback,
-			FolderDto folder) {
+			FolderState folder) {
 		// walk all files in this folder
 		BucketDao bucketDao = this.bucketDaoProvider.createBucketDao(folder.getBucket());
 		Iterator<String> keyIterator = bucketDao.keyIterator(folder.getPath());

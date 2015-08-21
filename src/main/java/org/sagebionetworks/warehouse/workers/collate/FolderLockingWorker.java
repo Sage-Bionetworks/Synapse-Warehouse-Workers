@@ -1,7 +1,7 @@
 package org.sagebionetworks.warehouse.workers.collate;
 
 import org.sagebionetworks.warehouse.workers.SemaphoreGatedRunnerProvider;
-import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
+import org.sagebionetworks.warehouse.workers.db.FolderState;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -38,8 +38,8 @@ public class FolderLockingWorker implements MessageDrivenRunner {
 			final Message message) throws RecoverableMessageException,
 			Exception {
 		// Read the folder data from the message
-		final FolderDto folder = XMLUtils.fromXML(message.getBody(),
-				FolderDto.class, FolderDto.FOLDER_DTO_ALIAS);
+		final FolderState folder = XMLUtils.fromXML(message.getBody(),
+				FolderState.class, FolderState.DTO_ALIAS);
 		// Lock on the folder and key combo to ensure only one worker collates a
 		// folder at a time.
 		final String lockKey = folder.getBucket() + "-" + folder.getPath();

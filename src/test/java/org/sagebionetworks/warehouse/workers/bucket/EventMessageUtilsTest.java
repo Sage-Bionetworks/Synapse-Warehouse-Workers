@@ -15,10 +15,12 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 public class EventMessageUtilsTest {
 	
 	private String sampleEventJson;
+	private String sampleEventMinimum;
 	
 	@Before
 	public void before(){
 		sampleEventJson = ClasspathUtils.loadStringFromClassPath("SampleS3Event.json");
+		sampleEventMinimum = ClasspathUtils.loadStringFromClassPath("SampleS3EventMinimum.json");
 	}
 	
 	@Test
@@ -39,6 +41,24 @@ public class EventMessageUtilsTest {
 		assertNotNull(summary);
 		assertEquals("devhill.access.record.sagebase.org", summary.getBucketName());
 		assertEquals("keytwo.csv", summary.getKey());
+	}
+	
+	/**
+	 * Amazon does not provide all of the same data for all messages pushed to the queue.  This test is for the case with the minimum amount of observed data.
+	 */
+	@Test
+	public void testParseEventJsonMinium(){
+		List<S3ObjectSummary> list = EventMessageUtils.parseEventJson(sampleEventMinimum);
+		assertNotNull(list);
+		assertEquals(1, list.size());
+		S3ObjectSummary summary = list.get(0);
+		assertNotNull(summary);
+		assertEquals("devhill.access.record.sagebase.org", summary.getBucketName());
+		assertEquals("AttributeCounts.csv", summary.getKey());
+		assertEquals(null, summary.getETag());
+		Date expectedDate = ISODateTimeFormat.dateTime().parseDateTime("2015-07-10T03:47:29.243Z").toDate();
+		assertEquals(expectedDate, summary.getLastModified());
+		assertEquals(5277L, summary.getSize());
 	}
 
 }

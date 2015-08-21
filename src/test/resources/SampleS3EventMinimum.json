@@ -1,0 +1,12 @@
+{
+  "Type" : "Notification",
+  "MessageId" : "0ec8be99-0678-5624-8e91-f08044e9b66e",
+  "TopicArn" : "arn:aws:sns:us-east-1:449435941126:devhill-all-bucket-events-topic",
+  "Subject" : "Amazon S3 Notification",
+  "Message" : "{\"Records\":[{\"eventVersion\":\"2.0\",\"eventSource\":\"aws:s3\",\"awsRegion\":\"us-east-1\",\"eventTime\":\"2015-07-10T03:47:29.243Z\",\"eventName\":\"ObjectCreated:Put\",\"userIdentity\":{\"principalId\":\"AWS:AIDAJD3LY7B3ZOCHGTVGU\"},\"requestParameters\":{\"sourceIPAddress\":\"10.253.215.31\"},\"responseElements\":{\"x-amz-request-id\":\"4C936BBFF7313AAD\",\"x-amz-id-2\":\"P0RE42OzCUYPPZmzn7qdMqP8pLg+3VpeWMB3GmbmAM3eO7U0A4KHVi9Tbr259Xxh\"},\"s3\":{\"s3SchemaVersion\":\"1.0\",\"configurationId\":\"realtimeBucketListenerConfig\",\"bucket\":{\"name\":\"devhill.access.record.sagebase.org\",\"ownerIdentity\":{\"principalId\":\"A1TP8FASJS8TUH\"},\"arn\":\"arn:aws:s3:::devhill.access.record.sagebase.org\"},\"object\":{\"key\":\"AttributeCounts.csv\",\"size\":5277}}}]}",
+  "Timestamp" : "2015-07-10T03:47:29.283Z",
+  "SignatureVersion" : "1",
+  "Signature" : "kKrIOG4PsGZZLX3sIwlc/so2YFHbZpDAsvN38QL0tygvk4QiByg3j9IyDYtD+ELxKLVt++Q73h4S6OhYnGJ7bljUn7/2QycDml6vQ5/ZjNWKfmKCZcFYhH7dhsqKdoeCjOjdx5bUbK05cr4mt4eX3r7kl9y3SqxWfx79tuebxgEiZaKjm34ntzQaDGpyJz2xXcM5MVcjHmZsxbMsJkYPX3Jt2zOPbr/gozBiMT81phBLghhGajtwdpL6vaAVwqFlCvuV3qXzaFPBdiBDlo0C7h/y01Li+4OjwNrd9/rFKh1bO78LBGdjMmxEYfJGgA+MR1iK2a7YMraATj0TNvzI2w==",
+  "SigningCertURL" : "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-d6d679a1d18e95c2f9ffcf11f4f9e198.pem",
+  "UnsubscribeURL" : "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:449435941126:devhill-all-bucket-events-topic:5d472b05-684c-4713-b152-2caa7b12dfb9"
+}
