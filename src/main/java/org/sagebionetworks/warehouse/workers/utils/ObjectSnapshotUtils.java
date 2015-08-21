@@ -3,6 +3,7 @@ package org.sagebionetworks.warehouse.workers.utils;
 import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
+import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
@@ -166,6 +167,38 @@ public class ObjectSnapshotUtils {
 			snapshot.setTeamId(Long.parseLong(teamMember.getTeamId()));
 			snapshot.setMemberId(Long.parseLong(teamMember.getMember().getOwnerId()));
 			snapshot.setIsAdmin(teamMember.getIsAdmin());
+			return snapshot;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Extract user profile's information and build UserProfileSnapshot from the captured record
+	 * 
+	 * @param record
+	 * @return
+	 */
+	public static UserProfileSnapshot getUserProfileSnapshot(ObjectRecord record) {
+		if (record == null || 
+				record.getTimestamp() == null ||
+				record.getJsonString() == null ||
+				record.getJsonClassName() == null || 
+				!record.getJsonClassName().equals(UserProfile.class.getSimpleName().toLowerCase())) {
+			return null;
+		}
+		try {
+			UserProfile profile = EntityFactory.createEntityFromJSONString(record.getJsonString(), UserProfile.class);
+			UserProfileSnapshot snapshot = new UserProfileSnapshot();
+			snapshot.setTimestamp(record.getTimestamp());
+			snapshot.setOwnerId(profile.getOwnerId());
+			snapshot.setUserName(profile.getUserName());
+			snapshot.setFirstName(profile.getFirstName());
+			snapshot.setLastName(profile.getLastName());
+			snapshot.setEmail(profile.getEmail());
+			snapshot.setLocation(profile.getLocation());
+			snapshot.setCompany(profile.getCompany());
+			snapshot.setPosition(profile.getPosition());
 			return snapshot;
 		} catch (Exception e) {
 			return null;

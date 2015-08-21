@@ -10,6 +10,7 @@ import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
 import org.sagebionetworks.repo.model.UserGroupHeader;
+import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
@@ -452,4 +453,84 @@ public class ObjectSnapshotUtilsTest {
 		assertEquals(teamMember.getMember().getOwnerId(), snapshot.getMemberId().toString());
 		assertEquals(teamMember.getIsAdmin(), snapshot.getIsAdmin());
 	}
+
+	/*
+	 * getUserProfileSnapshot() tests
+	 */
+	@Test
+	public void nullTimstampGetUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserProfile profile = new UserProfile();
+		record.setJsonString(EntityFactory.createJSONStringForEntity(profile));
+		record.setJsonClassName(UserProfile.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getUserProfileSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonStringGetUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(UserProfile.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getUserProfileSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonClassNameGetUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserProfile profile = new UserProfile();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(profile));
+		assertNull(ObjectSnapshotUtils.getUserProfileSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeNameGetUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserProfile profile = new UserProfile();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(profile));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getUserProfileSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeGetUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(UserProfile.class.getSimpleName().toLowerCase());
+		UserProfileSnapshot snapshot = ObjectSnapshotUtils.getUserProfileSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(new UserProfileSnapshot(), snapshot);
+	}
+
+	@Test
+	public void getUserProfileSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserProfile profile = new UserProfile();
+		profile.setOwnerId("1");
+		profile.setUserName("userName");
+		profile.setFirstName("firstName");
+		profile.setLastName("lastName");
+		profile.setEmail("email");
+		profile.setLocation("location");
+		profile.setCompany("company");
+		profile.setPosition("position");
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(profile));
+		record.setJsonClassName(UserProfile.class.getSimpleName().toLowerCase());
+		UserProfileSnapshot snapshot = ObjectSnapshotUtils.getUserProfileSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(timestamp, snapshot.getTimestamp());
+		assertEquals(profile.getOwnerId(), snapshot.getOwnerId());
+		assertEquals(profile.getUserName(), snapshot.getUserName());
+		assertEquals(profile.getFirstName(), snapshot.getFirstName());
+		assertEquals(profile.getLastName(), snapshot.getLastName());
+		assertEquals(profile.getEmail(), snapshot.getEmail());
+		assertEquals(profile.getLocation(), snapshot.getLocation());
+		assertEquals(profile.getCompany(), snapshot.getCompany());
+		assertEquals(profile.getPosition(), snapshot.getPosition());
+	}	
 }
