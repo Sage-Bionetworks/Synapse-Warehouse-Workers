@@ -11,6 +11,8 @@ import static org.mockito.Mockito.*;
 import org.sagebionetworks.warehouse.workers.SemaphoreGatedRunnerProvider;
 import org.sagebionetworks.warehouse.workers.collate.FolderLockingWorker;
 import org.sagebionetworks.warehouse.workers.collate.LockedFolderRunner;
+import org.sagebionetworks.warehouse.workers.db.FolderState;
+import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 import org.sagebionetworks.workers.util.progress.ProgressingRunner;
 import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedRunner;
@@ -25,7 +27,7 @@ public class FolderLockingWorkerTest {
 	ProgressCallback<Message> mockProgressCallback;
 	SemaphoreGatedRunner mockSemaphoreGatedRunner;
 	Message mockMessage;
-	FolderDto folderDto;
+	FolderState folderDto;
 	
 	FolderLockingWorker worker;
 	
@@ -37,11 +39,11 @@ public class FolderLockingWorkerTest {
 		mockProgressCallback = Mockito.mock(ProgressCallback.class);
 		mockMessage = Mockito.mock(Message.class);
 		
-		folderDto = new FolderDto();
+		folderDto = new FolderState();
 		folderDto.setBucket("someBcket");
 		folderDto.setPath("somePath");
 		// The FolderDto will be written to the message as XML.
-		when(mockMessage.getBody()).thenReturn(FolderDto.toXML(folderDto));
+		when(mockMessage.getBody()).thenReturn(XMLUtils.toXML(folderDto, FolderState.DTO_ALIAS));
 		when(mockSemaphoreProvider.createRunner(any(SemaphoreGatedRunnerConfiguration.class))).thenReturn(mockSemaphoreGatedRunner);
 		
 		worker = new FolderLockingWorker(mockSemaphoreProvider, mockCollateWorker);
