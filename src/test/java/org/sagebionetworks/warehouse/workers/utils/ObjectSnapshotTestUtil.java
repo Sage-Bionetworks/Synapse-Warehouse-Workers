@@ -10,6 +10,7 @@ import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
 import org.sagebionetworks.repo.model.UserGroupHeader;
+import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
@@ -174,6 +175,36 @@ public class ObjectSnapshotTestUtil {
 		List<ObjectRecord> batch = new ArrayList<ObjectRecord>();
 		for (int i = 0; i < size; i++) {
 			batch.add(createValidTeamMemberObjectRecord());
+		}
+		return batch;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws JSONObjectAdapterException
+	 */
+	public static ObjectRecord createValidUserProfileObjectRecord() throws JSONObjectAdapterException {
+		UserProfile profile = new UserProfile();
+		profile.setOwnerId("" + random.nextLong());
+		profile.setUserName("userName");
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(UserProfile.class.getSimpleName().toLowerCase());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(profile));
+		return record;
+	}
+
+	/**
+	 * 
+	 * @param size
+	 * @return
+	 * @throws JSONObjectAdapterException
+	 */
+	public static List<ObjectRecord> createValidUserProfileSnapshotBatch(int size) throws JSONObjectAdapterException {
+		List<ObjectRecord> batch = new ArrayList<ObjectRecord>();
+		for (int i = 0; i < size; i++) {
+			batch.add(createValidUserProfileObjectRecord());
 		}
 		return batch;
 	}
