@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import org.sagebionetworks.repo.model.ACCESS_TYPE;
 import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.ObjectType;
@@ -18,7 +17,6 @@ import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
-import org.sagebionetworks.warehouse.workers.model.ResourceAccessSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
@@ -222,20 +220,6 @@ public class ObjectSnapshotTestUtil {
 		snapshot.setTimestamp(System.currentTimeMillis());
 		snapshot.setOwnerId(random.nextLong());
 		snapshot.setOwnerType(ObjectType.ENTITY);
-		return snapshot;
-	}
-
-	/**
-	 * 
-	 * @return a unique valid ResourceAccessSnapshot
-	 */
-	public static ResourceAccessSnapshot createValidResourceAccessSnapshot() {
-		ResourceAccessSnapshot snapshot = new ResourceAccessSnapshot();
-		snapshot.setTimestamp(System.currentTimeMillis());
-		snapshot.setOwnerId(random.nextLong());
-		snapshot.setOwnerType(ObjectType.ENTITY);
-		snapshot.setAccessType(ACCESS_TYPE.READ);
-		snapshot.setPrincipalId(random.nextLong());
 		return snapshot;
 	}
 }

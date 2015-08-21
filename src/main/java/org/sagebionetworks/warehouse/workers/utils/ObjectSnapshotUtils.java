@@ -9,7 +9,6 @@ import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
-import org.sagebionetworks.warehouse.workers.model.ResourceAccessSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
@@ -91,22 +90,6 @@ public class ObjectSnapshotUtils {
 		if (snapshot.getTimestamp() 	== null) return false;
 		if (snapshot.getOwnerId() 		== null) return false;
 		if (snapshot.getOwnerType() 	== null) return false;
-		return true;
-	}
-
-	/**
-	 * 
-	 * @param snapshot
-	 * @return true is the snapshot contains not null values for required fields
-	 *         false otherwise.
-	 */
-	public static boolean isValidResourceAccessSnapshot(ResourceAccessSnapshot snapshot) {
-		if (snapshot 					== null) return false;
-		if (snapshot.getTimestamp() 	== null) return false;
-		if (snapshot.getOwnerId() 		== null) return false;
-		if (snapshot.getOwnerType() 	== null) return false;
-		if (snapshot.getPrincipalId() 	== null) return false;
-		if (snapshot.getAccessType() 	== null) return false;
 		return true;
 	}
 
@@ -235,5 +218,10 @@ public class ObjectSnapshotUtils {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+
+	public static AclSnapshot getAclSnapshot(ObjectRecord record) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

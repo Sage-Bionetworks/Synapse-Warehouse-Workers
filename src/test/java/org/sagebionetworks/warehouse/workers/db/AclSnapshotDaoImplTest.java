@@ -30,7 +30,6 @@ public class AclSnapshotDaoImplTest {
 	public void test() {
 		AclSnapshot snapshot1 = ObjectSnapshotTestUtil.createValidAclSnapshot();
 		AclSnapshot snapshot2 = ObjectSnapshotTestUtil.createValidAclSnapshot();
-		System.out.println(snapshot1.toString());
 
 		dao.insert(Arrays.asList(snapshot1, snapshot2));
 		assertEquals(snapshot1, dao.get(snapshot1.getTimestamp(), snapshot1.getOwnerId(), snapshot1.getOwnerType()));
