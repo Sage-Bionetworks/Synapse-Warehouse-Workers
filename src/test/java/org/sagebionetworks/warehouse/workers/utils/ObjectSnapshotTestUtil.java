@@ -5,8 +5,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import org.sagebionetworks.repo.model.ACCESS_TYPE;
 import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.repo.model.Node;
+import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
 import org.sagebionetworks.repo.model.UserGroupHeader;
@@ -14,7 +16,9 @@ import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
+import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
+import org.sagebionetworks.warehouse.workers.model.ResourceAccessSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
@@ -207,5 +211,31 @@ public class ObjectSnapshotTestUtil {
 			batch.add(createValidUserProfileObjectRecord());
 		}
 		return batch;
+	}
+
+	/**
+	 * 
+	 * @return a unique valid AclSnapshot
+	 */
+	public static AclSnapshot createValidAclSnapshot() {
+		AclSnapshot snapshot = new AclSnapshot();
+		snapshot.setTimestamp(System.currentTimeMillis());
+		snapshot.setOwnerId(random.nextLong());
+		snapshot.setOwnerType(ObjectType.ENTITY);
+		return snapshot;
+	}
+
+	/**
+	 * 
+	 * @return a unique valid ResourceAccessSnapshot
+	 */
+	public static ResourceAccessSnapshot createValidResourceAccessSnapshot() {
+		ResourceAccessSnapshot snapshot = new ResourceAccessSnapshot();
+		snapshot.setTimestamp(System.currentTimeMillis());
+		snapshot.setOwnerId(random.nextLong());
+		snapshot.setOwnerType(ObjectType.ENTITY);
+		snapshot.setAccessType(ACCESS_TYPE.READ);
+		snapshot.setPrincipalId(random.nextLong());
+		return snapshot;
 	}
 }

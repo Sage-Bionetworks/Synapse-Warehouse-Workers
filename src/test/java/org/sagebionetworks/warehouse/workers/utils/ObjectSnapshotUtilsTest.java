@@ -14,7 +14,9 @@ import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
+import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
+import org.sagebionetworks.warehouse.workers.model.ResourceAccessSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
@@ -215,6 +217,90 @@ public class ObjectSnapshotUtilsTest {
 		UserProfileSnapshot snapshot = ObjectSnapshotTestUtil.createValidUserProfileSnapshot();
 		snapshot.setUserName(null);
 		assertFalse(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
+	}
+
+	/*
+	 * isValidAclSnapshot() tests
+	 */
+	@Test
+	public void nullAclSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidAclSnapshot(null));
+	}
+
+	@Test
+	public void validAclSnapshotTest() {
+		AclSnapshot snapshot = ObjectSnapshotTestUtil.createValidAclSnapshot();
+		assertTrue(ObjectSnapshotUtils.isValidAclSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidAclSnapshotWithNullTimestampTest() {
+		AclSnapshot snapshot = ObjectSnapshotTestUtil.createValidAclSnapshot();
+		snapshot.setTimestamp(null);
+		assertFalse(ObjectSnapshotUtils.isValidAclSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidAclSnapshotWithNullOwnerIdTest() {
+		AclSnapshot snapshot = ObjectSnapshotTestUtil.createValidAclSnapshot();
+		snapshot.setOwnerId(null);
+		assertFalse(ObjectSnapshotUtils.isValidAclSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidAclSnapshotWithNullOwnerTypeTest() {
+		AclSnapshot snapshot = ObjectSnapshotTestUtil.createValidAclSnapshot();
+		snapshot.setOwnerType(null);
+		assertFalse(ObjectSnapshotUtils.isValidAclSnapshot(snapshot));
+	}
+
+	/*
+	 * isValidResourceSnapshot() tests
+	 */
+	@Test
+	public void nullResourceAccessSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidResourceAccessSnapshot(null));
+	}
+
+	@Test
+	public void validResourceAccessSnapshotTest() {
+		ResourceAccessSnapshot snapshot = ObjectSnapshotTestUtil.createValidResourceAccessSnapshot();
+		assertTrue(ObjectSnapshotUtils.isValidResourceAccessSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidResourceAccessSnapshotWithNullTimestampTest() {
+		ResourceAccessSnapshot snapshot = ObjectSnapshotTestUtil.createValidResourceAccessSnapshot();
+		snapshot.setTimestamp(null);
+		assertFalse(ObjectSnapshotUtils.isValidResourceAccessSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidResourceAccessSnapshotWithNullOwnerIdTest() {
+		ResourceAccessSnapshot snapshot = ObjectSnapshotTestUtil.createValidResourceAccessSnapshot();
+		snapshot.setOwnerId(null);
+		assertFalse(ObjectSnapshotUtils.isValidResourceAccessSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidResourceAccessSnapshotWithNullOwnerTypeTest() {
+		ResourceAccessSnapshot snapshot = ObjectSnapshotTestUtil.createValidResourceAccessSnapshot();
+		snapshot.setOwnerType(null);
+		assertFalse(ObjectSnapshotUtils.isValidResourceAccessSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidResourceAccessSnapshotWithNullPrincipalIdTest() {
+		ResourceAccessSnapshot snapshot = ObjectSnapshotTestUtil.createValidResourceAccessSnapshot();
+		snapshot.setPrincipalId(null);
+		assertFalse(ObjectSnapshotUtils.isValidResourceAccessSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidResourceAccessSnapshotWithNullAccessTypeTest() {
+		ResourceAccessSnapshot snapshot = ObjectSnapshotTestUtil.createValidResourceAccessSnapshot();
+		snapshot.setAccessType(null);
+		assertFalse(ObjectSnapshotUtils.isValidResourceAccessSnapshot(snapshot));
 	}
 
 	/*
