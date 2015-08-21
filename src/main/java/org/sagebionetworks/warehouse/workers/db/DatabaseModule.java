@@ -39,6 +39,8 @@ public class DatabaseModule extends AbstractModule {
 		bind(TeamSnapshotDao.class).to(TeamSnapshotDaoImpl.class);
 		bind(TeamMemberSnapshotDao.class).to(TeamMemberSnapshotDaoImpl.class);
 		bind(UserProfileSnapshotDao.class).to(UserProfileSnapshotDaoImpl.class);
+		bind(AclSnapshotDao.class).to(AclSnapshotDaoImpl.class);
+		bind(ResourceAccessSnapshotDao.class).to(ResourceAccessSnapshotDaoImpl.class);
 	}
 	
 	/**
