@@ -38,16 +38,16 @@ public class ConfigurationImpl implements Configuration {
 		}finally{
 			in.close();
 		}
-		// Now override the configuration with the system properties.
-		for(String key: System.getProperties().stringPropertyNames()){
-			properties.put(key, System.getProperties().get(key));
-		}
 		// replace the properties from settings
 		Properties settings = SettingsLoader.loadSettingsFile();
 		if(settings != null){
 			for(String key: settings.stringPropertyNames()){
 				properties.put(key, settings.get(key));
 			}
+		}
+		// Now override the configuration with the system properties.
+		for(String key: System.getProperties().stringPropertyNames()){
+			properties.put(key, System.getProperties().get(key));
 		}
 		// Link and replace references in values.
 		properties = PropertyLinker.linkAndReplace(properties);
