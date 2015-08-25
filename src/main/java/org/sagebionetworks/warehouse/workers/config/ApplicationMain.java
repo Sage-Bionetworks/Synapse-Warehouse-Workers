@@ -6,15 +6,10 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.sagebionetworks.warehouse.workers.AwsModule;
 import org.sagebionetworks.warehouse.workers.WorkerStack;
 import org.sagebionetworks.warehouse.workers.WorkerStackList;
-import org.sagebionetworks.warehouse.workers.WorkersModule;
 import org.sagebionetworks.warehouse.workers.db.ConnectionPool;
-import org.sagebionetworks.warehouse.workers.db.DatabaseModule;
-import org.sagebionetworks.warehouse.workers.servlet.WorkersServletModule;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
