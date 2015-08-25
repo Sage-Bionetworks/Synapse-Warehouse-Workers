@@ -14,6 +14,7 @@ import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.ProcessedAccessRecordDao;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
+import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -56,7 +57,7 @@ public class ProcessAccessRecordWorkerTest {
 		mockFile = Mockito.mock(File.class);
 		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
 		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(ProcessAccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(ProcessAccessRecordWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
-		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, AccessRecord.class)).thenReturn(mockObjectCSVReader);
+		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
 
 		batch = AccessRecordTestUtil.createValidAccessRecordBatch(5);
 	}
@@ -66,7 +67,7 @@ public class ProcessAccessRecordWorkerTest {
 		worker.run(mockCallback, message);
 		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(ProcessAccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(ProcessAccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
-		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, AccessRecord.class);
+		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader).close();
 	}
@@ -81,7 +82,7 @@ public class ProcessAccessRecordWorkerTest {
 		}
 		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(ProcessAccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(ProcessAccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
-		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, AccessRecord.class);
+		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader, Mockito.never()).close();
 	}

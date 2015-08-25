@@ -33,7 +33,7 @@ public class CollateFolderConfigurationProvider implements WorkerStackConfigurat
 		config.setPeriodMS(1000*2);
 		config.setRunner(stack);
 		config.setStartDelayMs(1333);
-		config.setWorkerName(CollateFolderConfigurationProvider.class.getName());
+		config.setWorkerName(FolderLockingWorker.class.getName());
 	}
 	
 	@Override
