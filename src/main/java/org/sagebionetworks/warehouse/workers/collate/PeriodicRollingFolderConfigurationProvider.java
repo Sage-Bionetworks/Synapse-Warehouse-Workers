@@ -36,7 +36,7 @@ public class PeriodicRollingFolderConfigurationProvider implements
 		this.config.setStartDelayMs(3);
 		// This worker only runs every 20 mins.
 		this.config.setPeriodMS(60*1000*20);
-		this.config.setWorkerName(PeriodicRollingFolderConfigurationProvider.class.getName());
+		this.config.setWorkerName(PeriodicRollingFolderMessageGeneratorWorker.class.getName());
 	}
 
 	@Override
