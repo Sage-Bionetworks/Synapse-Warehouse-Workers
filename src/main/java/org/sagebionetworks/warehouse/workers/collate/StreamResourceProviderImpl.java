@@ -80,9 +80,9 @@ public class StreamResourceProviderImpl implements StreamResourceProvider {
 	 * @see org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider#createObjectCSVReader(java.io.File, java.lang.Class)
 	 */
 	@Override
-	public <T> ObjectCSVReader<T> createObjectCSVReader(File file, Class<T> clazz) {
+	public <T> ObjectCSVReader<T> createObjectCSVReader(File file, Class<T> clazz, String[] headers) {
 		try {
-			return new ObjectCSVReader<T>(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), clazz);
+			return new ObjectCSVReader<T>(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), clazz, headers);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -93,9 +93,9 @@ public class StreamResourceProviderImpl implements StreamResourceProvider {
 	 * @see org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider#createObjectCSVWriter(java.io.File, java.lang.Class)
 	 */
 	@Override
-	public <T> ObjectCSVWriter<T> createObjectCSVWriter(File file, Class<T> clazz) {
+	public <T> ObjectCSVWriter<T> createObjectCSVWriter(File file, Class<T> clazz, String[] headers) {
 		try {
-			return new ObjectCSVWriter<T>(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(file)), "UTF-8"), clazz);
+			return new ObjectCSVWriter<T>(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(file)), "UTF-8"), clazz, headers);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
