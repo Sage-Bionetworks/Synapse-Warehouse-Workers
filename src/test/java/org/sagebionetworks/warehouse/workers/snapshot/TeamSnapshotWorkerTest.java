@@ -14,6 +14,7 @@ import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.TeamSnapshotDao;
+import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotTestUtil;
 import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
@@ -57,7 +58,7 @@ public class TeamSnapshotWorkerTest {
 		message.setBody(messageBody);
 
 		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(TeamSnapshotWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(TeamSnapshotWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
-		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, ObjectRecord.class)).thenReturn(mockObjectCSVReader);
+		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
 
 		batch = ObjectSnapshotTestUtil.createValidTeamSnapshotBatch(5);
 	}
@@ -67,7 +68,7 @@ public class TeamSnapshotWorkerTest {
 		worker.run(mockCallback, message);
 		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(TeamSnapshotWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(TeamSnapshotWorker.TEMP_FILE_NAME_SUFFIX));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
-		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, ObjectRecord.class);
+		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader).close();
 	}
@@ -82,7 +83,7 @@ public class TeamSnapshotWorkerTest {
 		}
 		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(TeamSnapshotWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(TeamSnapshotWorker.TEMP_FILE_NAME_SUFFIX));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
-		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, ObjectRecord.class);
+		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader, Mockito.never()).close();
 	}
