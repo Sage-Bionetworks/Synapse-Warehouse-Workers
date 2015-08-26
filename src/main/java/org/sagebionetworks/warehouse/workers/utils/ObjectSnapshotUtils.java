@@ -4,9 +4,11 @@ import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
 import org.sagebionetworks.repo.model.UserProfile;
+import org.sagebionetworks.repo.model.audit.AclRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
+import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -79,6 +81,20 @@ public class ObjectSnapshotUtils {
 	}
 
 	/**
+	 * 
+	 * @param snapshot
+	 * @return true is the snapshot contains not null values for required fields
+	 *         false otherwise.
+	 */
+	public static boolean isValidAclSnapshot(AclSnapshot snapshot) {
+		if (snapshot 					== null) return false;
+		if (snapshot.getTimestamp() 	== null) return false;
+		if (snapshot.getId() 			== null) return false;
+		if (snapshot.getOwnerType() 	== null) return false;
+		return true;
+	}
+
+	/**
 	 * Extract node's information and build NodeSnapshot from the captured record
 	 * 
 	 * @param record
@@ -111,7 +127,7 @@ public class ObjectSnapshotUtils {
 			snapshot.setName(node.getName());
 			return snapshot;
 		} catch (JSONObjectAdapterException e) {
-			return null;
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -142,7 +158,7 @@ public class ObjectSnapshotUtils {
 			snapshot.setCanPublicJoin(team.getCanPublicJoin());
 			return snapshot;
 		} catch (JSONObjectAdapterException e) {
-			return null;
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -168,7 +184,9 @@ public class ObjectSnapshotUtils {
 			snapshot.setMemberId(Long.parseLong(teamMember.getMember().getOwnerId()));
 			snapshot.setIsAdmin(teamMember.getIsAdmin());
 			return snapshot;
-		} catch (Exception e) {
+		} catch (JSONObjectAdapterException e) {
+			throw new RuntimeException(e);
+		} catch (NumberFormatException e) {
 			return null;
 		}
 	}
@@ -200,8 +218,36 @@ public class ObjectSnapshotUtils {
 			snapshot.setCompany(profile.getCompany());
 			snapshot.setPosition(profile.getPosition());
 			return snapshot;
-		} catch (Exception e) {
+		} catch (JSONObjectAdapterException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Extract ACL record's information and build AclSnapshot from the captured record
+	 * 
+	 * @param record
+	 * @return
+	 */
+	public static AclSnapshot getAclSnapshot(ObjectRecord record) {
+		if (record == null || 
+				record.getTimestamp() == null ||
+				record.getJsonString() == null ||
+				record.getJsonClassName() == null || 
+				!record.getJsonClassName().equals(AclRecord.class.getSimpleName().toLowerCase())) {
 			return null;
+		}
+		try {
+			AclRecord acl = EntityFactory.createEntityFromJSONString(record.getJsonString(), AclRecord.class);
+			AclSnapshot snapshot = new AclSnapshot();
+			snapshot.setTimestamp(record.getTimestamp());
+			snapshot.setCreationDate(acl.getCreationDate());
+			snapshot.setId(acl.getId());
+			snapshot.setOwnerType(acl.getOwnerType());
+			snapshot.setResourceAccess(acl.getResourceAccess());
+			return snapshot;
+		} catch (JSONObjectAdapterException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
