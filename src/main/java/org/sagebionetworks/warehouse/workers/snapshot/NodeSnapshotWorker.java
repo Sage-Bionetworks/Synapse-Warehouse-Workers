@@ -62,7 +62,7 @@ public class NodeSnapshotWorker implements MessageDrivenRunner {
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
 			reader = streamResourceProvider.createObjectCSVReader(file, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS);
 
-			writeNodeSnapshot(reader, dao, BATCH_SIZE);
+			writeNodeSnapshot(reader, dao, BATCH_SIZE, callback, message);
 
 		} finally {
 			if (reader != null) 	reader.close();
@@ -78,7 +78,8 @@ public class NodeSnapshotWorker implements MessageDrivenRunner {
 	 * @throws IOException
 	 */
 	public static void writeNodeSnapshot(ObjectCSVReader<ObjectRecord> reader,
-			NodeSnapshotDao dao, int batchSize) throws IOException {
+			NodeSnapshotDao dao, int batchSize, ProgressCallback<Message> callback,
+			Message message) throws IOException {
 		ObjectRecord record = null;
 		List<NodeSnapshot> batch = new ArrayList<NodeSnapshot>(batchSize);
 
@@ -90,11 +91,13 @@ public class NodeSnapshotWorker implements MessageDrivenRunner {
 			}
 			batch.add(snapshot);
 			if (batch.size() >= batchSize) {
+				callback.progressMade(message);
 				dao.insert(batch);
 				batch .clear();
 			}
 		}
 
+		callback.progressMade(message);
 		if (batch.size() > 0) {
 			dao.insert(batch);
 		}

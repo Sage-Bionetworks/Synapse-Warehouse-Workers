@@ -92,7 +92,7 @@ public class NodeSnapshotWorkerTest {
 	@Test
 	public void writeEmptyListTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(null);
-		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 2);
+		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 2, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<NodeSnapshot>) Mockito.any());
 	}
 
@@ -102,14 +102,14 @@ public class NodeSnapshotWorkerTest {
 		ObjectRecord invalidRecord = ObjectSnapshotTestUtil.createValidNodeObjectRecord();
 		invalidRecord.setTimestamp(null);
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, invalidRecord, null);
-		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 2);
+		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 2, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<NodeSnapshot>) Mockito.any());
 	}
 
 	@Test
 	public void writeLessThanBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), null);
-		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 5);
+		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 5, mockCallback, message);
 		List<NodeSnapshot> expected = new ArrayList<NodeSnapshot>(Arrays.asList(
 				ObjectSnapshotUtils.getNodeSnapshot(batch.get(0)),
 				ObjectSnapshotUtils.getNodeSnapshot(batch.get(1)),
@@ -122,7 +122,7 @@ public class NodeSnapshotWorkerTest {
 	@Test
 	public void writeBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 5);
+		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 5, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.times(1)).insert((List<NodeSnapshot>) Mockito.any());
 	}
 
@@ -130,7 +130,7 @@ public class NodeSnapshotWorkerTest {
 	@Test
 	public void writeOverBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 3);
+		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 3, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.times(2)).insert((List<NodeSnapshot>) Mockito.any());
 	}
 }

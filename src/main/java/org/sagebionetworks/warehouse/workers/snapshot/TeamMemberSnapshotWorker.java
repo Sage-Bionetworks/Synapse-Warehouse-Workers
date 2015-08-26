@@ -62,7 +62,7 @@ public class TeamMemberSnapshotWorker implements MessageDrivenRunner {
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
 			reader = streamResourceProvider.createObjectCSVReader(file, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS);
 
-			writeTeamMemberSnapshot(reader, dao, BATCH_SIZE);
+			writeTeamMemberSnapshot(reader, dao, BATCH_SIZE, callback, message);
 
 		} finally {
 			if (reader != null) 	reader.close();
@@ -78,7 +78,8 @@ public class TeamMemberSnapshotWorker implements MessageDrivenRunner {
 	 * @throws IOException
 	 */
 	public static void writeTeamMemberSnapshot(ObjectCSVReader<ObjectRecord> reader,
-			TeamMemberSnapshotDao dao, int batchSize) throws IOException {
+			TeamMemberSnapshotDao dao, int batchSize, ProgressCallback<Message> callback,
+			Message message) throws IOException {
 		ObjectRecord record = null;
 		List<TeamMemberSnapshot> batch = new ArrayList<TeamMemberSnapshot>(batchSize);
 
@@ -90,11 +91,13 @@ public class TeamMemberSnapshotWorker implements MessageDrivenRunner {
 			}
 			batch.add(snapshot);
 			if (batch.size() >= batchSize) {
+				callback.progressMade(message);
 				dao.insert(batch);
 				batch .clear();
 			}
 		}
 
+		callback.progressMade(message);
 		if (batch.size() > 0) {
 			dao.insert(batch);
 		}

@@ -64,7 +64,7 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
 			reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 
-			writeAccessRecord(reader, dao, BATCH_SIZE);
+			writeAccessRecord(reader, dao, BATCH_SIZE, callback, message);
 
 		} finally {
 			if (reader != null) 	reader.close();
@@ -80,7 +80,8 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 	 * @throws IOException
 	 */
 	public static void writeAccessRecord(ObjectCSVReader<AccessRecord> reader,
-			AccessRecordDao dao, int batchSize) throws IOException {
+			AccessRecordDao dao, int batchSize, ProgressCallback<Message> callback,
+			Message message) throws IOException {
 		AccessRecord record = null;
 		List<AccessRecord> batch = new ArrayList<AccessRecord>(batchSize);
 
@@ -91,11 +92,13 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 			}
 			batch.add(record);
 			if (batch.size() >= batchSize) {
+				callback.progressMade(message);
 				dao.insert(batch);
 				batch .clear();
 			}
 		}
 
+		callback.progressMade(message);
 		if (batch.size() > 0) {
 			dao.insert(batch);
 		}
