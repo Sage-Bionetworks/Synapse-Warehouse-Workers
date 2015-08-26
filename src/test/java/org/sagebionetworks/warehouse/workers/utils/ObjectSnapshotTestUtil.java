@@ -218,7 +218,7 @@ public class ObjectSnapshotTestUtil {
 	public static AclSnapshot createValidAclSnapshot() {
 		AclSnapshot snapshot = new AclSnapshot();
 		snapshot.setTimestamp(System.currentTimeMillis());
-		snapshot.setOwnerId(random.nextLong());
+		snapshot.setId("" + random.nextLong());
 		snapshot.setOwnerType(ObjectType.ENTITY);
 		return snapshot;
 	}
