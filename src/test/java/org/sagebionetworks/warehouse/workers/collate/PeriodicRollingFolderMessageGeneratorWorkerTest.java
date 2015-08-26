@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
-import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
 import org.sagebionetworks.warehouse.workers.db.FolderState;
 import org.sagebionetworks.warehouse.workers.db.FolderState.State;
@@ -67,7 +66,7 @@ public class PeriodicRollingFolderMessageGeneratorWorkerTest {
 		// call under test
 		worker.run(mockProgressCallback);
 		// The message should get sent
-		String xml = XMLUtils.toXML(rollingList.get(0), FolderDto.FOLDER_DTO_ALIAS);
+		String xml = XMLUtils.toXML(rollingList.get(0), FolderState.DTO_ALIAS);
 		verify(mockAmazonSQSClient, times(1)).sendMessage(queueUrl, xml);
 		verify(mockProgressCallback, times(1)).progressMade(null);
 	}

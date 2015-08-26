@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>org.sagebionetworks</groupId>
 			<artifactId>worker-utilities</artifactId>
-			<version>1.0.12</version>
+			<version>1.0.13</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sagebionetworks</groupId>
@@ -174,7 +174,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 		<plugins>
@@ -211,6 +211,10 @@
 						<resource>
 							<directory>src/main/webapp</directory>
 							<filtering>true</filtering>
+						</resource>
+						<resource>
+							<directory>src/main/resources</directory>
+							<filtering>false</filtering>
 						</resource>
 					</webResources>
 				</configuration>

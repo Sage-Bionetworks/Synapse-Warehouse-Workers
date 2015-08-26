@@ -1,6 +1,6 @@
 package org.sagebionetworks.warehouse.workers.collate;
 
-import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
+import org.sagebionetworks.warehouse.workers.db.FolderState;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
 /**
@@ -15,6 +15,6 @@ public interface LockedFolderRunner {
 	 * @param progressCallback
 	 * @param folder
 	 */
-	void runWhileHoldingLock(ProgressCallback<Void> progressCallback, FolderDto folder);
+	void runWhileHoldingLock(ProgressCallback<Void> progressCallback, FolderState folder);
 
 }

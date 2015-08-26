@@ -1,6 +1,5 @@
 package org.sagebionetworks.warehouse.workers.config;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,8 +7,6 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.warehouse.workers.WorkerStack;
-import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
-import org.sagebionetworks.warehouse.workers.WorkerStackImpl;
 import org.sagebionetworks.warehouse.workers.WorkerStackList;
 import org.sagebionetworks.warehouse.workers.db.ConnectionPool;
 
@@ -74,4 +71,35 @@ public class ApplicationMain {
 		pool.close();
 	}
 
+	/**
+	 * This main can be used to debug the application.
+	 * Simply start the application with all of the required configuration options in the "VM Arguments"
+	 * <ul>
+	 * <li>-Dorg.sagebionetworks.stack.iam.id=your_aws_id</li>
+	 * <li>-Dorg.sagebionetworks.stack.iam.key=your_aws_key</li>
+	 * <li>-Dorg.sagebionetworks.warehouse.worker.stack=your_stack</li>
+	 * <li>-Dorg.sagebionetworks.warehouse.workers.jdbc.connection.url =jdbc:mysql://your_db_host/your_db_schema</li>
+	 * <li>-Dorg.sagebionetworks.warehouse.workers.jdbc.user.password =your_password</li>
+	 * <li>-Dorg.sagebionetworks.warehouse.workers.jdbc.user.username =your_db_username</li>
+	 * </ul>
+	 * 
+	 * @param args
+	 * @throws InterruptedException 
+	 */
+	public static void main(String[] args) throws InterruptedException{
+		// Setup the container
+		Injector injector = ApplicationServletContextListener.createNewGuiceInjector();
+		ApplicationMain main = new ApplicationMain(injector);
+		// start the application
+		main.startup();
+		// enter a wait state
+		try{
+			while(true){
+				log.info("Main thread running...");
+				Thread.sleep(10*1000);
+			}
+		}finally{
+			main.shutdown();
+		}
+	}
 }

@@ -36,7 +36,7 @@ public class ProcessAccessRecordConfigurationProvider implements WorkerStackConf
 		this.config.setRunner(runner);
 		this.config.setStartDelayMs(317);
 		this.config.setPeriodMS(10*1000);
-		this.config.setWorkerName(AccessRecordConfigurationProvider.class.getName());
+		this.config.setWorkerName(ProcessAccessRecordWorker.class.getName());
 	}
 
 	@Override

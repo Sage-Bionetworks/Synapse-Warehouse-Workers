@@ -1,6 +1,13 @@
 package org.sagebionetworks.warehouse.workers.collate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -11,15 +18,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
-import static org.mockito.Mockito.*;
-
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
-import org.sagebionetworks.warehouse.workers.bucket.FolderDto;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
 import org.sagebionetworks.warehouse.workers.db.FolderState;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
@@ -33,7 +36,7 @@ public class FolderCollateWorkerTest {
 	BucketDao mockBucketDao;
 	BucketInfo bucketInfo;
 	ProgressCallback<Void> mockProgressCallback;
-	FolderDto folder;
+	FolderState folder;
 	List<String> keysInBucket;
 	FolderCollateWorker worker;
 
@@ -55,7 +58,7 @@ public class FolderCollateWorkerTest {
 		bucketInfo.setBucketName("someBucket");
 		bucketInfo.setTimestampColumnIndex(3);
 		bucketList = new BucketInfoList(Arrays.asList(bucketInfo));
-		folder = new FolderDto();
+		folder = new FolderState();
 		folder.setBucket(bucketInfo.getBucketName());
 		folder.setPath("123/2015-07-28");
 

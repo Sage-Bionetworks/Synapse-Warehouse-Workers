@@ -60,7 +60,9 @@ public class EventMessageUtils {
 						}
 						if(s3.has(KEY_OBJECT)){
 							JSONObject object = s3.getJSONObject(KEY_OBJECT);
-							summary.setETag(object.getString(KEY_E_TAG));
+							if(object.has(KEY_E_TAG)){
+								summary.setETag(object.getString(KEY_E_TAG));
+							}
 							summary.setKey(object.getString(KEY_KEY));
 							summary.setSize(object.getLong(KEY_SIZE));
 						}
