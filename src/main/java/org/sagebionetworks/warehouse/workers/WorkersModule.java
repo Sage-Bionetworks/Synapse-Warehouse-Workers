@@ -27,7 +27,7 @@ import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
-import org.sagebionetworks.warehouse.workers.snapshot.AclRecordSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.NodeSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.NodeSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.ProcessAccessRecordConfigurationProvider;
@@ -144,8 +144,8 @@ public class WorkersModule extends AbstractModule {
 	}
 
 	@Provides
-	public AclRecordSnapshotTopicBucketInfo getAclRecordSnapshotConfig(Configuration config){
-		AclRecordSnapshotTopicBucketInfo info = new AclRecordSnapshotTopicBucketInfo();
+	public AclSnapshotTopicBucketInfo getAclRecordSnapshotConfig(Configuration config){
+		AclSnapshotTopicBucketInfo info = new AclSnapshotTopicBucketInfo();
 		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.aclrecord.snapshot"));
 		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.aclrecord.snapshot"));
 		return info;

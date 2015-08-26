@@ -12,6 +12,7 @@ import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
 import org.sagebionetworks.repo.model.UserGroupHeader;
 import org.sagebionetworks.repo.model.UserProfile;
+import org.sagebionetworks.repo.model.audit.AclRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
@@ -221,5 +222,36 @@ public class ObjectSnapshotTestUtil {
 		snapshot.setId("" + random.nextLong());
 		snapshot.setOwnerType(ObjectType.ENTITY);
 		return snapshot;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws JSONObjectAdapterException
+	 */
+	public static ObjectRecord createValidAclObjectRecord() throws JSONObjectAdapterException {
+		AclRecord acl = new AclRecord();
+		acl.setCreationDate(new Date());
+		acl.setId("" + random.nextLong());
+		acl.setOwnerType(ObjectType.ENTITY);
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(AclRecord.class.getSimpleName().toLowerCase());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(acl));
+		return record;
+	}
+
+	/**
+	 * 
+	 * @param size
+	 * @return
+	 * @throws JSONObjectAdapterException 
+	 */
+	public static List<ObjectRecord> createValidAclSnapshotBatch(int size) throws JSONObjectAdapterException {
+		List<ObjectRecord> batch = new ArrayList<ObjectRecord>();
+		for (int i = 0; i < size; i++) {
+			batch.add(createValidAclObjectRecord());
+		}
+		return batch;
 	}
 }
