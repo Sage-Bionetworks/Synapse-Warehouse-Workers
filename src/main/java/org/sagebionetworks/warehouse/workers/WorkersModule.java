@@ -27,6 +27,7 @@ import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.NodeSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.NodeSnapshotTopicBucketInfo;
@@ -170,6 +171,7 @@ public class WorkersModule extends AbstractModule {
 		list.add(TeamSnapshotConfigurationProvider.class);
 		list.add(TeamMemberSnapshotConfigurationProvider.class);
 		list.add(UserProfileSnapshotConfigurationProvider.class);
+		list.add(AclSnapshotConfigurationProvider.class);
 		return list;
 	}
 	
