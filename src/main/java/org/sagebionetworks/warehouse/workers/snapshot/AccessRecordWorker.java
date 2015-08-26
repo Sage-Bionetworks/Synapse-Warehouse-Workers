@@ -32,7 +32,7 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecords";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
-	private static final int BATCH_SIZE = 1000;
+	private static final int BATCH_SIZE = 10000;
 	private static Logger log = LogManager.getLogger(AccessRecordWorker.class);
 	private AmazonS3Client s3Client;
 	private AccessRecordDao dao;
@@ -98,8 +98,8 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 			}
 		}
 
-		callback.progressMade(message);
 		if (batch.size() > 0) {
+			callback.progressMade(message);
 			dao.insert(batch);
 		}
 	}
