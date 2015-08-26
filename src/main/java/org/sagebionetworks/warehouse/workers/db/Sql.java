@@ -99,18 +99,11 @@ public class Sql {
 	public static final String COL_USER_PROFILE_SNAPSHOT_POSITION = 	"POSITION";
 
 	// ACL_SNAPSHOT
-	public static final String TABLE_ACL_SNAPSHOT = 			"ACL_SNAPSHOT";
-	public static final String COL_ACL_SNAPSHOT_TIMESTAMP = 	"TIMESTAMP";
-	public static final String COL_ACL_SNAPSHOT_OWNER_ID = 		"OWNER_ID";
-	public static final String COL_ACL_SNAPSHOT_OWNER_TYPE = 	"OWNER_TYPE";
-	public static final String COL_ACL_SNAPSHOT_CREATED_ON = 	"CREATED_ON";
+	public static final String TABLE_ACL_SNAPSHOT = 				"ACL_SNAPSHOT";
+	public static final String COL_ACL_SNAPSHOT_TIMESTAMP = 		"TIMESTAMP";
+	public static final String COL_ACL_SNAPSHOT_OWNER_ID = 			"OWNER_ID";
+	public static final String COL_ACL_SNAPSHOT_OWNER_TYPE = 		"OWNER_TYPE";
+	public static final String COL_ACL_SNAPSHOT_CREATED_ON = 		"CREATED_ON";
+	public static final String COL_ACL_SNAPSHOT_RESOURCE_ACCESS = 	"RESOURCE_ACCESS";
 
-
-	// RESOURCE_ACCESS_SNAPSHOT
-	public static final String TABLE_RESOURCE_ACCESS_SNAPSHOT = 			"RESOURCE_ACCESS_SNAPSHOT";
-	public static final String COL_RESOURCE_ACCESS_SNAPSHOT_TIMESTAMP = 	"TIMESTAMP";
-	public static final String COL_RESOURCE_ACCESS_SNAPSHOT_OWNER_ID = 		"OWNER_ID";
-	public static final String COL_RESOURCE_ACCESS_SNAPSHOT_OWNER_TYPE = 	"OWNER_TYPE";
-	public static final String COL_RESOURCE_ACCESS_SNAPSHOT_PRINCIPAL_ID = 	"PRINCIPAL_ID";
-	public static final String COL_RESOURCE_ACCESS_SNAPSHOT_ACCESS_TYPE = 	"ACCESS_TYPE";
 }
