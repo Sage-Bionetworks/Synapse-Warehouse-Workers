@@ -89,7 +89,7 @@ public class AccessRecordWorkerTest {
 	@Test
 	public void writeEmptyListTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(null);
-		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 2);
+		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 2, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<AccessRecord>) Mockito.any());
 	}
 
@@ -99,14 +99,14 @@ public class AccessRecordWorkerTest {
 		AccessRecord invalidRecord = AccessRecordTestUtil.createValidAccessRecord();
 		invalidRecord.setTimestamp(null);
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, invalidRecord, null);
-		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 2);
+		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 2, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<AccessRecord>) Mockito.any());
 	}
 
 	@Test
 	public void writeLessThanBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), null);
-		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 5);
+		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 5, mockCallback, message);
 		List<AccessRecord> expected = new ArrayList<AccessRecord>(Arrays.asList(batch.get(0), batch.get(1), batch.get(2), batch.get(3)));
 		Mockito.verify(mockDao, Mockito.times(1)).insert(expected);
 	}
@@ -115,7 +115,7 @@ public class AccessRecordWorkerTest {
 	@Test
 	public void writeBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 5);
+		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 5, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.times(1)).insert((List<AccessRecord>) Mockito.any());
 	}
 
@@ -123,7 +123,7 @@ public class AccessRecordWorkerTest {
 	@Test
 	public void writeOverBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 3);
+		AccessRecordWorker.writeAccessRecord(mockObjectCSVReader, mockDao, 3, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.times(2)).insert((List<AccessRecord>) Mockito.any());
 	}
 }
