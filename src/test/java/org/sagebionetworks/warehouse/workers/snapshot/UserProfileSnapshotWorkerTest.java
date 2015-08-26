@@ -92,7 +92,7 @@ public class UserProfileSnapshotWorkerTest {
 	@Test
 	public void writeEmptyListTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(null);
-		UserProfileSnapshotWorker.writeUserProfileSnapshot(mockObjectCSVReader, mockDao, 2);
+		UserProfileSnapshotWorker.writeUserProfileSnapshot(mockObjectCSVReader, mockDao, 2, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<UserProfileSnapshot>) Mockito.any());
 	}
 
@@ -102,14 +102,14 @@ public class UserProfileSnapshotWorkerTest {
 		ObjectRecord invalidRecord = ObjectSnapshotTestUtil.createValidUserProfileObjectRecord();
 		invalidRecord.setTimestamp(null);
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, invalidRecord, null);
-		UserProfileSnapshotWorker.writeUserProfileSnapshot(mockObjectCSVReader, mockDao, 2);
+		UserProfileSnapshotWorker.writeUserProfileSnapshot(mockObjectCSVReader, mockDao, 2, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<UserProfileSnapshot>) Mockito.any());
 	}
 
 	@Test
 	public void writeLessThanBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), null);
-		UserProfileSnapshotWorker.writeUserProfileSnapshot(mockObjectCSVReader, mockDao, 5);
+		UserProfileSnapshotWorker.writeUserProfileSnapshot(mockObjectCSVReader, mockDao, 5, mockCallback, message);
 		List<UserProfileSnapshot> expected = new ArrayList<UserProfileSnapshot>(Arrays.asList(
 				ObjectSnapshotUtils.getUserProfileSnapshot(batch.get(0)),
 				ObjectSnapshotUtils.getUserProfileSnapshot(batch.get(1)),
@@ -122,7 +122,7 @@ public class UserProfileSnapshotWorkerTest {
 	@Test
 	public void writeBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		UserProfileSnapshotWorker.writeUserProfileSnapshot(mockObjectCSVReader, mockDao, 5);
+		UserProfileSnapshotWorker.writeUserProfileSnapshot(mockObjectCSVReader, mockDao, 5, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.times(1)).insert((List<UserProfileSnapshot>) Mockito.any());
 	}
 
@@ -130,7 +130,7 @@ public class UserProfileSnapshotWorkerTest {
 	@Test
 	public void writeOverBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		UserProfileSnapshotWorker.writeUserProfileSnapshot(mockObjectCSVReader, mockDao, 3);
+		UserProfileSnapshotWorker.writeUserProfileSnapshot(mockObjectCSVReader, mockDao, 3, mockCallback, message);
 		Mockito.verify(mockDao, Mockito.times(2)).insert((List<UserProfileSnapshot>) Mockito.any());
 	}
 

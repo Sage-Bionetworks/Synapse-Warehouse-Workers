@@ -28,11 +28,15 @@ import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.AclRecordSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.NodeSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.NodeSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.ProcessAccessRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.ProcessAccessRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotTopicBucketInfo;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueConfiguration;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueImpl;
@@ -162,6 +166,10 @@ public class WorkersModule extends AbstractModule {
 		list.add(CollateFolderConfigurationProvider.class);
 		list.add(AccessRecordConfigurationProvider.class);
 		list.add(ProcessAccessRecordConfigurationProvider.class);
+		list.add(NodeSnapshotConfigurationProvider.class);
+		list.add(TeamSnapshotConfigurationProvider.class);
+		list.add(TeamMemberSnapshotConfigurationProvider.class);
+		list.add(UserProfileSnapshotConfigurationProvider.class);
 		return list;
 	}
 	
