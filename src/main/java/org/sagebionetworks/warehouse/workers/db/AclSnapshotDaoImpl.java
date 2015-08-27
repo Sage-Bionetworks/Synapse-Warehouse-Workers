@@ -1,6 +1,11 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import static org.sagebionetworks.warehouse.workers.db.Sql.*;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACL_SNAPSHOT_CREATED_ON;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACL_SNAPSHOT_OWNER_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACL_SNAPSHOT_OWNER_TYPE;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACL_SNAPSHOT_RESOURCE_ACCESS;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACL_SNAPSHOT_TIMESTAMP;
+import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_ACL_SNAPSHOT;
 
 import java.sql.Blob;
 import java.sql.PreparedStatement;
@@ -8,25 +13,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.sagebionetworks.repo.model.ObjectType;
-import org.sagebionetworks.repo.model.ResourceAccess;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
+import org.sagebionetworks.warehouse.workers.utils.CompressionUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.google.inject.Inject;
-import com.thoughtworks.xstream.io.StreamException;
 
 public class AclSnapshotDaoImpl implements AclSnapshotDao{
 
-	private static final String EMPTY_SET_XML = "<set\\>";
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_ACL_SNAPSHOT;
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO "
 			+ TABLE_ACL_SNAPSHOT
@@ -52,8 +54,6 @@ public class AclSnapshotDaoImpl implements AclSnapshotDao{
 			+ " = ? AND "
 			+ COL_ACL_SNAPSHOT_OWNER_TYPE
 			+ " = ?";
-	protected static final String RESOURCE_ACCESS_ALIAS = "ResourceAccessSet";
-
 	private JdbcTemplate template;
 
 	/*
@@ -71,18 +71,9 @@ public class AclSnapshotDaoImpl implements AclSnapshotDao{
 				snapshot.setCreationDate(new Date(createdOn));
 			}
 			Blob resourceAccessBlob = rs.getBlob(COL_ACL_SNAPSHOT_RESOURCE_ACCESS);
-			if (resourceAccessBlob != null) {
-				String resourceAccess = new String(resourceAccessBlob.getBytes(1, (int) resourceAccessBlob.length()));
-				try {
-					snapshot.setResourceAccess(XMLUtils.fromXML(resourceAccess, Set.class, RESOURCE_ACCESS_ALIAS));
-				} catch (StreamException e) {
-					if (e.getMessage().contains("input contained no data")) {
-						if (resourceAccess.contains(EMPTY_SET_XML)) 
-							snapshot.setResourceAccess(new HashSet<ResourceAccess>());
-					} else {
-						throw new RuntimeException();
-					}
-				}
+			if (resourceAccessBlob != null && resourceAccessBlob.length() > 0) {
+				String resourceAccess = CompressionUtils.decompressUTF8(resourceAccessBlob.getBytes(1, (int) resourceAccessBlob.length()));
+				snapshot.setResourceAccess(XMLUtils.fromXML(resourceAccess, Set.class, AclSnapshot.RESOURCE_ACCESS_ALIAS));
 			}
 			return snapshot;
 		}
@@ -117,9 +108,9 @@ public class AclSnapshotDaoImpl implements AclSnapshotDao{
 					ps.setNull(4, Types.BIGINT);
 				}
 				if (snapshot.getResourceAccess() != null) {
-					String xml = XMLUtils.toXML(snapshot.getResourceAccess(), RESOURCE_ACCESS_ALIAS);
+					String xml = XMLUtils.toXML(snapshot.getResourceAccess(), AclSnapshot.RESOURCE_ACCESS_ALIAS);
 					Blob blob = template.getDataSource().getConnection().createBlob();
-					blob.setBytes(1, xml.getBytes());
+					blob.setBytes(1, CompressionUtils.compressStringUTF8(xml));
 					ps.setBlob(5, blob);
 				} else {
 					ps.setNull(5, Types.BLOB);
