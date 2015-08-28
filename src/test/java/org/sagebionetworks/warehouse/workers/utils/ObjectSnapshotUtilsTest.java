@@ -15,6 +15,7 @@ import org.sagebionetworks.repo.model.TeamMember;
 import org.sagebionetworks.repo.model.UserGroupHeader;
 import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.AclRecord;
+import org.sagebionetworks.repo.model.audit.NodeRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
@@ -86,6 +87,27 @@ public class ObjectSnapshotUtilsTest {
 	public void invalidNodeSnapshotWithNullModifiedByTest() {
 		NodeSnapshot snapshot = ObjectSnapshotTestUtil.createValidNodeSnapshot();
 		snapshot.setModifiedByPrincipalId(null);
+		assertFalse(ObjectSnapshotUtils.isValidNodeSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidNodeSnapshotWithNullIsPublicTest() {
+		NodeSnapshot snapshot = ObjectSnapshotTestUtil.createValidNodeSnapshot();
+		snapshot.setIsPublic(null);
+		assertFalse(ObjectSnapshotUtils.isValidNodeSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidNodeSnapshotWithNullIsControlledTest() {
+		NodeSnapshot snapshot = ObjectSnapshotTestUtil.createValidNodeSnapshot();
+		snapshot.setIsControlled(null);
+		assertFalse(ObjectSnapshotUtils.isValidNodeSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidNodeSnapshotWithNullIsRestrictedTest() {
+		NodeSnapshot snapshot = ObjectSnapshotTestUtil.createValidNodeSnapshot();
+		snapshot.setIsRestricted(null);
 		assertFalse(ObjectSnapshotUtils.isValidNodeSnapshot(snapshot));
 	}
 
@@ -263,9 +285,9 @@ public class ObjectSnapshotUtilsTest {
 	@Test
 	public void nullTimstampGetNodeSnapshotTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
-		Node node = new Node();
+		NodeRecord node = new NodeRecord();
 		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
-		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		record.setJsonClassName(NodeRecord.class.getSimpleName().toLowerCase());
 		assertNull(ObjectSnapshotUtils.getNodeSnapshot(record));
 	}
 
@@ -273,14 +295,14 @@ public class ObjectSnapshotUtilsTest {
 	public void nullJsonStringGetNodeSnapshotTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		record.setTimestamp(System.currentTimeMillis());
-		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		record.setJsonClassName(NodeRecord.class.getSimpleName().toLowerCase());
 		assertNull(ObjectSnapshotUtils.getNodeSnapshot(record));
 	}
 
 	@Test
 	public void nullJsonClassNameGetNodeSnapshotTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
-		Node node = new Node();
+		NodeRecord node = new NodeRecord();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
 		assertNull(ObjectSnapshotUtils.getNodeSnapshot(record));
@@ -289,7 +311,7 @@ public class ObjectSnapshotUtilsTest {
 	@Test
 	public void wrongTypeNameGetNodeSnapshotTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
-		Node node = new Node();
+		NodeRecord node = new NodeRecord();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
 		record.setJsonClassName(Team.class.getSimpleName().toLowerCase());
@@ -302,7 +324,7 @@ public class ObjectSnapshotUtilsTest {
 		Team team = new Team();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(team));
-		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		record.setJsonClassName(NodeRecord.class.getSimpleName().toLowerCase());
 		NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
 		assertNotNull(snapshot);
 		assertEquals(new NodeSnapshot(), snapshot);
@@ -311,7 +333,7 @@ public class ObjectSnapshotUtilsTest {
 	@Test
 	public void getNodeSnapshotTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
-		Node node = new Node();
+		NodeRecord node = new NodeRecord();
 		node.setId("id");
 		node.setBenefactorId("benefactorId");
 		node.setProjectId("projectId");
@@ -324,10 +346,13 @@ public class ObjectSnapshotUtilsTest {
 		node.setVersionNumber(3L);
 		node.setFileHandleId("fileHandleId");
 		node.setName("name");
+		node.setIsPublic(false);
+		node.setIsControlled(true);
+		node.setIsRestricted(null);
 		Long timestamp = System.currentTimeMillis();
 		record.setTimestamp(timestamp);
 		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
-		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		record.setJsonClassName(NodeRecord.class.getSimpleName().toLowerCase());
 		NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
 		assertNotNull(snapshot);
 		assertEquals(timestamp, snapshot.getTimestamp());
@@ -343,6 +368,9 @@ public class ObjectSnapshotUtilsTest {
 		assertEquals(node.getVersionNumber(), snapshot.getVersionNumber());
 		assertEquals(node.getFileHandleId(), node.getFileHandleId());
 		assertEquals(node.getName(), snapshot.getName());
+		assertEquals(node.getIsPublic(), snapshot.getIsPublic());
+		assertEquals(node.getIsControlled(), snapshot.getIsControlled());
+		assertNull(snapshot.getIsRestricted());
 	}
 
 	/*

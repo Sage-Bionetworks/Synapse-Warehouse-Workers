@@ -1,10 +1,10 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
-import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
 import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.AclRecord;
+import org.sagebionetworks.repo.model.audit.NodeRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
@@ -31,6 +31,9 @@ public class ObjectSnapshotUtils {
 		if (snapshot.getCreatedByPrincipalId() 	== null) return false;
 		if (snapshot.getModifiedOn()	 		== null) return false;
 		if (snapshot.getModifiedByPrincipalId() == null) return false;
+		if (snapshot.getIsPublic() 				== null) return false;
+		if (snapshot.getIsControlled() 			== null) return false;
+		if (snapshot.getIsRestricted() 			== null) return false;
 		return true;
 	}
 
@@ -106,11 +109,11 @@ public class ObjectSnapshotUtils {
 				record.getTimestamp() == null ||
 				record.getJsonString() == null ||
 				record.getJsonClassName() == null || 
-				!record.getJsonClassName().equals(Node.class.getSimpleName().toLowerCase())) {
+				!record.getJsonClassName().equals(NodeRecord.class.getSimpleName().toLowerCase())) {
 			return null;
 		}
 		try {
-			Node node = EntityFactory.createEntityFromJSONString(record.getJsonString(), Node.class);
+			NodeRecord node = EntityFactory.createEntityFromJSONString(record.getJsonString(), NodeRecord.class);
 			NodeSnapshot snapshot = new NodeSnapshot();
 			snapshot.setTimestamp(record.getTimestamp());
 			snapshot.setId(node.getId());
@@ -125,6 +128,9 @@ public class ObjectSnapshotUtils {
 			snapshot.setVersionNumber(node.getVersionNumber());
 			snapshot.setFileHandleId(node.getFileHandleId());
 			snapshot.setName(node.getName());
+			snapshot.setIsPublic(node.getIsPublic());
+			snapshot.setIsControlled(node.getIsControlled());
+			snapshot.setIsRestricted(node.getIsRestricted());
 			return snapshot;
 		} catch (JSONObjectAdapterException e) {
 			throw new RuntimeException(e);

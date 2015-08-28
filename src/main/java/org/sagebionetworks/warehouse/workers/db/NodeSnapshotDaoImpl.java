@@ -49,7 +49,13 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 			+ COL_NODE_SNAPSHOT_FILE_HANDLE_ID
 			+ ","
 			+ COL_NODE_SNAPSHOT_NAME
-			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ ","
+			+ COL_NODE_SNAPSHOT_IS_PUBLIC
+			+ ","
+			+ COL_NODE_SNAPSHOT_IS_CONTROLLED
+			+ ","
+			+ COL_NODE_SNAPSHOT_IS_RESTRICTED
+			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	private static final String NODE_SNAPSHOT_DDL_SQL = "NodeSnapshot.ddl.sql";
 	private static final String SQL_GET = "SELECT * FROM "
@@ -97,6 +103,9 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 				snapshot.setFileHandleId("" + fileHandleId);
 			}
 			snapshot.setName(rs.getString(COL_NODE_SNAPSHOT_NAME));
+			snapshot.setIsPublic(rs.getBoolean(COL_NODE_SNAPSHOT_IS_PUBLIC));
+			snapshot.setIsControlled(rs.getBoolean(COL_NODE_SNAPSHOT_IS_CONTROLLED));
+			snapshot.setIsRestricted(rs.getBoolean(COL_NODE_SNAPSHOT_IS_RESTRICTED));
 			return snapshot;
 		}
 	};
@@ -154,6 +163,9 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 					ps.setNull(12, Types.BIGINT);
 				}
 				ps.setString(13, snapshot.getName());
+				ps.setBoolean(14, snapshot.getIsPublic());
+				ps.setBoolean(15, snapshot.getIsControlled());
+				ps.setBoolean(16, snapshot.getIsRestricted());
 			}
 		});
 	}
