@@ -67,6 +67,9 @@ public class Sql {
 	public static final String COL_NODE_SNAPSHOT_VERSION_NUMBER = 	"VERSION_NUMBER";
 	public static final String COL_NODE_SNAPSHOT_FILE_HANDLE_ID = 	"FILE_HANDLE_ID";
 	public static final String COL_NODE_SNAPSHOT_NAME = 			"NAME";
+	public static final String COL_NODE_SNAPSHOT_IS_PUBLIC = 		"IS_PUBLIC";
+	public static final String COL_NODE_SNAPSHOT_IS_CONTROLLED = 	"IS_CONTROLLED";
+	public static final String COL_NODE_SNAPSHOT_IS_RESTRICTED = 	"IS_RESTRICTED";
 
 	// TEAM_SNAPSHOT
 	public static final String TABLE_TEAM_SNAPSHOT =					"TEAM_SNAPSHOT";

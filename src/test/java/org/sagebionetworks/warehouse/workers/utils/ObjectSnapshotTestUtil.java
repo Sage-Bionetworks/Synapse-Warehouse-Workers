@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Random;
 
 import org.sagebionetworks.repo.model.EntityType;
-import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
 import org.sagebionetworks.repo.model.UserGroupHeader;
 import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.AclRecord;
+import org.sagebionetworks.repo.model.audit.NodeRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
@@ -38,6 +38,9 @@ public class ObjectSnapshotTestUtil {
 		snapshot.setCreatedOn(new Date());
 		snapshot.setModifiedByPrincipalId(random.nextLong());
 		snapshot.setModifiedOn(new Date());
+		snapshot.setIsPublic(false);
+		snapshot.setIsControlled(false);
+		snapshot.setIsRestricted(false);
 		return snapshot;
 	}
 
@@ -87,16 +90,19 @@ public class ObjectSnapshotTestUtil {
 	 * @throws JSONObjectAdapterException
 	 */
 	public static ObjectRecord createValidNodeObjectRecord() throws JSONObjectAdapterException {
-		Node node = new Node();
+		NodeRecord node = new NodeRecord();
 		node.setId("" + random.nextLong());
 		node.setNodeType(EntityType.values()[random.nextInt(5)]);
 		node.setCreatedByPrincipalId(random.nextLong());
 		node.setCreatedOn(new Date());
 		node.setModifiedByPrincipalId(random.nextLong());
 		node.setModifiedOn(new Date());
+		node.setIsPublic(false);
+		node.setIsControlled(false);
+		node.setIsRestricted(false);
 		ObjectRecord record = new ObjectRecord();
 		record.setTimestamp(System.currentTimeMillis());
-		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		record.setJsonClassName(NodeRecord.class.getSimpleName().toLowerCase());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
 		return record;
 	}
