@@ -15,9 +15,9 @@ public interface AccessRecordDao {
 
 	/**
 	 * 
-	 * @return an AccessRecord given the sessionId
+	 * @return an AccessRecord given the sessionId and timestamp
 	 */
-	public AccessRecord get(String sessionId);
+	public AccessRecord get(String sessionId, Long timestamp);
 
 	/**
 	 * Truncate all of the data.

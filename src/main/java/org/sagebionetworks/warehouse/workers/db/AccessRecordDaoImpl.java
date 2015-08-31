@@ -9,7 +9,10 @@ import java.sql.Types;
 import java.util.List;
 
 import org.sagebionetworks.repo.model.audit.AccessRecord;
+import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
+import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
+import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -68,6 +71,9 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 			+ TABLE_ACCESS_RECORD
 			+ " WHERE "
 			+ COL_ACCESS_RECORD_SESSION_ID
+			+ " = ?"
+			+ " AND "
+			+ COL_ACCESS_RECORD_TIMESTAMP
 			+ " = ?";
 
 	private JdbcTemplate template;
@@ -107,10 +113,15 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	};
 
 	@Inject
-	AccessRecordDaoImpl(JdbcTemplate template) throws SQLException {
+	AccessRecordDaoImpl(JdbcTemplate template, Configuration config) throws SQLException {
 		super();
 		this.template = template;
-		this.template.update(ClasspathUtils.loadStringFromClassPath(ACCESS_RECORD_DDL_SQL));
+		String createQuery = ClasspathUtils.loadStringFromClassPath(ACCESS_RECORD_DDL_SQL);
+		if (createQuery.contains(PartitionUtil.PARTITION)) {
+			String partitionString = PartitionUtil.buildPartition(TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY, config.getStartDate(), config.getEndDate());
+			createQuery = createQuery.replace(PartitionUtil.PARTITION, partitionString);
+		}
+		this.template.update(createQuery);
 	}
 
 	@Override
@@ -155,8 +166,8 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	}
 
 	@Override
-	public AccessRecord get(String sessionId) {
-		return template.queryForObject(SQL_GET, this.rowMapper, sessionId);
+	public AccessRecord get(String sessionId, Long timestamp) {
+		return template.queryForObject(SQL_GET, this.rowMapper, sessionId, timestamp);
 	}
 
 	@Override
