@@ -2,6 +2,7 @@ package org.sagebionetworks.warehouse.workers.config;
 
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
 
 /**
@@ -22,4 +23,18 @@ public interface Configuration {
 	 * @return
 	 */
 	public List<Class<? extends WorkerStackConfigurationProvider>> listAllWorkerStackInterfaces();
+
+	/**
+	 * Get the date <current year - 2>-01-01:00:00
+	 * 
+	 * @return 
+	 */
+	public DateTime getStartDate();
+
+	/**
+	 * Get the date <current year + 9>-01-01:00:00
+	 * 
+	 * @return
+	 */
+	public DateTime getEndDate();
 }
