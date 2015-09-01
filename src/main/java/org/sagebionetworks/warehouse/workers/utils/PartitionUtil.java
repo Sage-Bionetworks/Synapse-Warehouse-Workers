@@ -7,6 +7,7 @@ public class PartitionUtil {
 	public static final String PARTITION = "PARTITION";
 	public static enum Period {
 		DAY,
+		WEEK,
 		MONTH
 	}
 
@@ -37,6 +38,9 @@ public class PartitionUtil {
 			switch (period) {
 				case DAY:
 					nextDate = nextDate.plusDays(1);
+					break;
+				case WEEK:
+					nextDate = nextDate.plusWeeks(1);
 					break;
 				case MONTH:
 					nextDate = nextDate.plusMonths(1);
