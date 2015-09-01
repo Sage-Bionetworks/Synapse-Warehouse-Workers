@@ -84,7 +84,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 			+ COL_ACCESS_RECORD_RESPONSE_STATUS
 			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-	private static final String ACCESS_RECORD_DDL_SQL = "AccessRecord.ddl.sql";
+	public static final String ACCESS_RECORD_DDL_SQL = "AccessRecord.ddl.sql";
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_ACCESS_RECORD
 			+ " WHERE "
