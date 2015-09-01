@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jdom.JDOMException;
+import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketScanningConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.db.FileState;
@@ -82,6 +83,18 @@ public class ConfigurationImpl implements Configuration {
 		// Finds all access record files that need to be processed.
 		list.add(BucketScanningConfigurationProvider.class);
 		return list;
+	}
+
+	@Override
+	public DateTime getStartDate() {
+		int currentYear = new DateTime().getYear();
+		return new DateTime(currentYear - 2, 1, 1, 0, 0);
+	}
+
+	@Override
+	public DateTime getEndDate() {
+		int currentYear = new DateTime().getYear();
+		return new DateTime(currentYear + 9, 1, 1, 0, 0);
 	}
 
 }

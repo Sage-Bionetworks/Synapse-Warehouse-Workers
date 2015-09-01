@@ -1,6 +1,26 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import static org.sagebionetworks.warehouse.workers.db.Sql.*;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_DATE;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_ELAPSE_MS;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_HOST;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_INSTANCE;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_METHOD;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_ORIGIN;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_QUERY_STRING;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_REQUEST_URL;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_RESPONSE_STATUS;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_RETURN_OBJECT_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_SESSION_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_STACK;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_SUCCESS;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_THREAD_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_TIMESTAMP;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_USER_AGENT;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_USER_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_VIA;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_VM_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_X_FORWARDED_FOR;
+import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_ACCESS_RECORD;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,10 +29,11 @@ import java.sql.Types;
 import java.util.List;
 
 import org.sagebionetworks.repo.model.audit.AccessRecord;
-import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
+import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 
@@ -63,11 +84,14 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 			+ COL_ACCESS_RECORD_RESPONSE_STATUS
 			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-	private static final String ACCESS_RECORD_DDL_SQL = "AccessRecord.ddl.sql";
+	public static final String ACCESS_RECORD_DDL_SQL = "AccessRecord.ddl.sql";
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_ACCESS_RECORD
 			+ " WHERE "
 			+ COL_ACCESS_RECORD_SESSION_ID
+			+ " = ?"
+			+ " AND "
+			+ COL_ACCESS_RECORD_TIMESTAMP
 			+ " = ?";
 
 	private JdbcTemplate template;
@@ -107,12 +131,13 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	};
 
 	@Inject
-	AccessRecordDaoImpl(JdbcTemplate template) throws SQLException {
+	AccessRecordDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
-		this.template.update(ClasspathUtils.loadStringFromClassPath(ACCESS_RECORD_DDL_SQL));
+		creator.createTableWithPartition(ACCESS_RECORD_DDL_SQL, TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 	}
 
+	@Transactional
 	@Override
 	public void insert(final List<AccessRecord> batch) {
 		template.batchUpdate(INSERT_IGNORE, new BatchPreparedStatementSetter() {
@@ -155,8 +180,8 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	}
 
 	@Override
-	public AccessRecord get(String sessionId) {
-		return template.queryForObject(SQL_GET, this.rowMapper, sessionId);
+	public AccessRecord get(String sessionId, Long timestamp) {
+		return template.queryForObject(SQL_GET, this.rowMapper, sessionId, timestamp);
 	}
 
 	@Override

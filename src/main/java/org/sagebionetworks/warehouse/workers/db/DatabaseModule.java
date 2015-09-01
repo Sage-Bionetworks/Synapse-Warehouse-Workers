@@ -31,6 +31,7 @@ public class DatabaseModule extends AbstractModule {
 	protected void configure() {
 		// Dao binding
 		bind(ConnectionPool.class).to(ConnectionPoolImpl.class);
+		bind(TableCreator.class).to(TableCreatorImpl.class);
 		bind(FileMetadataDao.class).to(FileMetadataDaoImpl.class);
 		bind(FolderMetadataDao.class).to(FolderMetadataDaoImpl.class);
 		bind(AccessRecordDao.class).to(AccessRecordDaoImpl.class);
