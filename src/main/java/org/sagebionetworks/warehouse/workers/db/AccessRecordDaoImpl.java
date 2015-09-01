@@ -1,6 +1,26 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import static org.sagebionetworks.warehouse.workers.db.Sql.*;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_DATE;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_ELAPSE_MS;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_HOST;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_INSTANCE;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_METHOD;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_ORIGIN;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_QUERY_STRING;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_REQUEST_URL;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_RESPONSE_STATUS;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_RETURN_OBJECT_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_SESSION_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_STACK;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_SUCCESS;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_THREAD_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_TIMESTAMP;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_USER_AGENT;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_USER_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_VIA;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_VM_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_X_FORWARDED_FOR;
+import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_ACCESS_RECORD;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,9 +29,6 @@ import java.sql.Types;
 import java.util.List;
 
 import org.sagebionetworks.repo.model.audit.AccessRecord;
-import org.sagebionetworks.warehouse.workers.config.Configuration;
-import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
-import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -114,15 +131,10 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	};
 
 	@Inject
-	AccessRecordDaoImpl(JdbcTemplate template, Configuration config) throws SQLException {
+	AccessRecordDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
-		String createQuery = ClasspathUtils.loadStringFromClassPath(ACCESS_RECORD_DDL_SQL);
-		if (createQuery.contains(PartitionUtil.PARTITION)) {
-			String partitionString = PartitionUtil.buildPartition(TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY, config.getStartDate(), config.getEndDate());
-			createQuery = createQuery.replace(PartitionUtil.PARTITION, partitionString);
-		}
-		this.template.update(createQuery);
+		creator.createTableWithPartition(ACCESS_RECORD_DDL_SQL, TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 	}
 
 	@Transactional
