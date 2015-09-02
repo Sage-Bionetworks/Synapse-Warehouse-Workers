@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
+import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
+import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
 
 public class ProcessedAccessRecordDaoImplTest {
 
@@ -26,22 +28,14 @@ public class ProcessedAccessRecordDaoImplTest {
 
 	@Test
 	public void test() {
-		ProcessedAccessRecord par1 = new ProcessedAccessRecord();
-		par1.setSessionId("28a75682-f056-40f7-9a1e-416cb703bed5");
-		par1.setEntityId(null);
-		par1.setClient(Client.WEB);
-		par1.setNormalizedMethodSignature("GET /entity/#/descendants");
-		ProcessedAccessRecord par2 = new ProcessedAccessRecord();
-		par2.setSessionId("2cc63ec3-fc80-4b36-91d8-f381d73650f3");
-		par2.setEntityId(1583492L);
-		par2.setClient(Client.UNKNOWN);
-		par2.setNormalizedMethodSignature("GET /repo/v1/entity/#/bundle ");
+		ProcessedAccessRecord par1 = AccessRecordUtils.processAccessRecord(AccessRecordTestUtil.createValidAccessRecord());
+		ProcessedAccessRecord par2 = AccessRecordUtils.processAccessRecord(AccessRecordTestUtil.createValidAccessRecord());
 
 		dao.insert(Arrays.asList(par1, par2));
 
 		// verify that we have 2 entries in the table
-		ProcessedAccessRecord actualPar1 = dao.get(par1.getSessionId());
-		ProcessedAccessRecord actualPar2 = dao.get(par2.getSessionId());
+		ProcessedAccessRecord actualPar1 = dao.get(par1.getSessionId(), par1.getTimestamp());
+		ProcessedAccessRecord actualPar2 = dao.get(par2.getSessionId(), par2.getTimestamp());
 		assertEquals(par1, actualPar1);
 		assertEquals(par2, actualPar2);
 
@@ -49,7 +43,7 @@ public class ProcessedAccessRecordDaoImplTest {
 		par2.setClient(Client.R);
 		dao.insert(Arrays.asList(par2));
 		// validate that the par2 record is updated
-		actualPar2 = dao.get(par2.getSessionId());
+		actualPar2 = dao.get(par2.getSessionId(), par2.getTimestamp());
 		assertEquals(par2, actualPar2);
 	}
 

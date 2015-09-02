@@ -10,10 +10,11 @@ import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
-import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
+import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -27,12 +28,14 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 			+ " ("
 			+ COL_PROCESSED_ACCESS_RECORD_SESSION_ID
 			+ ","
+			+ COL_PROCESSED_ACCESS_RECORD_TIMESTAMP
+			+ ","
 			+ COL_PROCESSED_ACCESS_RECORD_ENTITY_ID
 			+ ","
 			+ COL_PROCESSED_ACCESS_RECORD_CLIENT
 			+ ","
 			+ COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE
-			+ ") VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE "
+			+ ") VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE "
 			+ COL_PROCESSED_ACCESS_RECORD_ENTITY_ID
 			+ " = ?, "
 			+ COL_PROCESSED_ACCESS_RECORD_CLIENT
@@ -45,17 +48,21 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 			+ TABLE_PROCESSED_ACCESS_RECORD
 			+ " WHERE "
 			+ COL_PROCESSED_ACCESS_RECORD_SESSION_ID
+			+ " = ?"
+			+ " AND "
+			+ COL_PROCESSED_ACCESS_RECORD_TIMESTAMP
 			+ " = ?";
 
 	private JdbcTemplate template;
 
 	@Inject
-	ProcessedAccessRecordDaoImpl(JdbcTemplate template) throws SQLException {
+	ProcessedAccessRecordDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
-		this.template.update(ClasspathUtils.loadStringFromClassPath(PROCESSED_ACCESS_RECORD_DDL_SQL));
+		creator.createTableWithPartition(PROCESSED_ACCESS_RECORD_DDL_SQL, TABLE_PROCESSED_ACCESS_RECORD, COL_PROCESSED_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 	}
 
+	@Transactional
 	@Override
 	public void insert(final List<ProcessedAccessRecord> batch) {
 		template.batchUpdate(INSERT, new BatchPreparedStatementSetter() {
@@ -70,17 +77,18 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 					throws SQLException {
 				ProcessedAccessRecord par = batch.get(i);
 				ps.setString(1, par.getSessionId());
+				ps.setLong(2, par.getTimestamp());
 				if (par.getEntityId() != null) {
-					ps.setLong(2, par.getEntityId());
-					ps.setLong(5, par.getEntityId());
+					ps.setLong(3, par.getEntityId());
+					ps.setLong(6, par.getEntityId());
 				} else {
-					ps.setNull(2, Types.BIGINT);
-					ps.setNull(5, Types.BIGINT);
+					ps.setNull(3, Types.BIGINT);
+					ps.setNull(6, Types.BIGINT);
 				}
-				ps.setString(3, par.getClient().name());
-				ps.setString(4, par.getNormalizedMethodSignature());
-				ps.setString(6, par.getClient().name());
-				ps.setString(7, par.getNormalizedMethodSignature());
+				ps.setString(4, par.getClient().name());
+				ps.setString(5, par.getNormalizedMethodSignature());
+				ps.setString(7, par.getClient().name());
+				ps.setString(8, par.getNormalizedMethodSignature());
 			}
 		});
 	}
@@ -91,8 +99,8 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 	}
 
 	@Override
-	public ProcessedAccessRecord get(String sessionId) {
-		return template.queryForObject(SQL_GET, this.rowMapper, sessionId);
+	public ProcessedAccessRecord get(String sessionId, Long timestamp) {
+		return template.queryForObject(SQL_GET, this.rowMapper, sessionId, timestamp);
 	}
 
 	/*
@@ -103,6 +111,7 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 		public ProcessedAccessRecord mapRow(ResultSet rs, int arg1) throws SQLException {
 			ProcessedAccessRecord par = new ProcessedAccessRecord();
 			par.setSessionId(rs.getString(COL_PROCESSED_ACCESS_RECORD_SESSION_ID));
+			par.setTimestamp(rs.getLong(COL_PROCESSED_ACCESS_RECORD_TIMESTAMP));
 			long entityId = rs.getLong(COL_PROCESSED_ACCESS_RECORD_ENTITY_ID);
 			if (!rs.wasNull()) {
 				par.setEntityId(entityId);
