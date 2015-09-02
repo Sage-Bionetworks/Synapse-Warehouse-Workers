@@ -14,7 +14,6 @@ import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 
@@ -117,7 +116,6 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 		creator.createTable(NODE_SNAPSHOT_DDL_SQL);
 	}
 
-	@Transactional
 	@Override
 	public void insert(final List<NodeSnapshot> batch) {
 		template.batchUpdate(INSERT_IGNORE, new BatchPreparedStatementSetter() {

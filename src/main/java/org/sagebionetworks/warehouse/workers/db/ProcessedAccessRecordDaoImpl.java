@@ -14,7 +14,6 @@ import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -62,7 +61,6 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 		creator.createTableWithPartition(PROCESSED_ACCESS_RECORD_DDL_SQL, TABLE_PROCESSED_ACCESS_RECORD, COL_PROCESSED_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 	}
 
-	@Transactional
 	@Override
 	public void insert(final List<ProcessedAccessRecord> batch) {
 		template.batchUpdate(INSERT, new BatchPreparedStatementSetter() {

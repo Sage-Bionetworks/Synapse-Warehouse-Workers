@@ -12,7 +12,6 @@ import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 
@@ -76,7 +75,6 @@ public class TeamSnapshotDaoImpl implements TeamSnapshotDao {
 		creator.createTable(TEAM_SNAPSHOT_DDL_SQL);
 	}
 
-	@Transactional
 	@Override
 	public void insert(final List<TeamSnapshot> batch) {
 		template.batchUpdate(INSERT_IGNORE, new BatchPreparedStatementSetter() {

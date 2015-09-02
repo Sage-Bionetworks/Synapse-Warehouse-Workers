@@ -11,7 +11,6 @@ import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 
@@ -78,7 +77,6 @@ public class UserProfileSnapshotDaoImpl implements UserProfileSnapshotDao{
 		creator.createTable(USER_PROFILE_SNAPSHOT_DDL_SQL);
 	}
 
-	@Transactional
 	@Override
 	public void insert(final List<UserProfileSnapshot> batch) {
 		template.batchUpdate(INSERT_IGNORE, new BatchPreparedStatementSetter() {
