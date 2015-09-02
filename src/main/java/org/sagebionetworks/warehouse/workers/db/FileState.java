@@ -2,7 +2,6 @@ package org.sagebionetworks.warehouse.workers.db;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.Date;
 
 
 /**
