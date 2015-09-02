@@ -26,7 +26,7 @@ public class AccessRecordConfigurationProvider implements WorkerStackConfigurati
 		mdwsc.setQueueName(config.getQueueName());
 		mdwsc.setTopicNamesToSubscribe(Arrays.asList(config.getTopicName()));
 		mdwsc.setRunner(worker);
-		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(2*60);
+		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(60);
 		mdwsc.setSemaphoreLockKey(SemaphoreKey.ACCESS_RECORD_WORKER.name());
 		mdwsc.setSemaphoreMaxLockCount(4);
 
