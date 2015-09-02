@@ -64,7 +64,10 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
 			reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 
-			writeAccessRecord(reader, dao, BATCH_SIZE, callback, message);
+			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
+			long start = System.currentTimeMillis();
+			int noRecords = writeAccessRecord(reader, dao, BATCH_SIZE, callback, message);
+			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} finally {
 			if (reader != null) 	reader.close();
@@ -77,14 +80,16 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 	 * 
 	 * @param reader
 	 * @param dao
+	 * @return the number of records written
 	 * @throws IOException
 	 */
-	public static void writeAccessRecord(ObjectCSVReader<AccessRecord> reader,
+	public static int writeAccessRecord(ObjectCSVReader<AccessRecord> reader,
 			AccessRecordDao dao, int batchSize, ProgressCallback<Message> callback,
 			Message message) throws IOException {
 		AccessRecord record = null;
 		List<AccessRecord> batch = new ArrayList<AccessRecord>(batchSize);
 
+		int noRecords = 0;
 		while ((record = reader.next()) != null) {
 			if (!AccessRecordUtils.isValidAccessRecord(record)) {
 				log.error("Invalid Access Record: " + record.toString());
@@ -94,6 +99,7 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 			if (batch.size() >= batchSize) {
 				callback.progressMade(message);
 				dao.insert(batch);
+				noRecords += batch.size();
 				batch .clear();
 			}
 		}
@@ -101,7 +107,9 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 		if (batch.size() > 0) {
 			callback.progressMade(message);
 			dao.insert(batch);
+			noRecords += batch.size();
 		}
+		return noRecords;
 	}
 
 }

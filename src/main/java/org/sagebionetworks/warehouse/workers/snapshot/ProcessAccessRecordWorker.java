@@ -66,7 +66,10 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
 			reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 
-			writeProcessedAcessRecord(reader, dao, BATCH_SIZE, callback, message);
+			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
+			long start = System.currentTimeMillis();
+			int noRecords = writeProcessedAcessRecord(reader, dao, BATCH_SIZE, callback, message);
+			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} finally {
 			if (reader != null) 	reader.close();
@@ -81,14 +84,16 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 	 * @param reader
 	 * @param dao
 	 * @param batchSize
+	 * @return number of records written
 	 * @throws IOException
 	 */
-	public static void writeProcessedAcessRecord(ObjectCSVReader<AccessRecord> reader,
+	public static int writeProcessedAcessRecord(ObjectCSVReader<AccessRecord> reader,
 			ProcessedAccessRecordDao dao, int batchSize, ProgressCallback<Message> callback,
 			Message message) throws IOException {
 		AccessRecord record = null;
 		List<ProcessedAccessRecord> batch = new ArrayList<ProcessedAccessRecord>(batchSize);
 
+		int noRecords = 0;
 		while ((record = reader.next()) != null) {
 			if (!AccessRecordUtils.isValidAccessRecord(record)) {
 				log.error("Invalid Access Record: " + record.toString());
@@ -98,6 +103,7 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 			if (batch.size() >= batchSize) {
 				callback.progressMade(message);
 				dao.insert(batch);
+				noRecords += batch.size();
 				batch.clear();
 			}
 		}
@@ -105,7 +111,9 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 		if (batch.size() > 0) {
 			callback.progressMade(message);
 			dao.insert(batch);
+			noRecords += batch.size();
 		}
+		return noRecords;
 	}
 
 }

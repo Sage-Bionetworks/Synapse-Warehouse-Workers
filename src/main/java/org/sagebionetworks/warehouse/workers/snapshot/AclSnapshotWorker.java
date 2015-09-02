@@ -63,7 +63,10 @@ public class AclSnapshotWorker implements MessageDrivenRunner {
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
 			reader = streamResourceProvider.createObjectCSVReader(file, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS);
 
-			writeAclSnapshot(reader, aclSnapshotDao, BATCH_SIZE, callback, message);
+			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
+			long start = System.currentTimeMillis();
+			int noRecords = writeAclSnapshot(reader, aclSnapshotDao, BATCH_SIZE, callback, message);
+			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} finally {
 			if (reader != null) 	reader.close();
@@ -76,14 +79,16 @@ public class AclSnapshotWorker implements MessageDrivenRunner {
 	 * 
 	 * @param reader
 	 * @param dao
+	 * @return number of records written
 	 * @throws IOException
 	 */
-	public static void writeAclSnapshot(ObjectCSVReader<ObjectRecord> reader,
+	public static int writeAclSnapshot(ObjectCSVReader<ObjectRecord> reader,
 			AclSnapshotDao dao, int batchSize, ProgressCallback<Message> callback,
 			Message message) throws IOException {
 		ObjectRecord record = null;
 		List<AclSnapshot> batch = new ArrayList<AclSnapshot>(batchSize);
 
+		int noRecords = 0;
 		while ((record = reader.next()) != null) {
 			AclSnapshot snapshot = ObjectSnapshotUtils.getAclSnapshot(record);
 			if (!ObjectSnapshotUtils.isValidAclSnapshot(snapshot)) {
@@ -94,6 +99,7 @@ public class AclSnapshotWorker implements MessageDrivenRunner {
 			if (batch.size() >= batchSize) {
 				callback.progressMade(message);
 				dao.insert(batch);
+				noRecords += batch.size();
 				batch .clear();
 			}
 		}
@@ -101,6 +107,8 @@ public class AclSnapshotWorker implements MessageDrivenRunner {
 		if (batch.size() > 0) {
 			callback.progressMade(message);
 			dao.insert(batch);
+			noRecords += batch.size();
 		}
+		return noRecords;
 	}
 }
