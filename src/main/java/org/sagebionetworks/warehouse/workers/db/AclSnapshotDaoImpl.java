@@ -18,12 +18,12 @@ import java.util.Set;
 
 import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
-import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
 import org.sagebionetworks.warehouse.workers.utils.CompressionUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 
@@ -80,12 +80,13 @@ public class AclSnapshotDaoImpl implements AclSnapshotDao{
 	};
 
 	@Inject
-	AclSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
+	AclSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
-		this.template.update(ClasspathUtils.loadStringFromClassPath(ACL_SNAPSHOT_DDL_SQL));
+		creator.createTable(ACL_SNAPSHOT_DDL_SQL);
 	}
 
+	@Transactional
 	@Override
 	public void insert(final List<AclSnapshot> batch) {
 		template.batchUpdate(INSERT_IGNORE, new BatchPreparedStatementSetter() {

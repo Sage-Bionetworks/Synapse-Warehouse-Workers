@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
-import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 
@@ -72,12 +72,13 @@ public class UserProfileSnapshotDaoImpl implements UserProfileSnapshotDao{
 	};
 
 	@Inject
-	UserProfileSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
+	UserProfileSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
-		this.template.update(ClasspathUtils.loadStringFromClassPath(USER_PROFILE_SNAPSHOT_DDL_SQL));
+		creator.createTable(USER_PROFILE_SNAPSHOT_DDL_SQL);
 	}
 
+	@Transactional
 	@Override
 	public void insert(final List<UserProfileSnapshot> batch) {
 		template.batchUpdate(INSERT_IGNORE, new BatchPreparedStatementSetter() {
