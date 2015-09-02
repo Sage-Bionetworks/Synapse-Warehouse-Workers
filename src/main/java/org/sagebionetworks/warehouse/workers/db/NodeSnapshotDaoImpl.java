@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
-import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -111,10 +110,10 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 	};
 
 	@Inject
-	NodeSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
+	NodeSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
-		this.template.update(ClasspathUtils.loadStringFromClassPath(NODE_SNAPSHOT_DDL_SQL));
+		creator.createTable(NODE_SNAPSHOT_DDL_SQL);
 	}
 
 	@Override

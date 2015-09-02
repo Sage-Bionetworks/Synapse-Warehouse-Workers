@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.Iterator;
 
 import org.sagebionetworks.warehouse.workers.db.FolderState.State;
-import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -53,12 +52,11 @@ public class FolderMetadataDaoImpl implements FolderMetadataDao {
 	};
 
 	@Inject
-	public FolderMetadataDaoImpl(JdbcTemplate template) {
+	public FolderMetadataDaoImpl(JdbcTemplate template, TableCreator creator) {
 		super();
 		this.template = template;
 		// Create the table
-		this.template.update(ClasspathUtils
-				.loadStringFromClassPath(FOLDER_STATE_DDL_SQL));
+		creator.createTable(FOLDER_STATE_DDL_SQL);
 	}
 
 	@Override

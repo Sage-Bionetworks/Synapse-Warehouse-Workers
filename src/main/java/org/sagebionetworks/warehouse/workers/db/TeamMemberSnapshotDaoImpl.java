@@ -9,7 +9,6 @@ import java.sql.Types;
 import java.util.List;
 
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
-import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -63,10 +62,10 @@ public class TeamMemberSnapshotDaoImpl implements TeamMemberSnapshotDao{
 	};
 
 	@Inject
-	TeamMemberSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
+	TeamMemberSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
-		this.template.update(ClasspathUtils.loadStringFromClassPath(TEAM_MEMBER_SNAPSHOT_DDL_SQL));
+		creator.createTable(TEAM_MEMBER_SNAPSHOT_DDL_SQL);
 	}
 
 	@Override

@@ -33,7 +33,6 @@ import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 
@@ -137,7 +136,6 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 		creator.createTableWithPartition(ACCESS_RECORD_DDL_SQL, TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 	}
 
-	@Transactional
 	@Override
 	public void insert(final List<AccessRecord> batch) {
 		template.batchUpdate(INSERT_IGNORE, new BatchPreparedStatementSetter() {

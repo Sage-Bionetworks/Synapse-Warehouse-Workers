@@ -62,7 +62,10 @@ public class TeamSnapshotWorker implements MessageDrivenRunner {
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
 			reader = streamResourceProvider.createObjectCSVReader(file, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS);
 
-			writeTeamSnapshot(reader, dao, BATCH_SIZE, callback, message);
+			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
+			long start = System.currentTimeMillis();
+			int noRecords = writeTeamSnapshot(reader, dao, BATCH_SIZE, callback, message);
+			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} finally {
 			if (reader != null) 	reader.close();
@@ -75,14 +78,16 @@ public class TeamSnapshotWorker implements MessageDrivenRunner {
 	 * 
 	 * @param reader
 	 * @param dao
+	 * @return number of records written
 	 * @throws IOException
 	 */
-	public static void writeTeamSnapshot(ObjectCSVReader<ObjectRecord> reader,
+	public static int writeTeamSnapshot(ObjectCSVReader<ObjectRecord> reader,
 			TeamSnapshotDao dao, int batchSize, ProgressCallback<Message> callback,
 			Message message) throws IOException {
 		ObjectRecord record = null;
 		List<TeamSnapshot> batch = new ArrayList<TeamSnapshot>(batchSize);
 
+		int noRecords = 0;
 		while ((record = reader.next()) != null) {
 			TeamSnapshot snapshot = ObjectSnapshotUtils.getTeamSnapshot(record);
 			if (!ObjectSnapshotUtils.isValidTeamSnapshot(snapshot)) {
@@ -93,6 +98,7 @@ public class TeamSnapshotWorker implements MessageDrivenRunner {
 			if (batch.size() >= batchSize) {
 				callback.progressMade(message);
 				dao.insert(batch);
+				noRecords += batch.size();
 				batch .clear();
 			}
 		}
@@ -100,6 +106,8 @@ public class TeamSnapshotWorker implements MessageDrivenRunner {
 		if (batch.size() > 0) {
 			callback.progressMade(message);
 			dao.insert(batch);
+			noRecords += batch.size();
 		}
+		return noRecords;
 	}
 }

@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.sagebionetworks.warehouse.workers.db.FileState.State;
-import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -67,12 +66,11 @@ public class FileMetadataDaoImpl implements FileMetadataDao {
 	};
 
 	@Inject
-	FileMetadataDaoImpl(JdbcTemplate template) throws SQLException {
+	FileMetadataDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
 		// Create the table
-		this.template.update(ClasspathUtils
-				.loadStringFromClassPath(FILE_STATE_DDL_SQL));
+		creator.createTable(FILE_STATE_DDL_SQL);
 	}
 
 	/*

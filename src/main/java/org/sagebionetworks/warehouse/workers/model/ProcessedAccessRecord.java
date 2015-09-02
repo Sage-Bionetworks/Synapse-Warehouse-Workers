@@ -3,10 +3,17 @@ package org.sagebionetworks.warehouse.workers.model;
 public class ProcessedAccessRecord {
 
 	private String sessionId;
+	private Long timestamp;
 	private Long entityId;
 	private Client client;
 	private String normalizedMethodSignature;
 
+	public Long getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(Long timestamp) {
+		this.timestamp = timestamp;
+	}
 	public String getSessionId() {
 		return sessionId;
 	}
@@ -45,6 +52,8 @@ public class ProcessedAccessRecord {
 						: normalizedMethodSignature.hashCode());
 		result = prime * result
 				+ ((sessionId == null) ? 0 : sessionId.hashCode());
+		result = prime * result
+				+ ((timestamp == null) ? 0 : timestamp.hashCode());
 		return result;
 	}
 	@Override
@@ -74,12 +83,17 @@ public class ProcessedAccessRecord {
 				return false;
 		} else if (!sessionId.equals(other.sessionId))
 			return false;
+		if (timestamp == null) {
+			if (other.timestamp != null)
+				return false;
+		} else if (!timestamp.equals(other.timestamp))
+			return false;
 		return true;
 	}
 	@Override
 	public String toString() {
-		return "ProcessedAccessRecord [sessionId=" + sessionId + ", entityId="
-				+ entityId + ", client=" + client
+		return "ProcessedAccessRecord [sessionId=" + sessionId + ", timestamp="
+				+ timestamp + ", entityId=" + entityId + ", client=" + client
 				+ ", normalizedMethodSignature=" + normalizedMethodSignature
 				+ "]";
 	}

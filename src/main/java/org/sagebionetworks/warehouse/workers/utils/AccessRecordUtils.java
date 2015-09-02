@@ -32,6 +32,7 @@ public class AccessRecordUtils {
 	public static ProcessedAccessRecord processAccessRecord(AccessRecord accessRecord) {
 		ProcessedAccessRecord processed = new ProcessedAccessRecord();
 		processed.setSessionId(accessRecord.getSessionId());
+		processed.setTimestamp(accessRecord.getTimestamp());
 		processed.setClient(getClient(accessRecord.getUserAgent()));
 		processed.setEntityId(getEntityId(accessRecord.getRequestURL()));
 		processed.setNormalizedMethodSignature(normalizeMethodSignature(accessRecord.getRequestURL(), accessRecord.getMethod()));
