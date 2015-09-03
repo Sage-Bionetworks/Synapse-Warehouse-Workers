@@ -29,10 +29,14 @@ import java.sql.Types;
 import java.util.List;
 
 import org.sagebionetworks.repo.model.audit.AccessRecord;
+import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.inject.Inject;
 
@@ -94,6 +98,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 			+ " = ?";
 
 	private JdbcTemplate template;
+	private TransactionTemplate transactionTemplate;
 
 	/*
 	 * Map all columns to the dbo.
@@ -130,49 +135,57 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	};
 
 	@Inject
-	AccessRecordDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
+	AccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
+		this.transactionTemplate = transactionTemplate;
 		creator.createTableWithPartition(ACCESS_RECORD_DDL_SQL, TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 	}
 
 	@Override
 	public void insert(final List<AccessRecord> batch) {
-		template.batchUpdate(INSERT_IGNORE, new BatchPreparedStatementSetter() {
+		transactionTemplate.execute(new TransactionCallback<Void>() {
 
 			@Override
-			public int getBatchSize() {
-				return batch.size();
-			}
+			public Void doInTransaction(TransactionStatus status) {
+				template.batchUpdate(INSERT_IGNORE, new BatchPreparedStatementSetter() {
 
-			@Override
-			public void setValues(PreparedStatement ps, int i)
-					throws SQLException {
-				AccessRecord ar = batch.get(i);
-				ps.setString(1, ar.getSessionId());
-				ps.setString(2, ar.getReturnObjectId());
-				ps.setLong(3, ar.getElapseMS());
-				ps.setLong(4, ar.getTimestamp());
-				ps.setString(5, ar.getVia());
-				ps.setString(6, ar.getHost());
-				ps.setLong(7, ar.getThreadId());
-				ps.setString(8, ar.getUserAgent());
-				ps.setString(9, ar.getQueryString());
-				ps.setString(10, ar.getXForwardedFor());
-				ps.setString(11, ar.getRequestURL());
-				if (ar.getUserId() != null) {
-					ps.setLong(12, ar.getUserId());
-				} else {
-					ps.setNull(12, Types.BIGINT);
-				}
-				ps.setString(13, ar.getOrigin());
-				ps.setString(14, ar.getDate());
-				ps.setString(15, ar.getMethod());
-				ps.setString(16, ar.getVmId());
-				ps.setString(17, ar.getInstance());
-				ps.setString(18, ar.getStack());
-				ps.setBoolean(19, ar.getSuccess());
-				ps.setLong(20, ar.getResponseStatus());
+					@Override
+					public int getBatchSize() {
+						return batch.size();
+					}
+
+					@Override
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						AccessRecord ar = batch.get(i);
+						ps.setString(1, ar.getSessionId());
+						ps.setString(2, ar.getReturnObjectId());
+						ps.setLong(3, ar.getElapseMS());
+						ps.setLong(4, ar.getTimestamp());
+						ps.setString(5, ar.getVia());
+						ps.setString(6, ar.getHost());
+						ps.setLong(7, ar.getThreadId());
+						ps.setString(8, ar.getUserAgent());
+						ps.setString(9, ar.getQueryString());
+						ps.setString(10, ar.getXForwardedFor());
+						ps.setString(11, ar.getRequestURL());
+						if (ar.getUserId() != null) {
+							ps.setLong(12, ar.getUserId());
+						} else {
+							ps.setNull(12, Types.BIGINT);
+						}
+						ps.setString(13, ar.getOrigin());
+						ps.setString(14, ar.getDate());
+						ps.setString(15, ar.getMethod());
+						ps.setString(16, ar.getVmId());
+						ps.setString(17, ar.getInstance());
+						ps.setString(18, ar.getStack());
+						ps.setBoolean(19, ar.getSuccess());
+						ps.setLong(20, ar.getResponseStatus());
+					}
+				});
+				return null;
 			}
 		});
 	}
