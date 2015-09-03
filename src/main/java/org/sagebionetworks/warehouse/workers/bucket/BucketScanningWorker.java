@@ -41,6 +41,7 @@ public class BucketScanningWorker implements ProgressingRunner<Void> {
 			BucketDao bucketDao = bucketDaoProvider.createBucketDao(info
 					.getBucketName());
 			String nullPrefix = null;
+			Thread.sleep(1000);
 			Iterator<S3ObjectSummary> objectStream = bucketDao
 					.summaryIterator(nullPrefix);
 			// The manager will deal with this stream.
