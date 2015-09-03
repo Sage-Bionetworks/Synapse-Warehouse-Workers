@@ -31,7 +31,7 @@ public class AclSnapshotWorker implements MessageDrivenRunner {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedAclRecordSnapshot";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
-	private static final int BATCH_SIZE = 10000;
+	private static final int BATCH_SIZE = 25000;
 	private static Logger log = LogManager.getLogger(AclSnapshotWorker.class);
 	private AmazonS3Client s3Client;
 	private AclSnapshotDao aclSnapshotDao;
