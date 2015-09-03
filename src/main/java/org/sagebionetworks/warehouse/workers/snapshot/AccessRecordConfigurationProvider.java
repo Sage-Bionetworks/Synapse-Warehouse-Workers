@@ -28,7 +28,7 @@ public class AccessRecordConfigurationProvider implements WorkerStackConfigurati
 		mdwsc.setRunner(worker);
 		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(10*60);
 		mdwsc.setSemaphoreLockKey(SemaphoreKey.ACCESS_RECORD_WORKER.name());
-		mdwsc.setSemaphoreMaxLockCount(4);
+		mdwsc.setSemaphoreMaxLockCount(1);
 
 		Runnable runner = new MessageDrivenWorkerStack(semaphore, awsSQSClient,
 				awsSNClient, mdwsc);
