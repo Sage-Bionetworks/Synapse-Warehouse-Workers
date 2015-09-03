@@ -26,7 +26,7 @@ public class AclSnapshotConfigurationProvider implements WorkerStackConfiguratio
 		mdwsc.setQueueName(config.getQueueName());
 		mdwsc.setTopicNamesToSubscribe(Arrays.asList(config.getTopicName()));
 		mdwsc.setRunner(worker);
-		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(60);
+		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(10*60);
 		mdwsc.setSemaphoreLockKey(SemaphoreKey.ACL_RECORD_SNAPSHOT_WORKER.name());
 		mdwsc.setSemaphoreMaxLockCount(4);
 
