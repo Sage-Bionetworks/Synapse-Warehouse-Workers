@@ -75,10 +75,9 @@ public class TeamSnapshotDaoImpl implements TeamSnapshotDao {
 	};
 
 	@Inject
-	TeamSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
+	TeamSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
 		super();
 		this.template = template;
-		creator.createTable(TEAM_SNAPSHOT_DDL_SQL);
 	}
 
 	@Override
