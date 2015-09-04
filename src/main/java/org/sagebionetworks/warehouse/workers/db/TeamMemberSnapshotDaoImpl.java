@@ -17,6 +17,14 @@ import com.google.inject.Inject;
 
 public class TeamMemberSnapshotDaoImpl implements TeamMemberSnapshotDao{
 
+	public static final String TEAM_MEMBER_SNAPSHOT_DDL_SQL = "TeamMemberSnapshot.ddl.sql";
+	public static final TableConfiguration CONFIG = new TableConfiguration(
+			TABLE_TEAM_MEMBER_SNAPSHOT,
+			TEAM_MEMBER_SNAPSHOT_DDL_SQL,
+			false,
+			null,
+			null);
+
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_TEAM_MEMBER_SNAPSHOT;
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO "
 			+ TABLE_TEAM_MEMBER_SNAPSHOT
@@ -29,8 +37,6 @@ public class TeamMemberSnapshotDaoImpl implements TeamMemberSnapshotDao{
 			+ ","
 			+ COL_TEAM_MEMBER_SNAPSHOT_IS_ADMIN
 			+ ") VALUES (?,?,?,?)";
-
-	private static final String TEAM_MEMBER_SNAPSHOT_DDL_SQL = "TeamMemberSnapshot.ddl.sql";
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_TEAM_MEMBER_SNAPSHOT
 			+ " WHERE "
@@ -62,10 +68,9 @@ public class TeamMemberSnapshotDaoImpl implements TeamMemberSnapshotDao{
 	};
 
 	@Inject
-	TeamMemberSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
+	TeamMemberSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
 		super();
 		this.template = template;
-		creator.createTable(TEAM_MEMBER_SNAPSHOT_DDL_SQL);
 	}
 
 	@Override

@@ -16,6 +16,14 @@ import com.google.inject.Inject;
 
 public class UserProfileSnapshotDaoImpl implements UserProfileSnapshotDao{
 
+	public static final String USER_PROFILE_SNAPSHOT_DDL_SQL = "UserProfileSnapshot.ddl.sql";
+	public static final TableConfiguration CONFIG = new TableConfiguration(
+			TABLE_USER_PROFILE_SNAPSHOT,
+			USER_PROFILE_SNAPSHOT_DDL_SQL,
+			false,
+			null,
+			null);
+
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_USER_PROFILE_SNAPSHOT;
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO "
 			+ TABLE_USER_PROFILE_SNAPSHOT
@@ -38,8 +46,6 @@ public class UserProfileSnapshotDaoImpl implements UserProfileSnapshotDao{
 			+ ","
 			+ COL_USER_PROFILE_SNAPSHOT_POSITION
 			+ ") VALUES (?,?,?,?,?,?,?,?,?)";
-
-	private static final String USER_PROFILE_SNAPSHOT_DDL_SQL = "UserProfileSnapshot.ddl.sql";
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_USER_PROFILE_SNAPSHOT
 			+ " WHERE "
@@ -71,10 +77,9 @@ public class UserProfileSnapshotDaoImpl implements UserProfileSnapshotDao{
 	};
 
 	@Inject
-	UserProfileSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
+	UserProfileSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
 		super();
 		this.template = template;
-		creator.createTable(USER_PROFILE_SNAPSHOT_DDL_SQL);
 	}
 
 	@Override

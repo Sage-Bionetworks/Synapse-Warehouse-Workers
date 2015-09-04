@@ -25,6 +25,14 @@ import com.google.inject.Singleton;
 @Singleton
 public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 
+	public static final String PROCESSED_ACCESS_RECORD_DDL_SQL = "ProcessedAccessRecord.ddl.sql";
+	public static final TableConfiguration CONFIG = new TableConfiguration(
+			TABLE_PROCESSED_ACCESS_RECORD,
+			PROCESSED_ACCESS_RECORD_DDL_SQL,
+			true,
+			COL_PROCESSED_ACCESS_RECORD_TIMESTAMP,
+			Period.DAY);
+
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_PROCESSED_ACCESS_RECORD;
 	private static final String INSERT = "INSERT INTO "
 			+ TABLE_PROCESSED_ACCESS_RECORD
@@ -45,8 +53,6 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 			+ " = ?, "
 			+ COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE
 			+ " = ?";
-
-	private static final String PROCESSED_ACCESS_RECORD_DDL_SQL = "ProcessedAccessRecord.ddl.sql";
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_PROCESSED_ACCESS_RECORD
 			+ " WHERE "
@@ -60,11 +66,10 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 	private TransactionTemplate transactionTemplate;
 
 	@Inject
-	ProcessedAccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate, TableCreator creator) throws SQLException {
+	ProcessedAccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate) throws SQLException {
 		super();
 		this.template = template;
 		this.transactionTemplate = transactionTemplate;
-		creator.createTableWithPartition(PROCESSED_ACCESS_RECORD_DDL_SQL, TABLE_PROCESSED_ACCESS_RECORD, COL_PROCESSED_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 	}
 
 	@Override

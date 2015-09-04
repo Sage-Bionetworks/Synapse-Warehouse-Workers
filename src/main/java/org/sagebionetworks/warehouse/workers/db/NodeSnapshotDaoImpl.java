@@ -19,6 +19,13 @@ import com.google.inject.Inject;
 
 public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 
+	public static final String NODE_SNAPSHOT_DDL_SQL = "NodeSnapshot.ddl.sql";
+	public static final TableConfiguration CONFIG = new TableConfiguration(
+			TABLE_NODE_SNAPSHOT,
+			NODE_SNAPSHOT_DDL_SQL,
+			false,
+			null,
+			null);
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_NODE_SNAPSHOT;
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO "
 			+ TABLE_NODE_SNAPSHOT
@@ -55,8 +62,6 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 			+ ","
 			+ COL_NODE_SNAPSHOT_IS_RESTRICTED
 			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
-	private static final String NODE_SNAPSHOT_DDL_SQL = "NodeSnapshot.ddl.sql";
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_NODE_SNAPSHOT
 			+ " WHERE "
@@ -110,10 +115,9 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 	};
 
 	@Inject
-	NodeSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
+	NodeSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
 		super();
 		this.template = template;
-		creator.createTable(NODE_SNAPSHOT_DDL_SQL);
 	}
 
 	@Override

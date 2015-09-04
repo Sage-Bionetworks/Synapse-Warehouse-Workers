@@ -9,6 +9,9 @@ import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.warehouse.workers.WorkerStack;
 import org.sagebionetworks.warehouse.workers.WorkerStackList;
 import org.sagebionetworks.warehouse.workers.db.ConnectionPool;
+import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
+import org.sagebionetworks.warehouse.workers.db.TableCreator;
+import org.sagebionetworks.warehouse.workers.db.TableConfigurationList;
 
 import com.google.inject.Injector;
 
@@ -39,6 +42,13 @@ public class ApplicationMain {
 			if(injector == null){
 				log.error("Injector is null.  Cannot start the application.");
 				return;
+			}
+			// Get the list of table configurations and create tables based on their config
+			List<TableConfiguration> tableConfigs = injector.getInstance(TableConfigurationList.class).getList();
+			TableCreator creator = injector.getInstance(TableCreator.class);
+			for (TableConfiguration config : tableConfigs) {
+				log.info("Creating table: " + config.getTableName() + "...");
+				creator.createTable(config);
 			}
 			// Get all of the worker stacks and start them.
 			stacks = injector.getInstance(WorkerStackList.class).getList();

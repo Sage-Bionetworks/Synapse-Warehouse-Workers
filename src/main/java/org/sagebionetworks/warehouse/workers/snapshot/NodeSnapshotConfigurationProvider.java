@@ -28,7 +28,7 @@ public class NodeSnapshotConfigurationProvider implements WorkerStackConfigurati
 		mdwsc.setRunner(worker);
 		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(60);
 		mdwsc.setSemaphoreLockKey(SemaphoreKey.NODE_SNAPSHOT_WORKER.name());
-		mdwsc.setSemaphoreMaxLockCount(4);
+		mdwsc.setSemaphoreMaxLockCount(1);
 
 		Runnable runner = new MessageDrivenWorkerStack(semaphore, awsSQSClient,
 				awsSNClient, mdwsc);

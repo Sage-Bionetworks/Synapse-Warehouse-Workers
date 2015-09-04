@@ -28,7 +28,7 @@ public class UserProfileSnapshotConfigurationProvider implements WorkerStackConf
 		mdwsc.setRunner(worker);
 		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(60);
 		mdwsc.setSemaphoreLockKey(SemaphoreKey.USER_PROFILE_SNAPSHOT_WORKER.name());
-		mdwsc.setSemaphoreMaxLockCount(4);
+		mdwsc.setSemaphoreMaxLockCount(1);
 
 		Runnable runner = new MessageDrivenWorkerStack(semaphore, awsSQSClient,
 				awsSNClient, mdwsc);

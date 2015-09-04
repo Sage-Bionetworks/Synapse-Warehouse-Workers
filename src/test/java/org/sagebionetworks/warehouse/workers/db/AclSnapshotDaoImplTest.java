@@ -18,9 +18,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 public class AclSnapshotDaoImplTest {
 	AclSnapshotDao dao = TestContext.singleton().getInstance(AclSnapshotDao.class);
+	TableCreator creator = TestContext.singleton().getInstance(TableCreator.class);
 
 	@Before
 	public void before(){
+		creator.createTableWithoutPartitions(AclSnapshotDaoImpl.ACL_SNAPSHOT_DDL_SQL);
 		dao.truncateAll();
 	}
 

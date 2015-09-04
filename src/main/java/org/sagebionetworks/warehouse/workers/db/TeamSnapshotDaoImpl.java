@@ -17,6 +17,14 @@ import com.google.inject.Inject;
 
 public class TeamSnapshotDaoImpl implements TeamSnapshotDao {
 
+	public static final String TEAM_SNAPSHOT_DDL_SQL = "TeamSnapshot.ddl.sql";
+	public static final TableConfiguration CONFIG = new TableConfiguration(
+			TABLE_TEAM_SNAPSHOT,
+			TEAM_SNAPSHOT_DDL_SQL,
+			false,
+			null,
+			null);
+
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_TEAM_SNAPSHOT;
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO "
 			+ TABLE_TEAM_SNAPSHOT
@@ -37,8 +45,6 @@ public class TeamSnapshotDaoImpl implements TeamSnapshotDao {
 			+ ","
 			+ COL_TEAM_SNAPSHOT_CAN_PUBLIC_JOIN
 			+ ") VALUES (?,?,?,?,?,?,?,?)";
-
-	private static final String TEAM_SNAPSHOT_DDL_SQL = "TeamSnapshot.ddl.sql";
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_TEAM_SNAPSHOT
 			+ " WHERE "
@@ -69,10 +75,9 @@ public class TeamSnapshotDaoImpl implements TeamSnapshotDao {
 	};
 
 	@Inject
-	TeamSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
+	TeamSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
 		super();
 		this.template = template;
-		creator.createTable(TEAM_SNAPSHOT_DDL_SQL);
 	}
 
 	@Override

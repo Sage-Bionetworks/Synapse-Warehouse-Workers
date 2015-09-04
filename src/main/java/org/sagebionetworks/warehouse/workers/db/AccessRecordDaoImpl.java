@@ -41,7 +41,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.google.inject.Inject;
 
 public class AccessRecordDaoImpl implements AccessRecordDao {
-
+	public static final String ACCESS_RECORD_DDL_SQL = "AccessRecord.ddl.sql";
+	public static final TableConfiguration CONFIG = new TableConfiguration(
+			TABLE_ACCESS_RECORD,
+			ACCESS_RECORD_DDL_SQL,
+			true,
+			COL_ACCESS_RECORD_TIMESTAMP,
+			Period.DAY);
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_ACCESS_RECORD;
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO "
 			+ TABLE_ACCESS_RECORD
@@ -86,8 +92,6 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 			+ ","
 			+ COL_ACCESS_RECORD_RESPONSE_STATUS
 			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
-	public static final String ACCESS_RECORD_DDL_SQL = "AccessRecord.ddl.sql";
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_ACCESS_RECORD
 			+ " WHERE "
@@ -135,11 +139,10 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	};
 
 	@Inject
-	AccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate, TableCreator creator) throws SQLException {
+	AccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate) throws SQLException {
 		super();
 		this.template = template;
 		this.transactionTemplate = transactionTemplate;
-		creator.createTableWithPartition(ACCESS_RECORD_DDL_SQL, TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 	}
 
 	@Override
