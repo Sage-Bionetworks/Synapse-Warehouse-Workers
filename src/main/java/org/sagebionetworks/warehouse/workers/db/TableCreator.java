@@ -20,4 +20,19 @@ public interface TableCreator {
 	 * @param period - the period that defines the range of a partition
 	 */
 	public void createTableWithPartition(String fileName, String tableName, String fieldName, Period period);
+
+	/**
+	 * Create a table based on the config
+	 * 
+	 * @param config
+	 */
+	public void createTable(TableConfiguration config);
+
+	/**
+	 * Create a table using the query defined in fileName
+	 * If the query contains PARTITION, ignore it
+	 * 
+	 * @param fileName
+	 */
+	public void createTableWithoutPartitions(String fileName);
 }
