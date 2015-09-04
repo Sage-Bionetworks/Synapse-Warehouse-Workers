@@ -51,7 +51,7 @@ public class ApplicationMainTest {
 	@Test
 	public void testStart(){
 		main.startup();
-		mockCreator.createTable(mockTableConfig);
+		verify(mockCreator).createTable(mockTableConfig);
 		// Each stack should be started.
 		verify(mockStack).start();
 	}
