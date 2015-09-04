@@ -22,31 +22,16 @@ public class TableConfiguration {
 	public String getTableName() {
 		return tableName;
 	}
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
 	public String getSchemaFileName() {
 		return schemaFileName;
-	}
-	public void setSchemaFileName(String schemaFileName) {
-		this.schemaFileName = schemaFileName;
 	}
 	public boolean isCreateWithPartitions() {
 		return createWithPartitions;
 	}
-	public void setCreateWithPartitions(boolean createWithPartitions) {
-		this.createWithPartitions = createWithPartitions;
-	}
 	public String getPartitionFieldName() {
 		return partitionFieldName;
 	}
-	public void setPartitionFieldName(String partitionFieldName) {
-		this.partitionFieldName = partitionFieldName;
-	}
 	public Period getPartitionPeriod() {
 		return partitionPeriod;
-	}
-	public void setPartitionPeriod(Period partitionPeriod) {
-		this.partitionPeriod = partitionPeriod;
 	}
 }
