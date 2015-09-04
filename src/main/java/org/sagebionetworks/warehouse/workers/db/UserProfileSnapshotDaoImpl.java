@@ -77,10 +77,9 @@ public class UserProfileSnapshotDaoImpl implements UserProfileSnapshotDao{
 	};
 
 	@Inject
-	UserProfileSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
+	UserProfileSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
 		super();
 		this.template = template;
-		creator.createTable(USER_PROFILE_SNAPSHOT_DDL_SQL);
 	}
 
 	@Override
