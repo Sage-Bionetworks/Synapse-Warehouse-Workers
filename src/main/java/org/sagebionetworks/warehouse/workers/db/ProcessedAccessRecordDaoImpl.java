@@ -66,11 +66,10 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 	private TransactionTemplate transactionTemplate;
 
 	@Inject
-	ProcessedAccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate, TableCreator creator) throws SQLException {
+	ProcessedAccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate) throws SQLException {
 		super();
 		this.template = template;
 		this.transactionTemplate = transactionTemplate;
-		creator.createTableWithPartition(PROCESSED_ACCESS_RECORD_DDL_SQL, TABLE_PROCESSED_ACCESS_RECORD, COL_PROCESSED_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 	}
 
 	@Override
