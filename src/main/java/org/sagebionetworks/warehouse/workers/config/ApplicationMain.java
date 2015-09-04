@@ -47,6 +47,7 @@ public class ApplicationMain {
 			List<TableConfiguration> tableConfigs = injector.getInstance(TableConfigurationList.class).getList();
 			TableCreator creator = injector.getInstance(TableCreator.class);
 			for (TableConfiguration config : tableConfigs) {
+				log.info("Creating table: " + config.getTableName() + "...");
 				creator.createTable(config);
 			}
 			// Get all of the worker stacks and start them.
