@@ -2,6 +2,10 @@ package org.sagebionetworks.warehouse.workers.db;
 
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 
+/**
+ * TableConfiguration holds table creation information including whether the
+ * table should be created with partitions or not, and the partition's config.
+ */
 public class TableConfiguration {
 
 	String tableName;
