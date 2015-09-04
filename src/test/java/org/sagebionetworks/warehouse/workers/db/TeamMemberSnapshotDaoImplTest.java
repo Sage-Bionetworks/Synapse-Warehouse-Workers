@@ -14,9 +14,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 public class TeamMemberSnapshotDaoImplTest {
 	TeamMemberSnapshotDao dao = TestContext.singleton().getInstance(TeamMemberSnapshotDao.class);
+	TableCreator creator = TestContext.singleton().getInstance(TableCreator.class);
 
 	@Before
 	public void before(){
+		creator.createTableWithoutPartitions(TeamMemberSnapshotDaoImpl.TEAM_MEMBER_SNAPSHOT_DDL_SQL);
 		dao.truncateAll();
 	}
 

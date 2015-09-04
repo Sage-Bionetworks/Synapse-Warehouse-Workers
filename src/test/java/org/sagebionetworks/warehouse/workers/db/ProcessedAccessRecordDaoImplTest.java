@@ -15,9 +15,11 @@ import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
 public class ProcessedAccessRecordDaoImplTest {
 
 	ProcessedAccessRecordDao dao = TestContext.singleton().getInstance(ProcessedAccessRecordDao.class);
+	TableCreator creator = TestContext.singleton().getInstance(TableCreator.class);
 
 	@Before
 	public void before(){
+		creator.createTableWithoutPartitions(ProcessedAccessRecordDaoImpl.PROCESSED_ACCESS_RECORD_DDL_SQL);
 		dao.truncateAll();
 	}
 

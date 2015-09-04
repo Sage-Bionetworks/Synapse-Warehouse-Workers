@@ -112,4 +112,16 @@ public class DatabaseModule extends AbstractModule {
 		return new CountingSemaphoreImpl(datasource, trxManager);
 	}
 
+	@Provides
+	public TableConfigurationList getTableList() {
+		TableConfigurationList tables = new TableConfigurationList();
+		tables.add(AccessRecordDaoImpl.CONFIG);
+		tables.add(AclSnapshotDaoImpl.CONFIG);
+		tables.add(NodeSnapshotDaoImpl.CONFIG);
+		tables.add(ProcessedAccessRecordDaoImpl.CONFIG);
+		tables.add(TeamMemberSnapshotDaoImpl.CONFIG);
+		tables.add(TeamSnapshotDaoImpl.CONFIG);
+		tables.add(UserProfileSnapshotDaoImpl.CONFIG);
+		return tables;
+	}
 }

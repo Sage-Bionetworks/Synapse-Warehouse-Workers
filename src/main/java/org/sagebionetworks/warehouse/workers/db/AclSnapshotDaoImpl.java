@@ -28,6 +28,14 @@ import com.google.inject.Inject;
 
 public class AclSnapshotDaoImpl implements AclSnapshotDao{
 
+	public static final String ACL_SNAPSHOT_DDL_SQL = "AclSnapshot.ddl.sql";
+	public static final TableConfiguration CONFIG = new TableConfiguration(
+			TABLE_ACL_SNAPSHOT,
+			ACL_SNAPSHOT_DDL_SQL,
+			false,
+			null,
+			null);
+
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_ACL_SNAPSHOT;
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO "
 			+ TABLE_ACL_SNAPSHOT
@@ -42,8 +50,6 @@ public class AclSnapshotDaoImpl implements AclSnapshotDao{
 			+ ","
 			+ COL_ACL_SNAPSHOT_RESOURCE_ACCESS
 			+ ") VALUES (?,?,?,?,?)";
-
-	private static final String ACL_SNAPSHOT_DDL_SQL = "AclSnapshot.ddl.sql";
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_ACL_SNAPSHOT
 			+ " WHERE "
@@ -79,10 +85,9 @@ public class AclSnapshotDaoImpl implements AclSnapshotDao{
 	};
 
 	@Inject
-	AclSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
+	AclSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
 		super();
 		this.template = template;
-		creator.createTable(ACL_SNAPSHOT_DDL_SQL);
 	}
 
 	@Override

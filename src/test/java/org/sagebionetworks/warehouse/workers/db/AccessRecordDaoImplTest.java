@@ -14,9 +14,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 public class AccessRecordDaoImplTest {
 
 	AccessRecordDao dao = TestContext.singleton().getInstance(AccessRecordDao.class);
+	TableCreator creator = TestContext.singleton().getInstance(TableCreator.class);
 
 	@Before
 	public void before(){
+		creator.createTableWithoutPartitions(AccessRecordDaoImpl.ACCESS_RECORD_DDL_SQL);
 		dao.truncateAll();
 	}
 
