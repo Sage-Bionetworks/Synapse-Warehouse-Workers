@@ -87,14 +87,14 @@ public class ConfigurationImpl implements Configuration {
 
 	@Override
 	public DateTime getStartDate() {
-		int currentYear = new DateTime().getYear();
-		return new DateTime(currentYear - 2, 1, 1, 0, 0);
+		DateTime startDate = new DateTime().minusYears(2);
+		return new DateTime(startDate.getYear() - 2, startDate.getMonthOfYear(), startDate.getDayOfMonth(), 0, 0);
 	}
 
 	@Override
 	public DateTime getEndDate() {
-		int currentYear = new DateTime().getYear();
-		return new DateTime(currentYear + 9, 1, 1, 0, 0);
+		DateTime nextWeek = new DateTime().plusWeeks(1);
+		return new DateTime(nextWeek.getYear(), nextWeek.getMonthOfYear(), nextWeek.getDayOfMonth(), 0, 0);
 	}
 
 }
