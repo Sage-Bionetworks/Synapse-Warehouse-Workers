@@ -19,7 +19,7 @@ public interface TableCreator {
 	 * @param fieldName - the field that is used for partitioning the table
 	 * @param period - the period that defines the range of a partition
 	 */
-	public void createTableWithPartition(String fileName, String tableName, String fieldName, Period period);
+	public void createTableWithPartitions(String fileName, String tableName, String fieldName, Period period);
 
 	/**
 	 * Create a table based on the config
@@ -35,4 +35,23 @@ public interface TableCreator {
 	 * @param fileName
 	 */
 	public void createTableWithoutPartitions(String fileName);
+
+	/**
+	 * 
+	 * @param tableName
+	 * @param partitionName
+	 * @return true is tableName has partition partitionName,
+	 *         false otherwise.
+	 */
+	public boolean doesPartitionExist(String tableName, String partitionName);
+
+	/**
+	 * Alter table tableName, add a partition partitionName by range with values
+	 * less than value
+	 * 
+	 * @param tableName
+	 * @param partitionName
+	 * @param value
+	 */
+	public void addPartition(String tableName, String partitionName, long value);
 }

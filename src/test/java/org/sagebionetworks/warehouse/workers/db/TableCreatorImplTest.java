@@ -5,6 +5,7 @@ import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 import static org.sagebionetworks.warehouse.workers.db.AccessRecordDaoImpl.ACCESS_RECORD_DDL_SQL;
 
 import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -30,9 +31,14 @@ public class TableCreatorImplTest {
 		creator = new TableCreatorImpl(mockTemplate, mockConfig);
 	}
 
+	@After
+	public void after(){
+		
+	}
+
 	@Test
 	public void createTableWithPartitionTest() {
-		creator.createTableWithPartition(ACCESS_RECORD_DDL_SQL, TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY);
+		creator.createTableWithPartitions(ACCESS_RECORD_DDL_SQL, TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(mockTemplate).update(argument.capture());
 		assertTrue(argument.getValue().contains(TABLE_ACCESS_RECORD));
@@ -66,5 +72,20 @@ public class TableCreatorImplTest {
 		Mockito.verify(mockTemplate).update(argument.capture());
 		assertTrue(argument.getValue().contains(TABLE_ACL_SNAPSHOT));
 		assertFalse(argument.getValue().contains(PartitionUtil.PARTITION));
+	}
+
+	@Test
+	public void testPartitionDoesNotExist() {
+		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_ACCESS_RECORD, 2015, 1, 1);
+		creator.doesPartitionExist(TABLE_ACCESS_RECORD, partitionName);
+		Mockito.verify(mockTemplate).queryForLong(TableCreatorImpl.CHECK_PARTITION, TABLE_ACCESS_RECORD, partitionName);
+	}
+
+	@Test
+	public void testAddPartition() {
+		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_ACCESS_RECORD, 2050, 1, 1);
+		Long value = new DateTime(2050, 1, 1, 0, 0).getMillis();
+		creator.addPartition(TABLE_ACCESS_RECORD, partitionName, value);
+		Mockito.verify(mockTemplate).update(TableCreatorImpl.ADD_PARTITION, TABLE_ACCESS_RECORD, partitionName, value);
 	}
 }
