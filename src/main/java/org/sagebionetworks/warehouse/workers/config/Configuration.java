@@ -25,14 +25,14 @@ public interface Configuration {
 	public List<Class<? extends WorkerStackConfigurationProvider>> listAllWorkerStackInterfaces();
 
 	/**
-	 * Get the date <current year - 2>-01-01:00:00
+	 * Get the date two years ago
 	 * 
 	 * @return 
 	 */
 	public DateTime getStartDate();
 
 	/**
-	 * Get the date <current year + 9>-01-01:00:00
+	 * Get the date a week from now
 	 * 
 	 * @return
 	 */
