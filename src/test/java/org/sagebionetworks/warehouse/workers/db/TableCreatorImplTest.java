@@ -55,8 +55,7 @@ public class TableCreatorImplTest {
 		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(mockTemplate).update(argument.capture());
 		assertTrue(argument.getValue().contains(TABLE_ACCESS_RECORD));
-		assertTrue(argument.getValue().contains(""+today.getMillis()));
-		assertTrue(argument.getValue().contains(""+nextWeek.getMillis()));
+		assertTrue(argument.getValue().contains(PartitionUtil.PARTITION_BY_RANGE));
 	}
 
 	@Test
@@ -81,10 +80,5 @@ public class TableCreatorImplTest {
 		Long value = new DateTime(2050, 1, 1, 0, 0).getMillis();
 		creator.addPartition(TABLE_ACCESS_RECORD, partitionName, value);
 		Mockito.verify(mockTemplate).execute(String.format(TableCreatorImpl.ADD_PARTITION, TABLE_ACCESS_RECORD, partitionName, value));
-	}
-
-	@Test (expected=IllegalArgumentException.class)
-	public void createTablePartitionTest() {
-		creator.createTableWithPartitions("FakeFile.ddl.sql", "PARTITIONS", "TIMESTAMP", Period.DAY);
 	}
 }
