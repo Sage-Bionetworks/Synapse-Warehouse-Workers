@@ -37,6 +37,7 @@ public class TablePartitionWorker implements ProgressingRunner<Void> {
 		DateTime startDate = config.getStartDate();
 		DateTime endDate = config.getEndDate();
 		for (TableConfiguration tableConfig : tableConfigList.getList()) {
+			if (!tableConfig.isCreateWithPartitions()) continue;
 			progressCallback.progressMade(null);
 			String tableName = tableConfig.getTableName();
 			log.info("Checking table "+tableName+"...");
