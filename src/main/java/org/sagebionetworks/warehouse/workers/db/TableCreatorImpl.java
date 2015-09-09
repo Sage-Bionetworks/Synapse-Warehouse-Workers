@@ -33,6 +33,12 @@ public class TableCreatorImpl implements TableCreator {
 
 	@Override
 	public void createTableWithPartitions(String fileName, String tableName, String fieldName, Period period) {
+		if (fileName == null ||
+				tableName == null ||
+				fieldName == null ||
+				period == null ||
+				tableName.contains(PartitionUtil.PARTITION))
+			throw new IllegalArgumentException();
 		String query = ClasspathUtils.loadStringFromClassPath(fileName);
 		if (!query.contains(PartitionUtil.PARTITION)) {
 			throw new IllegalArgumentException();

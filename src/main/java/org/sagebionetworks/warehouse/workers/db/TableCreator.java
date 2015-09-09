@@ -15,7 +15,7 @@ public interface TableCreator {
 	 * Create a table using the query defined in fileName and add partitions
 	 * 
 	 * @param fileName
-	 * @param tableName
+	 * @param tableName - tableName cannot contain key word "PARTITION"
 	 * @param fieldName - the field that is used for partitioning the table
 	 * @param period - the period that defines the range of a partition
 	 */
