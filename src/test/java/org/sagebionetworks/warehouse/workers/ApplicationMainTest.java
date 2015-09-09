@@ -9,9 +9,6 @@ import org.mockito.Mockito;
 import org.sagebionetworks.warehouse.workers.config.ApplicationMain;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.ConnectionPool;
-import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
-import org.sagebionetworks.warehouse.workers.db.TableConfigurationList;
-import org.sagebionetworks.warehouse.workers.db.TableCreator;
 
 import com.google.inject.Injector;
 
@@ -23,9 +20,6 @@ public class ApplicationMainTest {
 	ApplicationMain main;
 	WorkerStackList stackList;
 	ConnectionPool mockPool;
-	TableConfigurationList tableConfigList;
-	TableConfiguration mockTableConfig;
-	TableCreator mockCreator;
 	
 	@Before
 	public void before(){
@@ -39,19 +33,12 @@ public class ApplicationMainTest {
 		when(mockInjector.getInstance(WorkerStackList.class)).thenReturn(stackList);
 		when(mockInjector.getInstance(WorkerStack.class)).thenReturn(mockStack);
 		when(mockInjector.getInstance(ConnectionPool.class)).thenReturn(mockPool);
-		mockTableConfig = Mockito.mock(TableConfiguration.class);
-		tableConfigList = new TableConfigurationList();
-		tableConfigList.add(mockTableConfig);
-		when(mockInjector.getInstance(TableConfigurationList.class)).thenReturn(tableConfigList);
-		mockCreator = Mockito.mock(TableCreator.class);
-		when(mockInjector.getInstance(TableCreator.class)).thenReturn(mockCreator);
 		main = new ApplicationMain(mockInjector);
 	}
 	
 	@Test
 	public void testStart(){
 		main.startup();
-		verify(mockCreator).createTable(mockTableConfig);
 		// Each stack should be started.
 		verify(mockStack).start();
 	}
