@@ -8,9 +8,11 @@ import java.util.List;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 
+import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
+import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -64,12 +66,14 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 
 	private JdbcTemplate template;
 	private TransactionTemplate transactionTemplate;
+	private TableCreator creator;
 
 	@Inject
-	ProcessedAccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate) throws SQLException {
+	ProcessedAccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
 		this.transactionTemplate = transactionTemplate;
+		this.creator = creator;
 	}
 
 	@Override
@@ -137,4 +141,11 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 			return par;
 		}
 	};
+
+	@Override
+	public boolean doesPartitionExistForTimestamp(long timeMS) {
+		DateTime date = new DateTime(timeMS);
+		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_ACCESS_RECORD, date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+		return creator.doesPartitionExist(TABLE_ACCESS_RECORD, partitionName);
+	}
 }

@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.sagebionetworks.aws.utils.s3.KeyData;
+import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
 import org.sagebionetworks.aws.utils.sns.MessageUtil;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
@@ -57,6 +59,11 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 		// extract the bucket and key from the message
 		String xml = MessageUtil.extractMessageBodyAsString(message);
 		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, FileSubmissionMessage.ALIAS);
+
+		KeyData keyData = KeyGeneratorUtil.parseKey(fileSubmissionMessage.getKey());
+		if (!dao.doesPartitionExistForTimestamp(keyData.getTimeMS())) {
+			throw new RecoverableMessageException();
+		}
 
 		// read the file as a stream
 		File file = null;

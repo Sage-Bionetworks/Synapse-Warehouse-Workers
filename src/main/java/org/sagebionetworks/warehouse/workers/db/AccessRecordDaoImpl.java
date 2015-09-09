@@ -28,8 +28,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
+import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -103,6 +105,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 
 	private JdbcTemplate template;
 	private TransactionTemplate transactionTemplate;
+	private TableCreator creator;
 
 	/*
 	 * Map all columns to the dbo.
@@ -139,10 +142,11 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	};
 
 	@Inject
-	AccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate) throws SQLException {
+	AccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
 		this.transactionTemplate = transactionTemplate;
+		this.creator = creator;
 	}
 
 	@Override
@@ -201,6 +205,13 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	@Override
 	public void truncateAll() {
 		template.update(TRUNCATE);
+	}
+
+	@Override
+	public boolean doesPartitionExistForTimestamp(long timeMS) {
+		DateTime date = new DateTime(timeMS);
+		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_ACCESS_RECORD, date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+		return creator.doesPartitionExist(TABLE_ACCESS_RECORD, partitionName);
 	}
 
 }

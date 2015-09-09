@@ -23,4 +23,12 @@ public interface AccessRecordDao {
 	 * Truncate all of the data.
 	 */
 	public void truncateAll();
+
+	/**
+	 * 
+	 * @param timeMS
+	 * @return true if there is a partition for this timeMS,
+	 *         false otherwise.
+	 */
+	public boolean doesPartitionExistForTimestamp(long timeMS);
 }

@@ -48,8 +48,8 @@ public class ProcessAccessRecordWorkerTest {
 		mockCallback = Mockito.mock(ProgressCallback.class);
 
 		messageBody = "<Message>\n"
-				+"  <bucket>bucket</bucket>\n"
-				+"  <key>key</key>\n"
+				+"  <bucket>dev.access.record.sagebase.org</bucket>\n"
+				+"  <key>0000000001/node/2015-07-30/23-34-16-308-e4ccd5c9-8f61-4043-bbe2-df6578b4672f.csv.gz</key>\n"
 				+"</Message>";
 		message = new Message();
 		message.setBody(messageBody);
@@ -58,6 +58,7 @@ public class ProcessAccessRecordWorkerTest {
 		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
 		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(ProcessAccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(ProcessAccessRecordWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
 		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
+		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(true);
 
 		batch = AccessRecordTestUtil.createValidAccessRecordBatch(5);
 	}
@@ -70,6 +71,12 @@ public class ProcessAccessRecordWorkerTest {
 		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader).close();
+	}
+
+	@Test (expected=RecoverableMessageException.class)
+	public void invalidTimeTest() throws RecoverableMessageException, IOException {
+		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(false);
+		worker.run(mockCallback, message);
 	}
 
 	@Test
