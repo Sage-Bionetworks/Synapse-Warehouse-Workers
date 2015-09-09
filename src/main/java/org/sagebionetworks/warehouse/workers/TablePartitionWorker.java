@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,10 +34,11 @@ public class TablePartitionWorker implements ProgressingRunner<Void> {
 		DateTime startDate = config.getStartDate();
 		DateTime endDate = config.getEndDate();
 		for (TableConfiguration tableConfig : tableConfigList.getList()) {
+			progressCallback.progressMade(null);
 			String tableName = tableConfig.getTableName();
 			Map<String, Long> requiredPartitions = PartitionUtil.getPartitionsForPeriod(tableName, tableConfig.getPartitionPeriod(), startDate, endDate);
 			Set<String> existingPartitions = creator.getExistingPartitionsForTable(tableName);
-			Set<String> toDrop = existingPartitions;
+			Set<String> toDrop = new HashSet<String>(existingPartitions);
 			toDrop.removeAll(requiredPartitions.keySet());
 			Set<String> toAdd = requiredPartitions.keySet();
 			toAdd.removeAll(existingPartitions);
