@@ -88,7 +88,7 @@ public class ConfigurationImpl implements Configuration {
 	@Override
 	public DateTime getStartDate() {
 		DateTime startDate = new DateTime().minusYears(2);
-		return new DateTime(startDate.getYear() - 2, startDate.getMonthOfYear(), startDate.getDayOfMonth(), 0, 0);
+		return new DateTime(startDate.getYear(), startDate.getMonthOfYear(), startDate.getDayOfMonth(), 0, 0);
 	}
 
 	@Override
