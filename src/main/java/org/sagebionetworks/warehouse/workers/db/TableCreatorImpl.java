@@ -16,8 +16,8 @@ public class TableCreatorImpl implements TableCreator {
 	public static final String CHECK_PARTITION = "SELECT COUNT(*) "
 			+ "FROM INFORMATION_SCHEMA.PARTITIONS "
 			+ "WHERE TABLE_NAME = ? AND PARTITION_NAME = ?";
-	public static final String ADD_PARTITION = "ALTER TABLE ? "
-			+ "ADD PARTITION (PARTITION ? VALUES LESS THAN (?))";
+	public static final String ADD_PARTITION = "ALTER TABLE %1$S "
+			+ "ADD PARTITION (PARTITION %2$S VALUES LESS THAN (%3$d))";
 
 	@Inject
 	TableCreatorImpl (JdbcTemplate template, Configuration config) {
@@ -75,6 +75,6 @@ public class TableCreatorImpl implements TableCreator {
 
 	@Override
 	public void addPartition(String tableName, String partitionName, long value) {
-		template.update(ADD_PARTITION, tableName, partitionName, value);
+		template.execute(String.format(ADD_PARTITION, tableName, partitionName, value));
 	}
 }

@@ -80,7 +80,7 @@ public class TableCreatorImplTest {
 		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_ACCESS_RECORD, 2050, 1, 1);
 		Long value = new DateTime(2050, 1, 1, 0, 0).getMillis();
 		creator.addPartition(TABLE_ACCESS_RECORD, partitionName, value);
-		Mockito.verify(mockTemplate).update(TableCreatorImpl.ADD_PARTITION, TABLE_ACCESS_RECORD, partitionName, value);
+		Mockito.verify(mockTemplate).execute(String.format(TableCreatorImpl.ADD_PARTITION, TABLE_ACCESS_RECORD, partitionName, value));
 	}
 
 	@Test (expected=IllegalArgumentException.class)
