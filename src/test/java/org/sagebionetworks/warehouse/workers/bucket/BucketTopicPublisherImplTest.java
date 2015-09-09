@@ -2,10 +2,12 @@ package org.sagebionetworks.warehouse.workers.bucket;
 
 import static org.junit.Assert.*;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.sagebionetworks.warehouse.workers.config.Configuration;
 
 import com.amazonaws.services.sns.AmazonSNSClient;
 
@@ -14,12 +16,16 @@ public class BucketTopicPublisherImplTest {
 	private AmazonSNSClient mockAmazonSNSClient;
 	private TopicDaoProvider mockTopicDaoProvider;
 	private BucketTopicPublisherImpl publisher;
+	private Configuration mockConfig;
 
 	@Before
 	public void before() {
 		mockAmazonSNSClient = Mockito.mock(AmazonSNSClient.class);
 		mockTopicDaoProvider = Mockito.mock(TopicDaoProvider.class);
-		publisher = new BucketTopicPublisherImpl(mockAmazonSNSClient, mockTopicDaoProvider);
+		mockConfig = Mockito.mock(Configuration.class);
+		publisher = new BucketTopicPublisherImpl(mockAmazonSNSClient, mockTopicDaoProvider, mockConfig);
+		Mockito.when(mockConfig.getStartDate()).thenReturn(new DateTime(2000, 1, 1, 0, 0));
+		Mockito.when(mockConfig.getEndDate()).thenReturn(new DateTime(3000, 1, 1, 0, 0));
 	}
 
 	@Test
