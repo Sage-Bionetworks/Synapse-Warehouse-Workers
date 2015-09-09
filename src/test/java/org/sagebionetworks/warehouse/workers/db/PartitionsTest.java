@@ -11,7 +11,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
-import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
@@ -40,7 +39,7 @@ public class PartitionsTest {
 
 	@Before
 	public void before() {
-		creator.createTableWithPartitions(PARTITIONS_TEST_DDL_SQL, TABLE_PARTITIONS_TEST, COL_PARTITIONS_TEST_TIMESTAMP, Period.MONTH);
+		creator.createTable(PARTITIONS_TEST_DDL_SQL);
 	}
 
 	@After
@@ -72,14 +71,25 @@ public class PartitionsTest {
 	}
 
 	@Test
-	public void insertInPartitionRange() {
+	public void insertInPartitionRangeTest() {
 		DateTime today = new DateTime();
-		long timestamp = today.getMillis();
+		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_PARTITIONS_TEST, today.getYear(), today.getMonthOfYear(), today.getDayOfMonth());
+		assertFalse(creator.doesPartitionExist(TABLE_PARTITIONS_TEST, partitionName));
+		creator.addPartition(TABLE_PARTITIONS_TEST, partitionName, today.getMillis());
+		assertTrue(creator.doesPartitionExist(TABLE_PARTITIONS_TEST, partitionName));
+		long timestamp = today.minusDays(1).getMillis();
 		insert(timestamp);
 		assertTrue(doesValueExist(timestamp));
-		long timestamp2 = today.plusYears(10).getMillis();
-		insert(timestamp2);
-		assertFalse(doesValueExist(timestamp2));
+	}
+
+	@Test
+	public void insertNotInPartitionRangeTest() {
+		DateTime today = new DateTime();
+		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_PARTITIONS_TEST, today.getYear(), today.getMonthOfYear(), today.getDayOfMonth());
+		assertFalse(creator.doesPartitionExist(TABLE_PARTITIONS_TEST, partitionName));
+		long timestamp = today.minusDays(1).getMillis();
+		insert(timestamp);
+		assertFalse(doesValueExist(timestamp));
 	}
 
 	/*
