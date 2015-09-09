@@ -5,7 +5,6 @@ import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 import static org.sagebionetworks.warehouse.workers.db.AccessRecordDaoImpl.ACCESS_RECORD_DDL_SQL;
 
 import org.joda.time.DateTime;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -29,11 +28,6 @@ public class TableCreatorImplTest {
 		Mockito.when(mockConfig.getStartDate()).thenReturn(today);
 		Mockito.when(mockConfig.getEndDate()).thenReturn(nextWeek);
 		creator = new TableCreatorImpl(mockTemplate, mockConfig);
-	}
-
-	@After
-	public void after(){
-		
 	}
 
 	@Test
@@ -87,5 +81,10 @@ public class TableCreatorImplTest {
 		Long value = new DateTime(2050, 1, 1, 0, 0).getMillis();
 		creator.addPartition(TABLE_ACCESS_RECORD, partitionName, value);
 		Mockito.verify(mockTemplate).update(TableCreatorImpl.ADD_PARTITION, TABLE_ACCESS_RECORD, partitionName, value);
+	}
+
+	@Test (expected=IllegalArgumentException.class)
+	public void createTablePartitionTest() {
+		creator.createTableWithPartitions("FakeFile.ddl.sql", "PARTITIONS", "TIMESTAMP", Period.DAY);
 	}
 }

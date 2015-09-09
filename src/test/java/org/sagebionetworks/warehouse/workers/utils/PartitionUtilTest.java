@@ -20,11 +20,13 @@ public class PartitionUtilTest {
 		DateTime startDate = new DateTime(2015, 12, 30, 0, 0);
 		DateTime endDate = new DateTime(2016, 1, 2, 0, 0);
 		String partition = PartitionUtil.buildPartitions("TEST_TABLE", "timestamp", Period.DAY, startDate, endDate);
-		assertTrue(partition.contains("PARTITION BY RANGE (timestamp) (\n"));
-		assertTrue(partition.contains("PARTITION TEST_TABLE_2015_12_30 VALUES LESS THAN (1451462400000)"));
-		assertTrue(partition.contains("PARTITION TEST_TABLE_2015_12_31 VALUES LESS THAN (1451548800000)"));
-		assertTrue(partition.contains("PARTITION TEST_TABLE_2016_1_1 VALUES LESS THAN (1451635200000)"));
-		assertTrue(partition.contains("PARTITION TEST_TABLE_2016_1_2 VALUES LESS THAN (1451721600000)"));
+		String expected = "PARTITION BY RANGE (timestamp) (\n"
+				+ "PARTITION TEST_TABLE_2015_12_30 VALUES LESS THAN (1451462400000),\n"
+				+ "PARTITION TEST_TABLE_2015_12_31 VALUES LESS THAN (1451548800000),\n"
+				+ "PARTITION TEST_TABLE_2016_1_1 VALUES LESS THAN (1451635200000),\n"
+				+ "PARTITION TEST_TABLE_2016_1_2 VALUES LESS THAN (1451721600000)\n"
+				+ ");\n";
+		assertEquals(expected, partition);
 	}
 
 	@Test
@@ -32,11 +34,13 @@ public class PartitionUtilTest {
 		DateTime startDate = new DateTime(2015, 11, 30, 0, 0);
 		DateTime endDate = new DateTime(2016, 2, 2, 0, 0);
 		String partition = PartitionUtil.buildPartitions("TEST_TABLE", "timestamp", Period.MONTH, startDate, endDate);
-		assertTrue(partition.contains("PARTITION BY RANGE (timestamp) (\n"));
-		assertTrue(partition.contains("PARTITION TEST_TABLE_2015_11_30 VALUES LESS THAN (1448870400000)"));
-		assertTrue(partition.contains("PARTITION TEST_TABLE_2015_12_30 VALUES LESS THAN (1451462400000)"));
-		assertTrue(partition.contains("PARTITION TEST_TABLE_2016_1_30 VALUES LESS THAN (1454140800000)"));
-		assertTrue(partition.contains("PARTITION TEST_TABLE_2016_2_29 VALUES LESS THAN (1456732800000)"));
+		String expected = "PARTITION BY RANGE (timestamp) (\n"
+				+ "PARTITION TEST_TABLE_2015_11_30 VALUES LESS THAN (1448870400000),\n"
+				+ "PARTITION TEST_TABLE_2015_12_30 VALUES LESS THAN (1451462400000),\n"
+				+ "PARTITION TEST_TABLE_2016_1_30 VALUES LESS THAN (1454140800000),\n"
+				+ "PARTITION TEST_TABLE_2016_2_29 VALUES LESS THAN (1456732800000)\n"
+				+ ");\n";
+		assertEquals(expected, partition);
 	}
 
 	@Test

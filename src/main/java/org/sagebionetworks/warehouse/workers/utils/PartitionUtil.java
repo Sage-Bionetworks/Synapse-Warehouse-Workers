@@ -1,7 +1,10 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
-import java.util.HashMap;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 
@@ -34,8 +37,15 @@ public class PartitionUtil {
 		}
 		String partition = PARTITION_BY_RANGE + " (" + fieldName + ") (\n";
 		Map<String, Long> partitions = getPartitionsForPeriod(tableName, period, startDate, endDate);
-		for (String partitionName : partitions.keySet()) {
-			partition += String.format(PARTITION_LESS_THAN, partitionName, partitions.get(partitionName)) + "\n";
+		Iterator<String> it = partitions.keySet().iterator();
+		while (it.hasNext()) {
+			String partitionName = it.next();
+			partition += String.format(PARTITION_LESS_THAN, partitionName, partitions.get(partitionName));
+			if (it.hasNext()) {
+				partition += ",\n";
+			} else {
+				partition += "\n";
+			}
 		}
 		partition += ");\n";
 		return partition;
@@ -51,7 +61,7 @@ public class PartitionUtil {
 	 *         endDate with period
 	 */
 	public static Map<String, Long> getPartitionsForPeriod(String tableName, Period period, DateTime startDate, DateTime endDate) {
-		Map<String, Long> partitions = new HashMap<String, Long>();
+		SortedMap<String, Long> partitions = new TreeMap<String, Long>(partitionNameComparator);
 		DateTime nextDate = startDate;
 		while (nextDate.isBefore(endDate.getMillis())) {
 			String partitionName = String.format(PARTITION_NAME_PATTERN, tableName, nextDate.getYear(), nextDate.getMonthOfYear(), nextDate.getDayOfMonth());
@@ -71,4 +81,27 @@ public class PartitionUtil {
 		partitions.put(partitionName, nextDate.getMillis());
 		return partitions;
 	}
+
+	/**
+	 * Since partitions must be created in strictly increasing order, use this comparator
+	 * to sort the key set.
+	 */
+	private final static Comparator<String> partitionNameComparator = new Comparator<String>() {
+
+		@Override
+		public int compare(String partitionName1, String partitionName2) {
+			String[] name1parts = partitionName1.split("_");
+			String[] name2parts = partitionName2.split("_");
+			int length = name1parts.length;
+			int year1 = Integer.parseInt(name1parts[length - 3]);
+			int year2 = Integer.parseInt(name2parts[length - 3]);
+			if (year1 != year2) return year1 - year2;
+			int month1 = Integer.parseInt(name1parts[length - 2]);
+			int month2 = Integer.parseInt(name2parts[length - 2]);
+			if (month1 != month2) return month1 - month2;
+			int day1 = Integer.parseInt(name1parts[length - 1]);
+			int day2 = Integer.parseInt(name2parts[length - 1]);
+			return day1 - day2;
+		}
+	};
 }
