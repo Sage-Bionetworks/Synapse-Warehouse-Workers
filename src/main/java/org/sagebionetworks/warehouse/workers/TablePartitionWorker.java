@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
@@ -17,6 +19,7 @@ import com.google.inject.Inject;
 
 public class TablePartitionWorker implements ProgressingRunner<Void> {
 
+	private static Logger log = LogManager.getLogger(TablePartitionWorker.class);
 	private TableConfigurationList tableConfigList;
 	private TableCreator creator;
 	private Configuration config;
@@ -36,6 +39,7 @@ public class TablePartitionWorker implements ProgressingRunner<Void> {
 		for (TableConfiguration tableConfig : tableConfigList.getList()) {
 			progressCallback.progressMade(null);
 			String tableName = tableConfig.getTableName();
+			log.info("Checking table "+tableName+"...");
 			Map<String, Long> requiredPartitions = PartitionUtil.getPartitionsForPeriod(tableName, tableConfig.getPartitionPeriod(), startDate, endDate);
 			Set<String> existingPartitions = creator.getExistingPartitionsForTable(tableName);
 			Set<String> toDrop = new HashSet<String>(existingPartitions);
@@ -43,9 +47,11 @@ public class TablePartitionWorker implements ProgressingRunner<Void> {
 			Set<String> toAdd = requiredPartitions.keySet();
 			toAdd.removeAll(existingPartitions);
 			for (String partitionName : toAdd) {
+				log.info("Adding partition "+partitionName+"...");
 				creator.addPartition(tableName, partitionName, requiredPartitions.get(partitionName));
 			}
 			for (String partitionName : toDrop) {
+				log.info("Dropping partition "+partitionName+"...");
 				creator.dropPartition(tableName, partitionName);
 			}
 		}
