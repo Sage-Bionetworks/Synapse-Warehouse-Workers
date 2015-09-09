@@ -1,5 +1,7 @@
 package org.sagebionetworks.warehouse.workers.db;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,6 +11,8 @@ import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 import com.google.inject.Inject;
 
@@ -90,7 +94,15 @@ public class TableCreatorImpl implements TableCreator {
 
 	@Override
 	public Set<String> getExistingPartitionsForTable(String tableName) {
-		return new HashSet<String>(template.queryForList(ALL_PARTITIONS, String.class));
+		return new HashSet<String>(template.query(ALL_PARTITIONS,
+				new RowMapper<String>() {
+
+					@Override
+					public String mapRow(ResultSet rs, int rowNum)
+							throws SQLException {
+						return rs.getString(1);
+					}
+				}, tableName));
 	}
 
 	@Override
