@@ -134,19 +134,19 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 					throws SQLException {
 				NodeSnapshot snapshot = batch.get(i);
 				ps.setLong(1, snapshot.getTimestamp());
-				ps.setLong(2, Long.parseLong(snapshot.getId()));
+				ps.setLong(2, Long.parseLong(processSynapseId(snapshot.getId())));
 				if (snapshot.getBenefactorId() != null) {
-					ps.setLong(3, Long.parseLong(snapshot.getBenefactorId()));
+					ps.setLong(3, Long.parseLong(processSynapseId(snapshot.getBenefactorId())));
 				} else {
 					ps.setNull(3, Types.BIGINT);
 				}
 				if (snapshot.getProjectId() != null) {
-					ps.setLong(4, Long.parseLong(snapshot.getProjectId()));
+					ps.setLong(4, Long.parseLong(processSynapseId(snapshot.getProjectId())));
 				} else {
 					ps.setNull(4, Types.BIGINT);
 				}
 				if (snapshot.getParentId() != null) {
-					ps.setLong(5, Long.parseLong(snapshot.getParentId()));
+					ps.setLong(5, Long.parseLong(processSynapseId(snapshot.getParentId())));
 				} else {
 					ps.setNull(5, Types.BIGINT);
 				}
@@ -183,4 +183,11 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 		template.update(TRUNCATE);
 	}
 
+	private String processSynapseId(String synId) {
+		String id = synId.toLowerCase();
+		if (id.startsWith("syn")) {
+			id = id.substring(3);
+		}
+		return id;
+	}
 }

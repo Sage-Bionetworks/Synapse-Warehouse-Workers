@@ -104,7 +104,11 @@ public class AclSnapshotDaoImpl implements AclSnapshotDao{
 					throws SQLException {
 				AclSnapshot snapshot = batch.get(i);
 				ps.setLong(1, snapshot.getTimestamp());
-				ps.setLong(2, Long.parseLong(snapshot.getId()));
+				String id = snapshot.getId().toLowerCase();
+				if (id.startsWith("syn")) {
+					id = id.substring(3);
+				}
+				ps.setLong(2, Long.parseLong(id));
 				ps.setString(3, snapshot.getOwnerType().name());
 				if (snapshot.getCreationDate() != null) {
 					ps.setLong(4, snapshot.getCreationDate().getTime());
