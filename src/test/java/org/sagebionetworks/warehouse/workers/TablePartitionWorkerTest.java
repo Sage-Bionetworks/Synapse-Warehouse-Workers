@@ -63,8 +63,9 @@ public class TablePartitionWorkerTest {
 		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
 		worker.run(mockProgressCallback);
 		Mockito.verify(mockProgressCallback).progressMade(null);
-		String toAdd = PartitionUtil.getPartitionName(Sql.TABLE_ACCESS_RECORD, endDate, Period.DAY);
-		Mockito.verify(mockCreator).addPartition(Mockito.eq(Sql.TABLE_ACCESS_RECORD), Mockito.eq(toAdd), Mockito.eq(PartitionUtil.floorDateByPeriod(endDate, Period.DAY).getMillis()));
+		DateTime addDate = endDate.plusDays(1);
+		String toAdd = PartitionUtil.getPartitionName(Sql.TABLE_ACCESS_RECORD, addDate, Period.DAY);
+		Mockito.verify(mockCreator).addPartition(Mockito.eq(Sql.TABLE_ACCESS_RECORD), Mockito.eq(toAdd), Mockito.eq(PartitionUtil.floorDateByPeriod(addDate, Period.DAY).getMillis()));
 		DateTime dateToDrop = startDate.minusDays(1);
 		String toDrop = PartitionUtil.getPartitionName(Sql.TABLE_ACCESS_RECORD, dateToDrop, Period.DAY);
 		Mockito.verify(mockCreator).dropPartition(Mockito.eq(Sql.TABLE_ACCESS_RECORD), Mockito.eq(toDrop));
