@@ -1,17 +1,8 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import java.util.List;
-
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 
-public interface TeamMemberSnapshotDao {
-
-	/**
-	 * Insert a batch of TeamMemberSnapshot into TEAM_MEMBER_SNAPSHOT table
-	 * 
-	 * @param batch
-	 */
-	public void insert(List<TeamMemberSnapshot> batch);
+public interface TeamMemberSnapshotDao extends SnapshotDao<TeamMemberSnapshot>{
 
 	/**
 	 * 
