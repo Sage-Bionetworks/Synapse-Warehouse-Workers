@@ -28,7 +28,7 @@ public class TableCreatorImpl implements TableCreator {
 			+ "WHERE TABLE_NAME = ?";
 	public static final String ADD_PARTITION = "ALTER TABLE %1$S "
 			+ "ADD PARTITION (PARTITION %2$S VALUES LESS THAN (%3$d))";
-	public static final String DROP_PARTITION = "ALTER TABLE `%1$S DROP PARTITION %2$S";
+	public static final String DROP_PARTITION = "ALTER TABLE %1$S DROP PARTITION %2$S";
 
 	@Inject
 	TableCreatorImpl (JdbcTemplate template, Configuration config) {
