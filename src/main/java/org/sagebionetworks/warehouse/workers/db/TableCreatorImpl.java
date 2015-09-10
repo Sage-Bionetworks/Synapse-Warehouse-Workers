@@ -65,7 +65,7 @@ public class TableCreatorImpl implements TableCreator {
 	@Override
 	public void createTable(TableConfiguration config) {
 		if (config.isCreateWithPartitions()) {
-			createTableWithDefaultPartition(config.getSchemaFileName(),
+			createTableWithPartitions(config.getSchemaFileName(),
 					config.getTableName(), config.getPartitionFieldName(),
 					config.getPartitionPeriod());
 		} else {
