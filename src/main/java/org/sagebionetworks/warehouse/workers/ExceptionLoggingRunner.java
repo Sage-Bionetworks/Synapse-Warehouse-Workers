@@ -14,13 +14,15 @@ public class ExceptionLoggingRunner implements Runnable {
 			.getLogger(WorkerStackImpl.class);
 
 	private Runnable wrapped;
+	private String workerName;
 
-	public ExceptionLoggingRunner(Runnable wrapped) {
+	public ExceptionLoggingRunner(Runnable wrapped, String workerName) {
 		super();
 		if (wrapped == null) {
 			throw new IllegalArgumentException("runner cannot be null");
 		}
 		this.wrapped = wrapped;
+		this.workerName = workerName;
 	}
 
 	@Override
@@ -28,7 +30,7 @@ public class ExceptionLoggingRunner implements Runnable {
 		try {
 			wrapped.run();
 		} catch (Throwable e) {
-			log.error("Worker failed:", e);
+			log.error("Worker "+workerName+" failed:", e);
 		}
 	}
 
