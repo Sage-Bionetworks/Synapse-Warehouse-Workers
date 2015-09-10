@@ -109,4 +109,20 @@ public class TableCreatorImpl implements TableCreator {
 	public void dropPartition(String tableName, String partitionName) {
 		template.execute(String.format(DROP_PARTITION, tableName, partitionName));
 	}
+
+	@Override
+	public boolean doesPartitionExist(String tableName, long timeMS, Period partitionPeriod) {
+		if (tableName == null || partitionPeriod == null) {
+			throw new IllegalArgumentException();
+		}
+		DateTime date = PartitionUtil.floorDateByPeriod(new DateTime(timeMS), partitionPeriod);
+		DateTime nextDate = null;
+		switch (partitionPeriod) {
+			case DAY: nextDate = date.plusDays(1);
+			case MONTH: nextDate = date.plusMonths(1);
+		}
+		String sameDatePartition = PartitionUtil.getPartitionName(tableName, date, partitionPeriod);
+		String nextDatePartition = PartitionUtil.getPartitionName(tableName, nextDate, partitionPeriod);
+		return doesPartitionExist(tableName, sameDatePartition) && doesPartitionExist(tableName, nextDatePartition);
+	}
 }

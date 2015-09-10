@@ -12,6 +12,7 @@ import java.util.List;
 import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
+import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,9 +25,9 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 	public static final TableConfiguration CONFIG = new TableConfiguration(
 			TABLE_NODE_SNAPSHOT,
 			NODE_SNAPSHOT_DDL_SQL,
-			false,
-			null,
-			null);
+			true,
+			COL_NODE_SNAPSHOT_TIMESTAMP,
+			Period.MONTH);
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_NODE_SNAPSHOT;
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO "
 			+ TABLE_NODE_SNAPSHOT
@@ -72,6 +73,7 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 			+ " = ?";
 
 	private JdbcTemplate template;
+	private TableCreator creator;
 
 	/*
 	 * Map all columns to the dbo.
@@ -116,9 +118,10 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 	};
 
 	@Inject
-	NodeSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
+	NodeSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
+		this.creator = creator;
 	}
 
 	@Override
@@ -182,5 +185,10 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 	@Override
 	public void truncateAll() {
 		template.update(TRUNCATE);
+	}
+
+	@Override
+	public boolean doesPartitionExistForTimestamp(long timeMS) {
+		return creator.doesPartitionExist(TABLE_NODE_SNAPSHOT, timeMS, CONFIG.getPartitionPeriod());
 	}
 }

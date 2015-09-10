@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 
-public interface ProcessedAccessRecordDao {
+public interface ProcessedAccessRecordDao extends HasPartitions{
 
 	/**
 	 * Insert a batch of ProcessedAccessRecord into PROCESSED_ACCESS_RECORD table
@@ -23,12 +23,4 @@ public interface ProcessedAccessRecordDao {
 	 * Truncate all of the data.
 	 */
 	public void truncateAll();
-
-	/**
-	 * 
-	 * @param timeMS
-	 * @return true if there is a partition for this timeMS,
-	 *         false otherwise.
-	 */
-	public boolean doesPartitionExistForTimestamp(long timeMS);
 }

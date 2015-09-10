@@ -144,8 +144,6 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 
 	@Override
 	public boolean doesPartitionExistForTimestamp(long timeMS) {
-		DateTime date = new DateTime(timeMS);
-		String partitionName = PartitionUtil.getPartitionName(TABLE_ACCESS_RECORD, date, Period.DAY);
-		return creator.doesPartitionExist(TABLE_ACCESS_RECORD, partitionName);
+		return creator.doesPartitionExist(TABLE_PROCESSED_ACCESS_RECORD, timeMS, CONFIG.getPartitionPeriod());
 	}
 }

@@ -81,4 +81,13 @@ public interface TableCreator {
 	 * @param partitionName
 	 */
 	public void dropPartition(String tableName, String partitionName);
+
+	/**
+	 * 
+	 * @param tableName
+	 * @param timeMS
+	 * @param partitionPeriod
+	 * @return true if partitions exist for timeMS on table tableName given partitionPeriod
+	 */
+	public boolean doesPartitionExist(String tableName, long timeMS, Period partitionPeriod);
 }

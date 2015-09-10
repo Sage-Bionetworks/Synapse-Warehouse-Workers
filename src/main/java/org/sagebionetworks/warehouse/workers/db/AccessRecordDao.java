@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 
-public interface AccessRecordDao {
+public interface AccessRecordDao extends HasPartitions{
 
 	/**
 	 * Insert a batch of AccessRecord into ACCESS_RECORD table
@@ -24,11 +24,4 @@ public interface AccessRecordDao {
 	 */
 	public void truncateAll();
 
-	/**
-	 * 
-	 * @param timeMS
-	 * @return true if there is a partition for this timeMS,
-	 *         false otherwise.
-	 */
-	public boolean doesPartitionExistForTimestamp(long timeMS);
 }

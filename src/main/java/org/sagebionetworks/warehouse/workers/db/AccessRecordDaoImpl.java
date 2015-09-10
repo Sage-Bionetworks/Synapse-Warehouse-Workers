@@ -28,10 +28,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
-import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -42,7 +40,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.inject.Inject;
 
-public class AccessRecordDaoImpl implements AccessRecordDao {
+public class AccessRecordDaoImpl implements AccessRecordDao{
 	public static final String ACCESS_RECORD_DDL_SQL = "AccessRecord.ddl.sql";
 	public static final TableConfiguration CONFIG = new TableConfiguration(
 			TABLE_ACCESS_RECORD,
@@ -209,9 +207,6 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 
 	@Override
 	public boolean doesPartitionExistForTimestamp(long timeMS) {
-		DateTime date = new DateTime(timeMS);
-		String partitionName = PartitionUtil.getPartitionName(TABLE_ACCESS_RECORD, date, Period.DAY);
-		return creator.doesPartitionExist(TABLE_ACCESS_RECORD, partitionName);
+		return creator.doesPartitionExist(TABLE_ACCESS_RECORD, timeMS, CONFIG.getPartitionPeriod());
 	}
-
 }

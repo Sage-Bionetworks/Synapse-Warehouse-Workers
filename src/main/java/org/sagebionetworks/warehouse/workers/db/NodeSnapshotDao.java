@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 
-public interface NodeSnapshotDao {
+public interface NodeSnapshotDao extends HasPartitions{
 
 	/**
 	 * Insert a batch of NodeSnapshot into NODE_SNAPSHOT table
