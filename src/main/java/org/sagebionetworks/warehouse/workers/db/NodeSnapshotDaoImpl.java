@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
+import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -134,19 +135,19 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 					throws SQLException {
 				NodeSnapshot snapshot = batch.get(i);
 				ps.setLong(1, snapshot.getTimestamp());
-				ps.setLong(2, Long.parseLong(processSynapseId(snapshot.getId())));
+				ps.setLong(2, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getId()));
 				if (snapshot.getBenefactorId() != null) {
-					ps.setLong(3, Long.parseLong(processSynapseId(snapshot.getBenefactorId())));
+					ps.setLong(3, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getBenefactorId()));
 				} else {
 					ps.setNull(3, Types.BIGINT);
 				}
 				if (snapshot.getProjectId() != null) {
-					ps.setLong(4, Long.parseLong(processSynapseId(snapshot.getProjectId())));
+					ps.setLong(4, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getProjectId()));
 				} else {
 					ps.setNull(4, Types.BIGINT);
 				}
 				if (snapshot.getParentId() != null) {
-					ps.setLong(5, Long.parseLong(processSynapseId(snapshot.getParentId())));
+					ps.setLong(5, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getParentId()));
 				} else {
 					ps.setNull(5, Types.BIGINT);
 				}
@@ -161,7 +162,7 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 					ps.setNull(11, Types.BIGINT);
 				}
 				if (snapshot.getFileHandleId() != null) {
-					ps.setLong(12, Long.parseLong(snapshot.getFileHandleId()));
+					ps.setLong(12, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getFileHandleId()));
 				} else {
 					ps.setNull(12, Types.BIGINT);
 				}
@@ -181,13 +182,5 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 	@Override
 	public void truncateAll() {
 		template.update(TRUNCATE);
-	}
-
-	private String processSynapseId(String synId) {
-		String id = synId.toLowerCase();
-		if (id.startsWith("syn")) {
-			id = id.substring(3);
-		}
-		return id;
 	}
 }

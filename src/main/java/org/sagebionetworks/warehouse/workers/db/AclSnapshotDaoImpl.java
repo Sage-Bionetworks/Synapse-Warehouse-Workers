@@ -19,6 +19,7 @@ import java.util.Set;
 import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.utils.CompressionUtils;
+import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -104,11 +105,7 @@ public class AclSnapshotDaoImpl implements AclSnapshotDao{
 					throws SQLException {
 				AclSnapshot snapshot = batch.get(i);
 				ps.setLong(1, snapshot.getTimestamp());
-				String id = snapshot.getId().toLowerCase();
-				if (id.startsWith("syn")) {
-					id = id.substring(3);
-				}
-				ps.setLong(2, Long.parseLong(id));
+				ps.setLong(2, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getId()));
 				ps.setString(3, snapshot.getOwnerType().name());
 				if (snapshot.getCreationDate() != null) {
 					ps.setLong(4, snapshot.getCreationDate().getTime());
