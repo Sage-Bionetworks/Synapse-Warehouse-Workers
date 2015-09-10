@@ -2,8 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +24,7 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.google.inject.Inject;
 
-public class NodeSnapshotWorker implements MessageDrivenRunner {
+public class NodeSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<ObjectRecord, NodeSnapshot> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedNodeSnapshot";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -64,7 +62,7 @@ public class NodeSnapshotWorker implements MessageDrivenRunner {
 
 			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 			long start = System.currentTimeMillis();
-			int noRecords = writeNodeSnapshot(reader, dao, BATCH_SIZE, callback, message);
+			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this);
 			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} finally {
@@ -73,41 +71,13 @@ public class NodeSnapshotWorker implements MessageDrivenRunner {
 		}
 	}
 
-	/**
-	 * Read node snapshot records from reader, and write them to NODE_SNAPSHOT table using dao
-	 * 
-	 * @param reader
-	 * @param dao
-	 * @return number of records written
-	 * @throws IOException
-	 */
-	public static int writeNodeSnapshot(ObjectCSVReader<ObjectRecord> reader,
-			NodeSnapshotDao dao, int batchSize, ProgressCallback<Message> callback,
-			Message message) throws IOException {
-		ObjectRecord record = null;
-		List<NodeSnapshot> batch = new ArrayList<NodeSnapshot>(batchSize);
-
-		int noRecords = 0;
-		while ((record = reader.next()) != null) {
-			NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
-			if (!ObjectSnapshotUtils.isValidNodeSnapshot(snapshot)) {
-				log.error("Invalid Node Snapshot from Record: " + record.toString());
-				continue;
-			}
-			batch.add(snapshot);
-			if (batch.size() >= batchSize) {
-				callback.progressMade(message);
-				dao.insert(batch);
-				noRecords += batch.size();
-				batch .clear();
-			}
+	@Override
+	public NodeSnapshot convert(ObjectRecord record) {
+		NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
+		if (!ObjectSnapshotUtils.isValidNodeSnapshot(snapshot)) {
+			log.error("Invalid Node Snapshot from Record: " + record.toString());
+			return null;
 		}
-
-		if (batch.size() > 0) {
-			callback.progressMade(message);
-			dao.insert(batch);
-			noRecords += batch.size();
-		}
-		return noRecords;
+		return snapshot;
 	}
 }
