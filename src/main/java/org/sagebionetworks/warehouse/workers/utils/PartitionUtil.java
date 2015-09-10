@@ -12,13 +12,13 @@ public class PartitionUtil {
 	public static final String PARTITION = "PARTITION";
 	public static enum Period {
 		DAY,
-		WEEK,
 		MONTH
 	}
 
-	public final static String PARTITION_BY_RANGE = "PARTITION BY RANGE";
-	public final static String PARTITION_LESS_THAN = "PARTITION %1$s VALUES LESS THAN (%2$s)";
-	public final static String PARTITION_NAME_PATTERN = "%1$S_%2$04d_%3$02d_%4$02d";
+	private final static String PARTITION_BY_RANGE = "PARTITION BY RANGE";
+	private final static String PARTITION_LESS_THAN = "PARTITION %1$s VALUES LESS THAN (%2$s)";
+	private final static String PARTITION_NAME_PATTERN_FOR_DAY = "%1$S_%2$04d_%3$02d_%4$02d";
+	private final static String PARTITION_NAME_PATTERN_FOR_MONTH = "%1$S_%2$04d_%3$02d";
 
 	/**
 	 * Build partitions by range on fieldName
@@ -35,7 +35,7 @@ public class PartitionUtil {
 			throw new IllegalArgumentException();
 		}
 		String partition = PARTITION_BY_RANGE + " (" + fieldName + ") (\n";
-		Map<String, Long> partitions = getPartitionsForPeriod(tableName, period, startDate, endDate);
+		Map<String, Long> partitions = getPartitions(tableName, period, startDate, endDate);
 		Iterator<String> it = partitions.keySet().iterator();
 		while (it.hasNext()) {
 			String partitionName = it.next();
@@ -59,25 +59,58 @@ public class PartitionUtil {
 	 * @return a map of partitionName to value for table tableName from startDate to
 	 *         endDate with period
 	 */
-	public static Map<String, Long> getPartitionsForPeriod(String tableName, Period period, DateTime startDate, DateTime endDate) {
+	public static Map<String, Long> getPartitions(String tableName, Period period, DateTime startDate, DateTime endDate) {
+		if (tableName == null || period == null || startDate == null || endDate == null) {
+			throw new IllegalArgumentException();
+		}
+		startDate = floorDateByPeriod(startDate, period);
+		endDate = floorDateByPeriod(endDate, period);
 		SortedMap<String, Long> partitions = new TreeMap<String, Long>();
 		DateTime nextDate = startDate;
 		while (nextDate.isBefore(endDate.getMillis())) {
-			String partitionName = String.format(PARTITION_NAME_PATTERN, tableName, nextDate.getYear(), nextDate.getMonthOfYear(), nextDate.getDayOfMonth());
+			String partitionName = getPartitionName(tableName, nextDate, period);
 			partitions.put(partitionName, nextDate.getMillis());
 			switch (period) {
 				case DAY:
 					nextDate = nextDate.plusDays(1);
 					break;
-				case WEEK:
-					nextDate = nextDate.plusWeeks(1);
-					break;
 				case MONTH:
 					nextDate = nextDate.plusMonths(1);
 			}
 		}
-		String partitionName = String.format(PARTITION_NAME_PATTERN, tableName, nextDate.getYear(), nextDate.getMonthOfYear(), nextDate.getDayOfMonth());
+		String partitionName = getPartitionName(tableName, nextDate, period);
 		partitions.put(partitionName, nextDate.getMillis());
 		return partitions;
+	}
+
+	/**
+	 * 
+	 * @param tableName
+	 * @param date
+	 * @param period
+	 * @return
+	 */
+	public static String getPartitionName(String tableName, DateTime date, Period period) {
+		if (period == null || date == null || tableName == null) throw new IllegalArgumentException();
+		switch (period) {
+			case DAY: return String.format(PARTITION_NAME_PATTERN_FOR_DAY, tableName, date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+			case MONTH: return String.format(PARTITION_NAME_PATTERN_FOR_MONTH, tableName, date.getYear(), date.getMonthOfYear());
+		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param date
+	 * @param period
+	 * @return
+	 */
+	public static DateTime floorDateByPeriod(DateTime date, Period period) {
+		if (period == null || date == null) throw new IllegalArgumentException();
+		switch (period) {
+			case DAY: return new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), 0, 0);
+			case MONTH: return new DateTime(date.getYear(), date.getMonthOfYear(), 1, 0, 0);
+		}
+		return null;
 	}
 }

@@ -210,7 +210,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	@Override
 	public boolean doesPartitionExistForTimestamp(long timeMS) {
 		DateTime date = new DateTime(timeMS);
-		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_ACCESS_RECORD, date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+		String partitionName = PartitionUtil.getPartitionName(TABLE_ACCESS_RECORD, date, Period.DAY);
 		return creator.doesPartitionExist(TABLE_ACCESS_RECORD, partitionName);
 	}
 

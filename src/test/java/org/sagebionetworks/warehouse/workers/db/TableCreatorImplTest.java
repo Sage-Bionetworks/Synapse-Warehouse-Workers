@@ -36,8 +36,8 @@ public class TableCreatorImplTest {
 		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(mockTemplate).update(argument.capture());
 		assertTrue(argument.getValue().contains(TABLE_ACCESS_RECORD));
-		assertTrue(argument.getValue().contains(""+today.getMillis()));
-		assertTrue(argument.getValue().contains(""+nextWeek.getMillis()));
+		assertTrue(argument.getValue().contains(""+PartitionUtil.floorDateByPeriod(today, Period.DAY).getMillis()));
+		assertTrue(argument.getValue().contains(""+PartitionUtil.floorDateByPeriod(nextWeek, Period.DAY).getMillis()));
 	}
 
 	@Test
@@ -55,7 +55,7 @@ public class TableCreatorImplTest {
 		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(mockTemplate).update(argument.capture());
 		assertTrue(argument.getValue().contains(TABLE_ACCESS_RECORD));
-		assertTrue(argument.getValue().contains(PartitionUtil.PARTITION_BY_RANGE));
+		assertTrue(argument.getValue().contains("PARTITION BY RANGE"));
 	}
 
 	@Test
@@ -65,20 +65,5 @@ public class TableCreatorImplTest {
 		Mockito.verify(mockTemplate).update(argument.capture());
 		assertTrue(argument.getValue().contains(TABLE_ACL_SNAPSHOT));
 		assertFalse(argument.getValue().contains(PartitionUtil.PARTITION));
-	}
-
-	@Test
-	public void testPartitionDoesNotExist() {
-		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_ACCESS_RECORD, 2015, 1, 1);
-		creator.doesPartitionExist(TABLE_ACCESS_RECORD, partitionName);
-		Mockito.verify(mockTemplate).queryForLong(TableCreatorImpl.CHECK_PARTITION, TABLE_ACCESS_RECORD, partitionName);
-	}
-
-	@Test
-	public void testAddPartition() {
-		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_ACCESS_RECORD, 2050, 1, 1);
-		Long value = new DateTime(2050, 1, 1, 0, 0).getMillis();
-		creator.addPartition(TABLE_ACCESS_RECORD, partitionName, value);
-		Mockito.verify(mockTemplate).execute(String.format(TableCreatorImpl.ADD_PARTITION, TABLE_ACCESS_RECORD, partitionName, value));
 	}
 }

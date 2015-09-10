@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
+import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
@@ -50,7 +51,7 @@ public class PartitionsTest {
 	@Test (expected=Exception.class)
 	public void createPartitionTwiceTest() {
 		DateTime date = new DateTime().plusYears(1);
-		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_PARTITIONS_TEST, date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+		String partitionName = PartitionUtil.getPartitionName(TABLE_PARTITIONS_TEST, date, Period.DAY);
 		assertFalse(creator.doesPartitionExist(TABLE_PARTITIONS_TEST, partitionName));
 		creator.addPartition(TABLE_PARTITIONS_TEST, partitionName, date.getMillis());
 		assertTrue(creator.doesPartitionExist(TABLE_PARTITIONS_TEST, partitionName));
@@ -73,7 +74,7 @@ public class PartitionsTest {
 	@Test
 	public void insertInPartitionRangeTest() {
 		DateTime today = new DateTime();
-		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_PARTITIONS_TEST, today.getYear(), today.getMonthOfYear(), today.getDayOfMonth());
+		String partitionName = PartitionUtil.getPartitionName(TABLE_PARTITIONS_TEST, today, Period.DAY);
 		assertFalse(creator.doesPartitionExist(TABLE_PARTITIONS_TEST, partitionName));
 		creator.addPartition(TABLE_PARTITIONS_TEST, partitionName, today.getMillis());
 		assertTrue(creator.doesPartitionExist(TABLE_PARTITIONS_TEST, partitionName));
@@ -85,7 +86,7 @@ public class PartitionsTest {
 	@Test
 	public void insertNotInPartitionRangeTest() {
 		DateTime today = new DateTime();
-		String partitionName = String.format(PartitionUtil.PARTITION_NAME_PATTERN, TABLE_PARTITIONS_TEST, today.getYear(), today.getMonthOfYear(), today.getDayOfMonth());
+		String partitionName = PartitionUtil.getPartitionName(TABLE_PARTITIONS_TEST, today, Period.DAY);
 		assertFalse(creator.doesPartitionExist(TABLE_PARTITIONS_TEST, partitionName));
 		long timestamp = today.minusDays(1).getMillis();
 		insert(timestamp);

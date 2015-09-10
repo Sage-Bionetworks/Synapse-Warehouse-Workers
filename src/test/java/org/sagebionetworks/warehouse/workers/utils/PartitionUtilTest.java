@@ -8,6 +8,9 @@ import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 
 public class PartitionUtilTest {
 
+	/*
+	 * buildPartitions() tests
+	 */
 	@Test (expected=IllegalArgumentException.class)
 	public void partitionWithEndDateBeforeStartDate() {
 		DateTime endDate = new DateTime();
@@ -35,10 +38,10 @@ public class PartitionUtilTest {
 		DateTime endDate = new DateTime(2016, 2, 2, 0, 0);
 		String partition = PartitionUtil.buildPartitions("TEST_TABLE", "timestamp", Period.MONTH, startDate, endDate);
 		String expected = "PARTITION BY RANGE (timestamp) (\n"
-				+ "PARTITION TEST_TABLE_2015_11_30 VALUES LESS THAN (1448870400000),\n"
-				+ "PARTITION TEST_TABLE_2015_12_30 VALUES LESS THAN (1451462400000),\n"
-				+ "PARTITION TEST_TABLE_2016_01_30 VALUES LESS THAN (1454140800000),\n"
-				+ "PARTITION TEST_TABLE_2016_02_29 VALUES LESS THAN (1456732800000)\n"
+				+ "PARTITION TEST_TABLE_2015_11 VALUES LESS THAN (1446361200000),\n"
+				+ "PARTITION TEST_TABLE_2015_12 VALUES LESS THAN (1448956800000),\n"
+				+ "PARTITION TEST_TABLE_2016_01 VALUES LESS THAN (1451635200000),\n"
+				+ "PARTITION TEST_TABLE_2016_02 VALUES LESS THAN (1454313600000)\n"
 				+ ");\n";
 		assertEquals(expected, partition);
 	}
@@ -49,7 +52,7 @@ public class PartitionUtilTest {
 		DateTime endDate = startDate;
 		String partition = PartitionUtil.buildPartitions("TEST_TABLE", "timestamp", Period.MONTH, startDate, endDate);
 		String expected = "PARTITION BY RANGE (timestamp) (\n"
-				+ "PARTITION TEST_TABLE_2015_11_30 VALUES LESS THAN (1448870400000)\n"
+				+ "PARTITION TEST_TABLE_2015_11 VALUES LESS THAN (1446361200000)\n"
 				+ ");\n";
 		assertEquals(expected, partition);
 	}
@@ -62,4 +65,9 @@ public class PartitionUtilTest {
 		assertTrue(partition.contains("TEST_TABLE_2025_01_01"));
 		assertFalse(partition.contains("TEST_TABLE_2025_01_02"));
 	}
+
+	/*
+	 * getPartitionsForPeriod() tests
+	 */
+	
 }

@@ -49,7 +49,7 @@ public class TablePartitionWorkerTest {
 
 	@Test
 	public void allPartitionsExistTest() throws Exception {
-		Set<String> set = PartitionUtil.getPartitionsForPeriod(Sql.TABLE_ACCESS_RECORD, Period.DAY, startDate, endDate).keySet();
+		Set<String> set = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, startDate, endDate).keySet();
 		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
 		worker.run(mockProgressCallback);
 		Mockito.verify(mockProgressCallback).progressMade(null);
@@ -59,14 +59,14 @@ public class TablePartitionWorkerTest {
 
 	@Test
 	public void offByOneTest() throws Exception {
-		Set<String> set = PartitionUtil.getPartitionsForPeriod(Sql.TABLE_ACCESS_RECORD, Period.DAY, startDate.minusDays(1), endDate.minusDays(1)).keySet();
+		Set<String> set = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, startDate.minusDays(1), endDate.minusDays(1)).keySet();
 		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
 		worker.run(mockProgressCallback);
 		Mockito.verify(mockProgressCallback).progressMade(null);
-		String toAdd = String.format(PartitionUtil.PARTITION_NAME_PATTERN, Sql.TABLE_ACCESS_RECORD, endDate.getYear(), endDate.getMonthOfYear(), endDate.getDayOfMonth());
-		Mockito.verify(mockCreator).addPartition(Mockito.eq(Sql.TABLE_ACCESS_RECORD), Mockito.eq(toAdd), Mockito.eq(endDate.getMillis()));
+		String toAdd = PartitionUtil.getPartitionName(Sql.TABLE_ACCESS_RECORD, endDate, Period.DAY);
+		Mockito.verify(mockCreator).addPartition(Mockito.eq(Sql.TABLE_ACCESS_RECORD), Mockito.eq(toAdd), Mockito.eq(PartitionUtil.floorDateByPeriod(endDate, Period.DAY).getMillis()));
 		DateTime dateToDrop = startDate.minusDays(1);
-		String toDrop = String.format(PartitionUtil.PARTITION_NAME_PATTERN, Sql.TABLE_ACCESS_RECORD, dateToDrop.getYear(), dateToDrop.getMonthOfYear(), dateToDrop.getDayOfMonth());
+		String toDrop = PartitionUtil.getPartitionName(Sql.TABLE_ACCESS_RECORD, dateToDrop, Period.DAY);
 		Mockito.verify(mockCreator).dropPartition(Mockito.eq(Sql.TABLE_ACCESS_RECORD), Mockito.eq(toDrop));
 	}
 }
