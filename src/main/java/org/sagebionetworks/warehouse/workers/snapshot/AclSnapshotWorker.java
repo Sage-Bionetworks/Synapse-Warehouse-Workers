@@ -2,8 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +11,7 @@ import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.AclSnapshotDao;
+import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
@@ -25,9 +24,7 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.google.inject.Inject;
 
-import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
-
-public class AclSnapshotWorker implements MessageDrivenRunner {
+public class AclSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<ObjectRecord, AclSnapshot> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedAclRecordSnapshot";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -65,7 +62,7 @@ public class AclSnapshotWorker implements MessageDrivenRunner {
 
 			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 			long start = System.currentTimeMillis();
-			int noRecords = writeAclSnapshot(reader, aclSnapshotDao, BATCH_SIZE, callback, message);
+			int noRecords = SnapshotWriter.write(reader, aclSnapshotDao, BATCH_SIZE, callback, message, this);
 			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} finally {
@@ -74,41 +71,13 @@ public class AclSnapshotWorker implements MessageDrivenRunner {
 		}
 	}
 
-	/**
-	 * Read node snapshot records from reader, and write them to NODE_SNAPSHOT table using dao
-	 * 
-	 * @param reader
-	 * @param dao
-	 * @return number of records written
-	 * @throws IOException
-	 */
-	public static int writeAclSnapshot(ObjectCSVReader<ObjectRecord> reader,
-			AclSnapshotDao dao, int batchSize, ProgressCallback<Message> callback,
-			Message message) throws IOException {
-		ObjectRecord record = null;
-		List<AclSnapshot> batch = new ArrayList<AclSnapshot>(batchSize);
-
-		int noRecords = 0;
-		while ((record = reader.next()) != null) {
-			AclSnapshot snapshot = ObjectSnapshotUtils.getAclSnapshot(record);
-			if (!ObjectSnapshotUtils.isValidAclSnapshot(snapshot)) {
-				log.error("Invalid Acl Snapshot from Record: " + record.toString());
-				continue;
-			}
-			batch.add(snapshot);
-			if (batch.size() >= batchSize) {
-				callback.progressMade(message);
-				dao.insert(batch);
-				noRecords += batch.size();
-				batch .clear();
-			}
+	@Override
+	public AclSnapshot convert(ObjectRecord record) {
+		AclSnapshot snapshot = ObjectSnapshotUtils.getAclSnapshot(record);
+		if (!ObjectSnapshotUtils.isValidAclSnapshot(snapshot)) {
+			log.error("Invalid Acl Snapshot from Record: " + record.toString());
+			return null;
 		}
-
-		if (batch.size() > 0) {
-			callback.progressMade(message);
-			dao.insert(batch);
-			noRecords += batch.size();
-		}
-		return noRecords;
+		return snapshot;
 	}
 }
