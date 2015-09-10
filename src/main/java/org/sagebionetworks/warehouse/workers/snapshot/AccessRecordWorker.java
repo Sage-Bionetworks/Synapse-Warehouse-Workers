@@ -58,6 +58,7 @@ public class AccessRecordWorker implements MessageDrivenRunner, SnapshotWorker<A
 
 		KeyData keyData = KeyGeneratorUtil.parseKey(fileSubmissionMessage.getKey());
 		if (!dao.doesPartitionExistForTimestamp(keyData.getTimeMS())) {
+			log.info("Missing partition for timestamp: "+keyData.getTimeMS()+". Putting message back...");
 			throw new RecoverableMessageException();
 		}
 

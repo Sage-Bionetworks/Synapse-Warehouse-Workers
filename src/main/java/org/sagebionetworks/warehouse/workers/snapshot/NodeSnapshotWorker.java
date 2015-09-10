@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.sagebionetworks.aws.utils.s3.KeyData;
+import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
 import org.sagebionetworks.aws.utils.sns.MessageUtil;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
@@ -51,6 +53,12 @@ public class NodeSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<O
 		// extract the bucket and key from the message
 		String xml = MessageUtil.extractMessageBodyAsString(message);
 		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, FileSubmissionMessage.ALIAS);
+
+		KeyData keyData = KeyGeneratorUtil.parseKey(fileSubmissionMessage.getKey());
+		if (!dao.doesPartitionExistForTimestamp(keyData.getTimeMS())) {
+			log.info("Missing partition for timestamp: "+keyData.getTimeMS()+". Putting message back...");
+			throw new RecoverableMessageException();
+		}
 
 		// read the file as a stream
 		File file = null;
