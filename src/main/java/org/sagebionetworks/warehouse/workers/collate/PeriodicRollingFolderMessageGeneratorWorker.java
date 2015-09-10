@@ -6,7 +6,7 @@ import java.util.List;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
-import org.sagebionetworks.warehouse.workers.db.FolderState;
+import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 import org.sagebionetworks.workers.util.progress.ProgressingRunner;

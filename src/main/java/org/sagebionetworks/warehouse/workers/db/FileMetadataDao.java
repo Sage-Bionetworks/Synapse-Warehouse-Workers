@@ -1,6 +1,7 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import org.sagebionetworks.warehouse.workers.db.FileState.State;
+import org.sagebionetworks.warehouse.workers.model.FileState;
+import org.sagebionetworks.warehouse.workers.model.FileState.State;
 
 public interface FileMetadataDao {
 

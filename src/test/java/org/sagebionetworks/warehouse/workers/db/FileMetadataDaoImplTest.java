@@ -1,10 +1,11 @@
 package org.sagebionetworks.warehouse.workers.db;
 
 import static org.junit.Assert.*;
-import static org.sagebionetworks.warehouse.workers.db.FileState.State.*;
+import static org.sagebionetworks.warehouse.workers.model.FileState.State.*;
 
 import org.junit.After;
 import org.junit.Test;
+import org.sagebionetworks.warehouse.workers.model.FileState;
 
 
 public class FileMetadataDaoImplTest {

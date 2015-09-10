@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.model;
 
 import java.sql.Timestamp;
 import java.util.Arrays;

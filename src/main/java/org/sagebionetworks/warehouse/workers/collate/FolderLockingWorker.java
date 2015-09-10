@@ -1,7 +1,7 @@
 package org.sagebionetworks.warehouse.workers.collate;
 
 import org.sagebionetworks.warehouse.workers.SemaphoreGatedRunnerProvider;
-import org.sagebionetworks.warehouse.workers.db.FolderState;
+import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;

@@ -10,7 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import org.sagebionetworks.warehouse.workers.db.FolderState.State;
+import org.sagebionetworks.warehouse.workers.model.FolderState;
+import org.sagebionetworks.warehouse.workers.model.FolderState.State;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -32,7 +33,7 @@ public class FolderMetadataDaoImpl implements FolderMetadataDao {
 			+ COL_FOLDER_STATE_STATE + "= ? , " + COL_FOLDER_STATE_UPDATED_ON
 			+ " = ?";
 
-	private static final String SQL_TRUCATE = "TRUNCATE TABLE "
+	private static final String SQL_TRUNCATE = "TRUNCATE TABLE "
 			+ TABLE_FOLDER_STATE;
 
 	private static final String FOLDER_STATE_DDL_SQL = "FolderState.ddl.sql";
@@ -74,7 +75,7 @@ public class FolderMetadataDaoImpl implements FolderMetadataDao {
 
 	@Override
 	public void truncateTable() {
-		template.update(SQL_TRUCATE);
+		template.update(SQL_TRUNCATE);
 	}
 
 	@Override

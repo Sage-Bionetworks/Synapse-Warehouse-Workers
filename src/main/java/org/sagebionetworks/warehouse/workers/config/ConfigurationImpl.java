@@ -11,7 +11,7 @@ import org.jdom.JDOMException;
 import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketScanningConfigurationProvider;
-import org.sagebionetworks.warehouse.workers.db.FileState;
+import org.sagebionetworks.warehouse.workers.model.FileState;
 
 import com.google.inject.Singleton;
 
