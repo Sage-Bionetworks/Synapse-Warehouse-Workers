@@ -1,18 +1,21 @@
 package org.sagebionetworks.warehouse.workers.db;
 
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_CLIENT;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_ENTITY_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_SESSION_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_TIMESTAMP;
+import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_PROCESSED_ACCESS_RECORD;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
-import static org.sagebionetworks.warehouse.workers.db.Sql.*;
-
-import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
-import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
