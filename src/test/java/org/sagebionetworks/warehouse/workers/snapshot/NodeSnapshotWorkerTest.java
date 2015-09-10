@@ -2,7 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +12,6 @@ import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.NodeSnapshotDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotTestUtil;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
@@ -33,7 +31,6 @@ public class NodeSnapshotWorkerTest {
 	StreamResourceProvider mockStreamResourceProvider;
 	File mockFile;
 	ObjectCSVReader<ObjectRecord> mockObjectCSVReader;
-	List<ObjectRecord> batch;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -55,8 +52,6 @@ public class NodeSnapshotWorkerTest {
 
 		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(NodeSnapshotWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(NodeSnapshotWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
 		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
-
-		batch = ObjectSnapshotTestUtil.createValidNodeSnapshotBatch(5);
 	}
 
 	@Test

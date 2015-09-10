@@ -2,7 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +11,6 @@ import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.ProcessedAccessRecordDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
-import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
@@ -32,7 +30,6 @@ public class ProcessAccessRecordWorkerTest {
 	StreamResourceProvider mockStreamResourceProvider;
 	File mockFile;
 	ObjectCSVReader<AccessRecord> mockObjectCSVReader;
-	List<AccessRecord> batch;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -55,8 +52,6 @@ public class ProcessAccessRecordWorkerTest {
 		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(ProcessAccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(ProcessAccessRecordWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
 		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
 		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(true);
-
-		batch = AccessRecordTestUtil.createValidAccessRecordBatch(5);
 	}
 
 	@Test
