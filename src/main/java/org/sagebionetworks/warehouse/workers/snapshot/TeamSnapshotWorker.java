@@ -2,8 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +24,7 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.google.inject.Inject;
 
-public class TeamSnapshotWorker implements MessageDrivenRunner {
+public class TeamSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<ObjectRecord, TeamSnapshot> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedTeamSnapshot";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -64,7 +62,7 @@ public class TeamSnapshotWorker implements MessageDrivenRunner {
 
 			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 			long start = System.currentTimeMillis();
-			int noRecords = writeTeamSnapshot(reader, dao, BATCH_SIZE, callback, message);
+			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this);
 			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} finally {
@@ -73,41 +71,13 @@ public class TeamSnapshotWorker implements MessageDrivenRunner {
 		}
 	}
 
-	/**
-	 * Read team snapshot records from reader, and write them to TEAM_SNAPSHOT table using dao
-	 * 
-	 * @param reader
-	 * @param dao
-	 * @return number of records written
-	 * @throws IOException
-	 */
-	public static int writeTeamSnapshot(ObjectCSVReader<ObjectRecord> reader,
-			TeamSnapshotDao dao, int batchSize, ProgressCallback<Message> callback,
-			Message message) throws IOException {
-		ObjectRecord record = null;
-		List<TeamSnapshot> batch = new ArrayList<TeamSnapshot>(batchSize);
-
-		int noRecords = 0;
-		while ((record = reader.next()) != null) {
-			TeamSnapshot snapshot = ObjectSnapshotUtils.getTeamSnapshot(record);
-			if (!ObjectSnapshotUtils.isValidTeamSnapshot(snapshot)) {
-				log.error("Invalid Team Snapshot from Record: " + record.toString());
-				continue;
-			}
-			batch.add(snapshot);
-			if (batch.size() >= batchSize) {
-				callback.progressMade(message);
-				dao.insert(batch);
-				noRecords += batch.size();
-				batch .clear();
-			}
+	@Override
+	public TeamSnapshot convert(ObjectRecord record) {
+		TeamSnapshot snapshot = ObjectSnapshotUtils.getTeamSnapshot(record);
+		if (!ObjectSnapshotUtils.isValidTeamSnapshot(snapshot)) {
+			log.error("Invalid Team Snapshot from Record: " + record.toString());
+			return null;
 		}
-
-		if (batch.size() > 0) {
-			callback.progressMade(message);
-			dao.insert(batch);
-			noRecords += batch.size();
-		}
-		return noRecords;
+		return snapshot;
 	}
 }

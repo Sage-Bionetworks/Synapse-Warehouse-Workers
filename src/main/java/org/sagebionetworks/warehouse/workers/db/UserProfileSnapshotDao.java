@@ -1,17 +1,8 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import java.util.List;
-
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
 
-public interface UserProfileSnapshotDao {
-
-	/**
-	 * Insert a batch of UserProfileSnapshot into USER_PROFILE_SNAPSHOT table
-	 * 
-	 * @param batch
-	 */
-	public void insert(List<UserProfileSnapshot> batch);
+public interface UserProfileSnapshotDao extends SnapshotDao<UserProfileSnapshot>{
 
 	/**
 	 * 
