@@ -1,17 +1,8 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import java.util.List;
-
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 
-public interface AccessRecordDao extends HasPartitions{
-
-	/**
-	 * Insert a batch of AccessRecord into ACCESS_RECORD table
-	 * 
-	 * @param batch
-	 */
-	public void insert(List<AccessRecord> batch);
+public interface AccessRecordDao extends HasPartitions, SnapshotDao<AccessRecord> {
 
 	/**
 	 * 

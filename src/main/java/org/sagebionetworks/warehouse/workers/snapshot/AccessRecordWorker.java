@@ -2,8 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +28,7 @@ import com.google.inject.Inject;
 /**
  * This worker reader a collated access record file from S3 and write the data to ACCESS_RECORD table.
  */
-public class AccessRecordWorker implements MessageDrivenRunner {
+public class AccessRecordWorker implements MessageDrivenRunner, SnapshotWorker<AccessRecord, AccessRecord> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecords";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -73,7 +71,7 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 
 			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 			long start = System.currentTimeMillis();
-			int noRecords = writeAccessRecord(reader, dao, BATCH_SIZE, callback, message);
+			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this);
 			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} finally {
@@ -82,41 +80,13 @@ public class AccessRecordWorker implements MessageDrivenRunner {
 		}
 	}
 
-	/**
-	 * Read access records from reader, and write them to ACCESS_RECORD table using dao
-	 * 
-	 * @param reader
-	 * @param dao
-	 * @return the number of records written
-	 * @throws IOException
-	 */
-	public static int writeAccessRecord(ObjectCSVReader<AccessRecord> reader,
-			AccessRecordDao dao, int batchSize, ProgressCallback<Message> callback,
-			Message message) throws IOException {
-		AccessRecord record = null;
-		List<AccessRecord> batch = new ArrayList<AccessRecord>(batchSize);
-
-		int noRecords = 0;
-		while ((record = reader.next()) != null) {
-			if (!AccessRecordUtils.isValidAccessRecord(record)) {
-				log.error("Invalid Access Record: " + record.toString());
-				continue;
-			}
-			batch.add(record);
-			if (batch.size() >= batchSize) {
-				callback.progressMade(message);
-				dao.insert(batch);
-				noRecords += batch.size();
-				batch .clear();
-			}
+	@Override
+	public AccessRecord convert(AccessRecord record) {
+		if (!AccessRecordUtils.isValidAccessRecord(record)) {
+			log.error("Invalid Access Record: " + record.toString());
+			return null;
 		}
-
-		if (batch.size() > 0) {
-			callback.progressMade(message);
-			dao.insert(batch);
-			noRecords += batch.size();
-		}
-		return noRecords;
+		return record;
 	}
 
 }
