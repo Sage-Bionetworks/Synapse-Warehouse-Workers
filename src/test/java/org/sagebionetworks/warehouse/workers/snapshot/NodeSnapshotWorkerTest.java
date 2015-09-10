@@ -44,14 +44,15 @@ public class NodeSnapshotWorkerTest {
 		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
 
 		messageBody = "<Message>\n"
-				+"  <bucket>bucket</bucket>\n"
-				+"  <key>key</key>\n"
+				+"  <bucket>elasticstaging.snapshot.record.sagebase.org</bucket>\n"
+				+"  <key>0000000103/noderecord/2015-08-30/18-10-00-000-a1283526-d9d7-4510-b5a7-6df0c381d62c.csv.gz</key>\n"
 				+"</Message>";
 		message = new Message();
 		message.setBody(messageBody);
 
 		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(NodeSnapshotWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(NodeSnapshotWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
 		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
+		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(true);
 	}
 
 	@Test
