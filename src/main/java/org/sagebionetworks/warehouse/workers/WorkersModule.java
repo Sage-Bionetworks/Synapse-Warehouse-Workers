@@ -25,6 +25,7 @@ import org.sagebionetworks.warehouse.workers.collate.S3ObjectCollatorImpl;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
+import org.sagebionetworks.warehouse.workers.db.WarehouseWorkersStateDao;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotConfigurationProvider;
@@ -200,5 +201,14 @@ public class WorkersModule extends AbstractModule {
 		MessageQueueImpl queue = new MessageQueueImpl(awsSQSClient, awsSNSClient, messageConfig);
 		return new CollateMessageQueue(queue);
 	}
-}
 
+	@Provides
+	public RunDuringMaintainanceStateGate getMaintainanceStateGate(WarehouseWorkersStateDao dao) {
+		return new RunDuringMaintainanceStateGate(dao);
+	}
+
+	@Provides
+	public RunDuringNormalStateGate getNormalStateGate(WarehouseWorkersStateDao dao) {
+		return new RunDuringNormalStateGate(dao);
+	}
+}

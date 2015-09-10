@@ -11,9 +11,11 @@ public class TablePartitionConfigurationProvider implements WorkerStackConfigura
 	final WorkerStackConfiguration config;
 
 	@Inject
-	public TablePartitionConfigurationProvider(CountingSemaphore semaphore, TablePartitionWorker worker) {
+	public TablePartitionConfigurationProvider(CountingSemaphore semaphore, TablePartitionWorker worker,
+			RunDuringMaintainanceStateGate gate) {
 		super();
 		SemaphoreGatedWorkerStackConfiguration config = new SemaphoreGatedWorkerStackConfiguration();
+		config.setGate(gate);
 		config.setProgressingRunner(worker);
 		config.setSemaphoreLockKey(SemaphoreKey.TABLE_PARTITION_WORKER.name());
 		config.setSemaphoreLockTimeoutSec(30);

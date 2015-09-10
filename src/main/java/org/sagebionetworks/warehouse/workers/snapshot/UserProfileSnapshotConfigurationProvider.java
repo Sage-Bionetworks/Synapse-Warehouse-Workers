@@ -3,6 +3,7 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 import java.util.Arrays;
 
 import org.sagebionetworks.database.semaphore.CountingSemaphore;
+import org.sagebionetworks.warehouse.workers.RunDuringNormalStateGate;
 import org.sagebionetworks.warehouse.workers.SemaphoreKey;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfiguration;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
@@ -20,9 +21,11 @@ public class UserProfileSnapshotConfigurationProvider implements WorkerStackConf
 	@Inject
 	public UserProfileSnapshotConfigurationProvider (CountingSemaphore semaphore,
 			AmazonSQSClient awsSQSClient, AmazonSNSClient awsSNClient,
-			UserProfileSnapshotWorker worker, UserProfileSnapshotTopicBucketInfo config) {
+			UserProfileSnapshotWorker worker, UserProfileSnapshotTopicBucketInfo config,
+			RunDuringNormalStateGate gate) {
 
 		MessageDrivenWorkerStackConfiguration mdwsc = new MessageDrivenWorkerStackConfiguration();
+		mdwsc.setGate(gate);
 		mdwsc.setQueueName(config.getQueueName());
 		mdwsc.setTopicNamesToSubscribe(Arrays.asList(config.getTopicName()));
 		mdwsc.setRunner(worker);
