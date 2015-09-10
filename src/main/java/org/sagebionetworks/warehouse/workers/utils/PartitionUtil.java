@@ -63,6 +63,14 @@ public class PartitionUtil {
 		if (tableName == null || period == null || startDate == null || endDate == null || endDate.isBefore(startDate.getMillis())) {
 			throw new IllegalArgumentException();
 		}
+		// adding an extra day/month to endDate
+		switch (period) {
+			case DAY:
+				endDate = endDate.plusDays(1);
+				break;
+			case MONTH:
+				endDate = endDate.plusMonths(1);
+		}
 		startDate = floorDateByPeriod(startDate, period);
 		endDate = floorDateByPeriod(endDate, period);
 		SortedMap<String, Long> partitions = new TreeMap<String, Long>();

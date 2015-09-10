@@ -18,7 +18,7 @@ public class PartitionUtilTest {
 	@Test
 	public void buildPartitionsWithDayBetweenTwoYears() {
 		DateTime startDate = new DateTime(2015, 12, 30, 0, 0);
-		DateTime endDate = new DateTime(2016, 1, 2, 0, 0);
+		DateTime endDate = new DateTime(2016, 1, 1, 0, 0);
 		String partition = PartitionUtil.buildPartitions("TEST_TABLE", "timestamp", Period.DAY, startDate, endDate);
 		String expected = "PARTITION BY RANGE (timestamp) (\n"
 				+ "PARTITION TEST_TABLE_2015_12_30 VALUES LESS THAN (1451462400000),\n"
@@ -42,7 +42,7 @@ public class PartitionUtilTest {
 	@Test
 	public void getPartitionsWithDayBetweenTwoYears() {
 		DateTime startDate = new DateTime(2015, 12, 30, 0, 0);
-		DateTime endDate = new DateTime(2016, 1, 2, 0, 0);
+		DateTime endDate = new DateTime(2016, 1, 1, 0, 0);
 		SortedMap<String, Long> expected = new TreeMap<String, Long>();
 		expected.put("TEST_TABLE_2015_12_30", 1451462400000L);
 		expected.put("TEST_TABLE_2015_12_31", 1451548800000L);
@@ -54,7 +54,7 @@ public class PartitionUtilTest {
 	@Test
 	public void getPartitionsWithMonthBetweenTwoYears() {
 		DateTime startDate = new DateTime(2015, 11, 30, 0, 0);
-		DateTime endDate = new DateTime(2016, 2, 2, 0, 0);
+		DateTime endDate = new DateTime(2016, 1, 2, 0, 0);
 		SortedMap<String, Long> expected = new TreeMap<String, Long>();
 		expected.put("TEST_TABLE_2015_11", 1446361200000L);
 		expected.put("TEST_TABLE_2015_12", 1448956800000L);
@@ -69,6 +69,17 @@ public class PartitionUtilTest {
 		DateTime endDate = startDate;
 		SortedMap<String, Long> expected = new TreeMap<String, Long>();
 		expected.put("TEST_TABLE_2015_11", 1446361200000L);
+		expected.put("TEST_TABLE_2015_12", 1448956800000L);
+		assertEquals(expected, PartitionUtil.getPartitions("TEST_TABLE", Period.MONTH, startDate, endDate));
+	}
+
+	@Test
+	public void getPartitionsWithStartDateAndEndDateInTheSameMonth() {
+		DateTime startDate = new DateTime(2015, 11, 3, 0, 0);
+		DateTime endDate = new DateTime(2015, 11, 30, 0, 0);
+		SortedMap<String, Long> expected = new TreeMap<String, Long>();
+		expected.put("TEST_TABLE_2015_11", 1446361200000L);
+		expected.put("TEST_TABLE_2015_12", 1448956800000L);
 		assertEquals(expected, PartitionUtil.getPartitions("TEST_TABLE", Period.MONTH, startDate, endDate));
 	}
 
@@ -78,7 +89,8 @@ public class PartitionUtilTest {
 		DateTime endDate = new DateTime(2025, 1, 1, 0, 0, 0, 0);
 		Map<String, Long> actual = PartitionUtil.getPartitions("TEST_TABLE", Period.DAY, startDate, endDate);
 		assertTrue(actual.containsKey("TEST_TABLE_2025_01_01"));
-		assertFalse(actual.containsKey("TEST_TABLE_2025_01_02"));
+		assertTrue(actual.containsKey("TEST_TABLE_2025_01_02"));
+		assertFalse(actual.containsKey("TEST_TABLE_2025_01_03"));
 	}
 
 	/*
