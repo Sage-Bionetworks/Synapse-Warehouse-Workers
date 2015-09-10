@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.google.inject.Inject;
 
-public class WarehouseWorkerStateDaoImpl implements WarehouseWorkersStateDao {
+public class WarehouseWorkersStateDaoImpl implements WarehouseWorkersStateDao {
 
 	private static final String WAREHOUSE_WORKERS_STATE_DDL_SQL = "WarehouseWorkersState.ddl.sql";
 	private JdbcTemplate template;
@@ -28,14 +28,16 @@ public class WarehouseWorkerStateDaoImpl implements WarehouseWorkersStateDao {
 			+ TABLE_WAREHOUSE_WORKERS_STATE
 			+ " WHERE "
 			+ COL_WAREHOUSE_WORKERS_STATE_TIMESTAMP
-			+ " = MAX("
+			+ " = (SELECT MAX("
 			+ COL_WAREHOUSE_WORKERS_STATE_TIMESTAMP
+			+ ") FROM "
+			+ TABLE_WAREHOUSE_WORKERS_STATE
 			+ ")";
 
 	private static final String TRUNCATE = "TRUNCATE TABLE " + COL_WAREHOUSE_WORKERS_STATE_STATE;
 
 	@Inject
-	WarehouseWorkerStateDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
+	WarehouseWorkersStateDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
 		// Create the table
