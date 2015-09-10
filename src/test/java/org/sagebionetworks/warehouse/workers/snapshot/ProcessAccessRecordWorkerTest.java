@@ -2,8 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -13,10 +11,8 @@ import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.ProcessedAccessRecordDao;
-import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
-import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
@@ -92,54 +88,5 @@ public class ProcessAccessRecordWorkerTest {
 		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader, Mockito.never()).close();
-	}
-
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void writeEmptyListTest() throws IOException {
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(null);
-		ProcessAccessRecordWorker.writeProcessedAcessRecord(mockObjectCSVReader, mockDao, 2, mockCallback, message);
-		Mockito.verify(mockDao, Mockito.never()).insert((List<ProcessedAccessRecord>) Mockito.any());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void writeInvalidRecordTest() throws IOException {
-		AccessRecord invalidRecord = AccessRecordTestUtil.createValidAccessRecord();
-		invalidRecord.setTimestamp(null);
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, invalidRecord, null);
-		ProcessAccessRecordWorker.writeProcessedAcessRecord(mockObjectCSVReader, mockDao, 2, mockCallback, message);
-		Mockito.verify(mockDao, Mockito.never()).insert((List<ProcessedAccessRecord>) Mockito.any());
-	}
-
-	@Test
-	public void writeLessThanBatchSizeTest() throws IOException {
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), null);
-		ProcessAccessRecordWorker.writeProcessedAcessRecord(mockObjectCSVReader, mockDao, 5, mockCallback, message);
-		List<ProcessedAccessRecord> expected = 
-				new ArrayList<ProcessedAccessRecord>(Arrays.asList(
-						AccessRecordUtils.processAccessRecord(batch.get(0)),
-						AccessRecordUtils.processAccessRecord(batch.get(1)),
-						AccessRecordUtils.processAccessRecord(batch.get(2)),
-						AccessRecordUtils.processAccessRecord(batch.get(3))));
-		Mockito.verify(mockDao, Mockito.times(1)).insert(expected);
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void writeBatchSizeTest() throws IOException {
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		ProcessAccessRecordWorker.writeProcessedAcessRecord(mockObjectCSVReader, mockDao, 5, mockCallback, message);
-		Mockito.verify(mockDao, Mockito.times(1)).insert((List<ProcessedAccessRecord>) Mockito.any());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void writeOverBatchSizeTest() throws IOException {
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		ProcessAccessRecordWorker.writeProcessedAcessRecord(mockObjectCSVReader, mockDao, 3, mockCallback, message);
-		Mockito.verify(mockDao, Mockito.times(2)).insert((List<ProcessedAccessRecord>) Mockito.any());
 	}
 }
