@@ -40,7 +40,7 @@ public class TablePartitionWorker implements ProgressingRunner<Void> {
 			if (!tableConfig.isCreateWithPartitions()) continue;
 			progressCallback.progressMade(null);
 			String tableName = tableConfig.getTableName();
-			log.info("Checking table "+tableName+"...");
+			log.info("Checking partitions on table "+tableName+"...");
 			Map<String, Long> requiredPartitions = PartitionUtil.getPartitions(tableName, tableConfig.getPartitionPeriod(), startDate, endDate);
 			Set<String> existingPartitions = creator.getExistingPartitionsForTable(tableName);
 			Set<String> toDrop = new HashSet<String>(existingPartitions);
