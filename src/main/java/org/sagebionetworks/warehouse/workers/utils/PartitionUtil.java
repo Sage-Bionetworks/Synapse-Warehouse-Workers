@@ -31,7 +31,7 @@ public class PartitionUtil {
 	 * @return
 	 */
 	public static String buildPartitions(String tableName, String fieldName, Period period, DateTime startDate, DateTime endDate) {
-		if (endDate.isBefore(startDate.getMillis())) {
+		if (tableName == null || fieldName == null || period == null || startDate == null || endDate == null || endDate.isBefore(startDate.getMillis())) {
 			throw new IllegalArgumentException();
 		}
 		String partition = PARTITION_BY_RANGE + " (" + fieldName + ") (\n";
@@ -60,7 +60,7 @@ public class PartitionUtil {
 	 *         endDate with period
 	 */
 	public static Map<String, Long> getPartitions(String tableName, Period period, DateTime startDate, DateTime endDate) {
-		if (tableName == null || period == null || startDate == null || endDate == null) {
+		if (tableName == null || period == null || startDate == null || endDate == null || endDate.isBefore(startDate.getMillis())) {
 			throw new IllegalArgumentException();
 		}
 		startDate = floorDateByPeriod(startDate, period);
