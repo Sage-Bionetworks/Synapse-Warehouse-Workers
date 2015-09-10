@@ -22,6 +22,11 @@ public class Sql {
 	public static final String COL_FOLDER_STATE_STATE = 		"STATE";
 	public static final String COL_FOLDER_STATE_UPDATED_ON = 	"UPDATED_ON";
 
+	// WAREHOUSE_WORKERS_STATE
+	public static final String TABLE_WAREHOUSE_WORKERS_STATE = 			"WAREHOUSE_WORKERS_STATE";
+	public static final String COL_WAREHOUSE_WORKERS_STATE_STATE = 		"STATE";
+	public static final String COL_WAREHOUSE_WORKERS_STATE_TIMESTAMP = 	"TIMESTAMP";
+
 	// PROCESSED_ACCESS_RECORD
 	public static final String TABLE_PROCESSED_ACCESS_RECORD = 								"PROCESSED_ACCESS_RECORD";
 	public static final String COL_PROCESSED_ACCESS_RECORD_SESSION_ID = 					"SESSION_ID";
