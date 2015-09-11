@@ -18,9 +18,7 @@ public class WarehouseWorkersStateDaoImpl implements WarehouseWorkersStateDao {
 			+ TABLE_WAREHOUSE_WORKERS_STATE
 			+ " ("
 			+ COL_WAREHOUSE_WORKERS_STATE_STATE
-			+ ","
-			+ COL_WAREHOUSE_WORKERS_STATE_TIMESTAMP
-			+ ") VALUES (?,?)";
+			+ ") VALUES (?)";
 
 	private static final String GET_STATE = "SELECT "
 			+ COL_WAREHOUSE_WORKERS_STATE_STATE
@@ -34,7 +32,7 @@ public class WarehouseWorkersStateDaoImpl implements WarehouseWorkersStateDao {
 			+ TABLE_WAREHOUSE_WORKERS_STATE
 			+ ")";
 
-	private static final String TRUNCATE = "TRUNCATE TABLE " + COL_WAREHOUSE_WORKERS_STATE_STATE;
+	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_WAREHOUSE_WORKERS_STATE;
 
 	@Inject
 	WarehouseWorkersStateDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
@@ -52,7 +50,7 @@ public class WarehouseWorkersStateDaoImpl implements WarehouseWorkersStateDao {
 
 	@Override
 	public void setState(WarehouseWorkersState state) {
-		template.update(SET_STATE, state.name(), System.currentTimeMillis());
+		template.update(SET_STATE, state.name());
 	}
 
 	@Override
