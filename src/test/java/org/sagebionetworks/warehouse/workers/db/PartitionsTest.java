@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 
 /**
  * This test ensures that insert ignore a record that does not belong to any
- * partitions cause exception thrown.
+ * partitions does not cause exception thrown.
  */
 public class PartitionsTest {
 	private TableCreator creator = TestContext.singleton().getInstance(TableCreator.class);
