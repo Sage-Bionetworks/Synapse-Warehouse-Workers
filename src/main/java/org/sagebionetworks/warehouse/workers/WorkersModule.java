@@ -203,8 +203,8 @@ public class WorkersModule extends AbstractModule {
 	}
 
 	@Provides
-	public RunDuringMaintainanceStateGate getMaintainanceStateGate(WarehouseWorkersStateDao dao) {
-		return new RunDuringMaintainanceStateGate(dao);
+	public RunDuringMaintenanceStateGate getMaintainanceStateGate(WarehouseWorkersStateDao dao) {
+		return new RunDuringMaintenanceStateGate(dao);
 	}
 
 	@Provides

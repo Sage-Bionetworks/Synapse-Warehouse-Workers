@@ -2,6 +2,6 @@ package org.sagebionetworks.warehouse.workers.model;
 
 public enum WarehouseWorkersState {
 	NORMAL,
-	MAINTAINANCE,
+	MAINTENANCE,
 	READ_ONLY
 }

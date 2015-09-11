@@ -8,19 +8,19 @@ import org.sagebionetworks.workers.util.Gate;
 
 import com.google.inject.Inject;
 
-public class RunDuringMaintainanceStateGate implements Gate{
+public class RunDuringMaintenanceStateGate implements Gate{
 
 	private WarehouseWorkersStateDao dao;
-	private static Logger log = LogManager.getLogger(RunDuringMaintainanceStateGate.class);
+	private static Logger log = LogManager.getLogger(RunDuringMaintenanceStateGate.class);
 
 	@Inject
-	RunDuringMaintainanceStateGate(WarehouseWorkersStateDao dao) {
+	RunDuringMaintenanceStateGate(WarehouseWorkersStateDao dao) {
 		this.dao = dao;
 	}
 
 	@Override
 	public boolean canRun() {
-		return dao.getState() == WarehouseWorkersState.MAINTAINANCE;
+		return dao.getState() == WarehouseWorkersState.MAINTENANCE;
 	}
 
 	@Override

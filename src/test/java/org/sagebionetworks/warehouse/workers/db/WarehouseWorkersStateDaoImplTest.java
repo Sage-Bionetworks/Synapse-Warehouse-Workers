@@ -12,8 +12,8 @@ public class WarehouseWorkersStateDaoImplTest {
 	@Test
 	public void test() {
 		assertEquals(WarehouseWorkersState.NORMAL, dao.getState());
-		dao.setState(WarehouseWorkersState.MAINTAINANCE);
-		assertEquals(WarehouseWorkersState.MAINTAINANCE, dao.getState());
+		dao.setState(WarehouseWorkersState.MAINTENANCE);
+		assertEquals(WarehouseWorkersState.MAINTENANCE, dao.getState());
 		dao.setState(WarehouseWorkersState.READ_ONLY);
 		assertEquals(WarehouseWorkersState.READ_ONLY, dao.getState());
 		dao.setState(WarehouseWorkersState.NORMAL);

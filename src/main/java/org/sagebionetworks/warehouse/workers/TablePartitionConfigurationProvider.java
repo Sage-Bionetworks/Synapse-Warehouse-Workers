@@ -12,7 +12,7 @@ public class TablePartitionConfigurationProvider implements WorkerStackConfigura
 
 	@Inject
 	public TablePartitionConfigurationProvider(CountingSemaphore semaphore, TablePartitionWorker worker,
-			RunDuringMaintainanceStateGate gate) {
+			RunDuringMaintenanceStateGate gate) {
 		super();
 		SemaphoreGatedWorkerStackConfiguration config = new SemaphoreGatedWorkerStackConfiguration();
 		config.setGate(gate);
