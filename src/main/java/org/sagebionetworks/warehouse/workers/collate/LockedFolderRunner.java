@@ -1,6 +1,6 @@
 package org.sagebionetworks.warehouse.workers.collate;
 
-import org.sagebionetworks.warehouse.workers.db.FolderState;
+import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
 /**

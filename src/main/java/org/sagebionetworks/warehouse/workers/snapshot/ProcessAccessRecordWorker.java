@@ -2,11 +2,11 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.sagebionetworks.aws.utils.s3.KeyData;
+import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
 import org.sagebionetworks.aws.utils.sns.MessageUtil;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
@@ -30,7 +30,7 @@ import com.google.inject.Inject;
  * This worker reader a collated access record file from S3, processes it,
  * and write the processed data to PROCESSED_ACCESS_RECORD table.
  */
-public class ProcessAccessRecordWorker implements MessageDrivenRunner {
+public class ProcessAccessRecordWorker implements MessageDrivenRunner, SnapshotWorker<AccessRecord, ProcessedAccessRecord> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecords";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -58,6 +58,12 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 		String xml = MessageUtil.extractMessageBodyAsString(message);
 		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, FileSubmissionMessage.ALIAS);
 
+		KeyData keyData = KeyGeneratorUtil.parseKey(fileSubmissionMessage.getKey());
+		if (!dao.doesPartitionExistForTimestamp(keyData.getTimeMS())) {
+			log.info("Missing partition for timestamp: "+keyData.getTimeMS()+". Putting message back...");
+			throw new RecoverableMessageException();
+		}
+
 		// read the file as a stream
 		File file = null;
 		ObjectCSVReader<AccessRecord> reader = null;
@@ -68,7 +74,7 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 
 			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 			long start = System.currentTimeMillis();
-			int noRecords = writeProcessedAcessRecord(reader, dao, BATCH_SIZE, callback, message);
+			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this);
 			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} finally {
@@ -77,43 +83,13 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner {
 		}
 	}
 
-	/**
-	 * Read access records from reader, process them, and write the processed
-	 * access records to PROCESSED_ACCESS_RECORD table using dao
-	 * 
-	 * @param reader
-	 * @param dao
-	 * @param batchSize
-	 * @return number of records written
-	 * @throws IOException
-	 */
-	public static int writeProcessedAcessRecord(ObjectCSVReader<AccessRecord> reader,
-			ProcessedAccessRecordDao dao, int batchSize, ProgressCallback<Message> callback,
-			Message message) throws IOException {
-		AccessRecord record = null;
-		List<ProcessedAccessRecord> batch = new ArrayList<ProcessedAccessRecord>(batchSize);
-
-		int noRecords = 0;
-		while ((record = reader.next()) != null) {
-			if (!AccessRecordUtils.isValidAccessRecord(record)) {
-				log.error("Invalid Access Record: " + record.toString());
-				continue;
-			}
-			batch.add(AccessRecordUtils.processAccessRecord(record));
-			if (batch.size() >= batchSize) {
-				callback.progressMade(message);
-				dao.insert(batch);
-				noRecords += batch.size();
-				batch.clear();
-			}
+	@Override
+	public ProcessedAccessRecord convert(AccessRecord record) {
+		if (!AccessRecordUtils.isValidAccessRecord(record)) {
+			log.error("Invalid Access Record: " + record.toString());
+			return null;
 		}
-
-		if (batch.size() > 0) {
-			callback.progressMade(message);
-			dao.insert(batch);
-			noRecords += batch.size();
-		}
-		return noRecords;
+		return AccessRecordUtils.processAccessRecord(record);
 	}
 
 }

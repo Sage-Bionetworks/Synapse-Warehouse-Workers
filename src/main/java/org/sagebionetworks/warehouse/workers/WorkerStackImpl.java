@@ -34,7 +34,7 @@ public class WorkerStackImpl implements WorkerStack {
 		this.workerName = config.getWorkerName();
 		this.scheduler = Executors.newScheduledThreadPool(1);
 		// Since exceptions will terminate the timer trap and log any exceptions.
-		this.runner = new ExceptionLoggingRunner(config.getRunner());
+		this.runner = new ExceptionLoggingRunner(config.getRunner(), config.getWorkerName());
 		this.startDalayMS = config.getStartDelayMs();
 		this.periodMS = config.getPeriodMS();
 	}

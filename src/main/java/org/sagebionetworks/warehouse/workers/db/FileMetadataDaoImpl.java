@@ -5,12 +5,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.sagebionetworks.warehouse.workers.db.FileState.State;
+import org.sagebionetworks.warehouse.workers.model.FileState;
+import org.sagebionetworks.warehouse.workers.model.FileState.State;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.*;
-import static org.sagebionetworks.warehouse.workers.db.FileState.State.*;
+import static org.sagebionetworks.warehouse.workers.model.FileState.State.*;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

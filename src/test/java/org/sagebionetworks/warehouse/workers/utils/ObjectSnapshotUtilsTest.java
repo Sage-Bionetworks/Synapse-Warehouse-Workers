@@ -673,4 +673,32 @@ public class ObjectSnapshotUtilsTest {
 		assertEquals(acl.getOwnerType(), snapshot.getOwnerType());
 		assertEquals(acl.getResourceAccess(), snapshot.getResourceAccess());
 	}
+
+	/*
+	 * convertSynapseIdToLong() tests
+	 */
+	@Test (expected=IllegalArgumentException.class)
+	public void convertNullSynapseId() {
+		ObjectSnapshotUtils.convertSynapseIdToLong(null);
+	}
+
+	@Test (expected=NumberFormatException.class)
+	public void convertNANSynapseId() {
+		ObjectSnapshotUtils.convertSynapseIdToLong("abc");
+	}
+
+	@Test
+	public void idWithSynPrefixTest() {
+		assertEquals(123456L, ObjectSnapshotUtils.convertSynapseIdToLong("Syn123456"));
+	}
+
+	@Test
+	public void idWithoutSynPrefixTest() {
+		assertEquals(123456L, ObjectSnapshotUtils.convertSynapseIdToLong("123456"));
+	}
+
+	@Test
+	public void idWithWhiteSpaceTest() {
+		assertEquals(123456L, ObjectSnapshotUtils.convertSynapseIdToLong("123456     "));
+	}
 }

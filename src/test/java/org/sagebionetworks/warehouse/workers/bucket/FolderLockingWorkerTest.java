@@ -11,7 +11,7 @@ import static org.mockito.Mockito.*;
 import org.sagebionetworks.warehouse.workers.SemaphoreGatedRunnerProvider;
 import org.sagebionetworks.warehouse.workers.collate.FolderLockingWorker;
 import org.sagebionetworks.warehouse.workers.collate.LockedFolderRunner;
-import org.sagebionetworks.warehouse.workers.db.FolderState;
+import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 import org.sagebionetworks.workers.util.progress.ProgressingRunner;

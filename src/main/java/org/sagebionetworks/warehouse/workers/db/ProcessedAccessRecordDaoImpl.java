@@ -1,12 +1,17 @@
 package org.sagebionetworks.warehouse.workers.db;
 
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_CLIENT;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_ENTITY_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_SESSION_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_TIMESTAMP;
+import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_PROCESSED_ACCESS_RECORD;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
-
-import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.sagebionetworks.warehouse.workers.model.Client;
@@ -64,12 +69,14 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 
 	private JdbcTemplate template;
 	private TransactionTemplate transactionTemplate;
+	private TableCreator creator;
 
 	@Inject
-	ProcessedAccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate) throws SQLException {
+	ProcessedAccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
 		this.transactionTemplate = transactionTemplate;
+		this.creator = creator;
 	}
 
 	@Override
@@ -137,4 +144,9 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 			return par;
 		}
 	};
+
+	@Override
+	public boolean doesPartitionExistForTimestamp(long timeMS) {
+		return creator.doesPartitionExist(TABLE_PROCESSED_ACCESS_RECORD, timeMS, CONFIG.getPartitionPeriod());
+	}
 }

@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
+import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
+import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,9 +25,9 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 	public static final TableConfiguration CONFIG = new TableConfiguration(
 			TABLE_NODE_SNAPSHOT,
 			NODE_SNAPSHOT_DDL_SQL,
-			false,
-			null,
-			null);
+			true,
+			COL_NODE_SNAPSHOT_TIMESTAMP,
+			Period.MONTH);
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_NODE_SNAPSHOT;
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO "
 			+ TABLE_NODE_SNAPSHOT
@@ -71,6 +73,7 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 			+ " = ?";
 
 	private JdbcTemplate template;
+	private TableCreator creator;
 
 	/*
 	 * Map all columns to the dbo.
@@ -115,9 +118,10 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 	};
 
 	@Inject
-	NodeSnapshotDaoImpl(JdbcTemplate template) throws SQLException {
+	NodeSnapshotDaoImpl(JdbcTemplate template, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
+		this.creator = creator;
 	}
 
 	@Override
@@ -134,19 +138,19 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 					throws SQLException {
 				NodeSnapshot snapshot = batch.get(i);
 				ps.setLong(1, snapshot.getTimestamp());
-				ps.setLong(2, Long.parseLong(snapshot.getId()));
+				ps.setLong(2, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getId()));
 				if (snapshot.getBenefactorId() != null) {
-					ps.setLong(3, Long.parseLong(snapshot.getBenefactorId()));
+					ps.setLong(3, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getBenefactorId()));
 				} else {
 					ps.setNull(3, Types.BIGINT);
 				}
 				if (snapshot.getProjectId() != null) {
-					ps.setLong(4, Long.parseLong(snapshot.getProjectId()));
+					ps.setLong(4, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getProjectId()));
 				} else {
 					ps.setNull(4, Types.BIGINT);
 				}
 				if (snapshot.getParentId() != null) {
-					ps.setLong(5, Long.parseLong(snapshot.getParentId()));
+					ps.setLong(5, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getParentId()));
 				} else {
 					ps.setNull(5, Types.BIGINT);
 				}
@@ -161,7 +165,7 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 					ps.setNull(11, Types.BIGINT);
 				}
 				if (snapshot.getFileHandleId() != null) {
-					ps.setLong(12, Long.parseLong(snapshot.getFileHandleId()));
+					ps.setLong(12, ObjectSnapshotUtils.convertSynapseIdToLong(snapshot.getFileHandleId()));
 				} else {
 					ps.setNull(12, Types.BIGINT);
 				}
@@ -183,4 +187,8 @@ public class NodeSnapshotDaoImpl implements NodeSnapshotDao {
 		template.update(TRUNCATE);
 	}
 
+	@Override
+	public boolean doesPartitionExistForTimestamp(long timeMS) {
+		return creator.doesPartitionExist(TABLE_NODE_SNAPSHOT, timeMS, CONFIG.getPartitionPeriod());
+	}
 }

@@ -1,18 +1,9 @@
 package org.sagebionetworks.warehouse.workers.db;
 
-import java.util.List;
-
 import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 
-public interface AclSnapshotDao {
-
-	/**
-	 * Insert a batch of AclSnapshot into ACL_SNAPSHOT table
-	 * 
-	 * @param batch
-	 */
-	public void insert(List<AclSnapshot> batch);
+public interface AclSnapshotDao extends SnapshotDao<AclSnapshot>{
 
 	/**
 	 * 

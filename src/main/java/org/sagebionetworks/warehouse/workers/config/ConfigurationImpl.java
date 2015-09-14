@@ -11,7 +11,7 @@ import org.jdom.JDOMException;
 import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketScanningConfigurationProvider;
-import org.sagebionetworks.warehouse.workers.db.FileState;
+import org.sagebionetworks.warehouse.workers.model.FileState;
 
 import com.google.inject.Singleton;
 
@@ -87,14 +87,14 @@ public class ConfigurationImpl implements Configuration {
 
 	@Override
 	public DateTime getStartDate() {
-		int currentYear = new DateTime().getYear();
-		return new DateTime(currentYear - 2, 1, 1, 0, 0);
+		DateTime startDate = new DateTime().minusYears(2);
+		return new DateTime(startDate.getYear(), startDate.getMonthOfYear(), startDate.getDayOfMonth(), 0, 0);
 	}
 
 	@Override
 	public DateTime getEndDate() {
-		int currentYear = new DateTime().getYear();
-		return new DateTime(currentYear + 9, 1, 1, 0, 0);
+		DateTime nextWeek = new DateTime().plusWeeks(1);
+		return new DateTime(nextWeek.getYear(), nextWeek.getMonthOfYear(), nextWeek.getDayOfMonth(), 0, 0);
 	}
 
 }

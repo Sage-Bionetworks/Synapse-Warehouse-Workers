@@ -2,9 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,10 +11,7 @@ import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.NodeSnapshotDao;
-import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotTestUtil;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
@@ -37,7 +31,6 @@ public class NodeSnapshotWorkerTest {
 	StreamResourceProvider mockStreamResourceProvider;
 	File mockFile;
 	ObjectCSVReader<ObjectRecord> mockObjectCSVReader;
-	List<ObjectRecord> batch;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -51,16 +44,15 @@ public class NodeSnapshotWorkerTest {
 		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
 
 		messageBody = "<Message>\n"
-				+"  <bucket>bucket</bucket>\n"
-				+"  <key>key</key>\n"
+				+"  <bucket>elasticstaging.snapshot.record.sagebase.org</bucket>\n"
+				+"  <key>0000000103/noderecord/2015-08-30/18-10-00-000-a1283526-d9d7-4510-b5a7-6df0c381d62c.csv.gz</key>\n"
 				+"</Message>";
 		message = new Message();
 		message.setBody(messageBody);
 
 		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(NodeSnapshotWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(NodeSnapshotWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
 		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
-
-		batch = ObjectSnapshotTestUtil.createValidNodeSnapshotBatch(5);
+		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(true);
 	}
 
 	@Test
@@ -86,51 +78,5 @@ public class NodeSnapshotWorkerTest {
 		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader, Mockito.never()).close();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void writeEmptyListTest() throws IOException {
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(null);
-		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 2, mockCallback, message);
-		Mockito.verify(mockDao, Mockito.never()).insert((List<NodeSnapshot>) Mockito.any());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void writeInvalidRecordTest() throws IOException, JSONObjectAdapterException {
-		ObjectRecord invalidRecord = ObjectSnapshotTestUtil.createValidNodeObjectRecord();
-		invalidRecord.setTimestamp(null);
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, invalidRecord, null);
-		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 2, mockCallback, message);
-		Mockito.verify(mockDao, Mockito.never()).insert((List<NodeSnapshot>) Mockito.any());
-	}
-
-	@Test
-	public void writeLessThanBatchSizeTest() throws IOException {
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), null);
-		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 5, mockCallback, message);
-		List<NodeSnapshot> expected = new ArrayList<NodeSnapshot>(Arrays.asList(
-				ObjectSnapshotUtils.getNodeSnapshot(batch.get(0)),
-				ObjectSnapshotUtils.getNodeSnapshot(batch.get(1)),
-				ObjectSnapshotUtils.getNodeSnapshot(batch.get(2)),
-				ObjectSnapshotUtils.getNodeSnapshot(batch.get(3))));
-		Mockito.verify(mockDao, Mockito.times(1)).insert(expected);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void writeBatchSizeTest() throws IOException {
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 5, mockCallback, message);
-		Mockito.verify(mockDao, Mockito.times(1)).insert((List<NodeSnapshot>) Mockito.any());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void writeOverBatchSizeTest() throws IOException {
-		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		NodeSnapshotWorker.writeNodeSnapshot(mockObjectCSVReader, mockDao, 3, mockCallback, message);
-		Mockito.verify(mockDao, Mockito.times(2)).insert((List<NodeSnapshot>) Mockito.any());
 	}
 }

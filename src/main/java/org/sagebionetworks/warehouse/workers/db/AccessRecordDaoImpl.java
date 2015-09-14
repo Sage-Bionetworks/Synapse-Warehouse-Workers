@@ -40,7 +40,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.inject.Inject;
 
-public class AccessRecordDaoImpl implements AccessRecordDao {
+public class AccessRecordDaoImpl implements AccessRecordDao{
 	public static final String ACCESS_RECORD_DDL_SQL = "AccessRecord.ddl.sql";
 	public static final TableConfiguration CONFIG = new TableConfiguration(
 			TABLE_ACCESS_RECORD,
@@ -103,6 +103,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 
 	private JdbcTemplate template;
 	private TransactionTemplate transactionTemplate;
+	private TableCreator creator;
 
 	/*
 	 * Map all columns to the dbo.
@@ -139,10 +140,11 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 	};
 
 	@Inject
-	AccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate) throws SQLException {
+	AccessRecordDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate, TableCreator creator) throws SQLException {
 		super();
 		this.template = template;
 		this.transactionTemplate = transactionTemplate;
+		this.creator = creator;
 	}
 
 	@Override
@@ -203,4 +205,8 @@ public class AccessRecordDaoImpl implements AccessRecordDao {
 		template.update(TRUNCATE);
 	}
 
+	@Override
+	public boolean doesPartitionExistForTimestamp(long timeMS) {
+		return creator.doesPartitionExist(TABLE_ACCESS_RECORD, timeMS, CONFIG.getPartitionPeriod());
+	}
 }

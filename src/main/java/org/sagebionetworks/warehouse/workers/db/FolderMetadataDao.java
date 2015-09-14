@@ -2,6 +2,8 @@ package org.sagebionetworks.warehouse.workers.db;
 
 import java.util.Iterator;
 
+import org.sagebionetworks.warehouse.workers.model.FolderState;
+
 public interface FolderMetadataDao {
 
 	/**

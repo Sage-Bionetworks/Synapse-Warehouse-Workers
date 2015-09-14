@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sagebionetworks.warehouse.workers.model.FolderState;
 
 public class FolderStateDaoImplTest {
 

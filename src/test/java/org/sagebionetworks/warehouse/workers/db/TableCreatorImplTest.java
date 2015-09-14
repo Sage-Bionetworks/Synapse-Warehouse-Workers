@@ -32,12 +32,12 @@ public class TableCreatorImplTest {
 
 	@Test
 	public void createTableWithPartitionTest() {
-		creator.createTableWithPartition(ACCESS_RECORD_DDL_SQL, TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY);
+		creator.createTableWithPartitions(ACCESS_RECORD_DDL_SQL, TABLE_ACCESS_RECORD, COL_ACCESS_RECORD_TIMESTAMP, Period.DAY);
 		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(mockTemplate).update(argument.capture());
 		assertTrue(argument.getValue().contains(TABLE_ACCESS_RECORD));
-		assertTrue(argument.getValue().contains(""+today.getMillis()));
-		assertTrue(argument.getValue().contains(""+nextWeek.getMillis()));
+		assertTrue(argument.getValue().contains(""+PartitionUtil.floorDateByPeriod(today, Period.DAY).getMillis()));
+		assertTrue(argument.getValue().contains(""+PartitionUtil.floorDateByPeriod(nextWeek, Period.DAY).getMillis()));
 	}
 
 	@Test
@@ -55,8 +55,7 @@ public class TableCreatorImplTest {
 		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 		Mockito.verify(mockTemplate).update(argument.capture());
 		assertTrue(argument.getValue().contains(TABLE_ACCESS_RECORD));
-		assertTrue(argument.getValue().contains(""+today.getMillis()));
-		assertTrue(argument.getValue().contains(""+nextWeek.getMillis()));
+		assertTrue(argument.getValue().contains("PARTITION BY RANGE"));
 	}
 
 	@Test
