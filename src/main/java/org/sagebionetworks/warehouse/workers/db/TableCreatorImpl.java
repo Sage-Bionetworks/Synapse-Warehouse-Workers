@@ -118,8 +118,11 @@ public class TableCreatorImpl implements TableCreator {
 		DateTime date = PartitionUtil.floorDateByPeriod(new DateTime(timeMS), partitionPeriod);
 		DateTime nextDate = null;
 		switch (partitionPeriod) {
-			case DAY: nextDate = date.plusDays(1);
-			case MONTH: nextDate = date.plusMonths(1);
+			case DAY:
+				nextDate = date.plusDays(1);
+				break;
+			case MONTH:
+				nextDate = date.plusMonths(1);
 		}
 		String sameDatePartition = PartitionUtil.getPartitionName(tableName, date, partitionPeriod);
 		String nextDatePartition = PartitionUtil.getPartitionName(tableName, nextDate, partitionPeriod);
