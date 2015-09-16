@@ -80,7 +80,6 @@ public class ObjectSnapshotTestUtil {
 		UserProfileSnapshot snapshot = new UserProfileSnapshot();
 		snapshot.setTimestamp(System.currentTimeMillis());
 		snapshot.setOwnerId("" + random.nextLong());
-		snapshot.setUserName("username");
 		return snapshot;
 	}
 

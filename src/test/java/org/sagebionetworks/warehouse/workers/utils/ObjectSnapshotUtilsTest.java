@@ -237,13 +237,6 @@ public class ObjectSnapshotUtilsTest {
 		assertFalse(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
 	}
 
-	@Test
-	public void invalidUserProfileSnapshotWithNullUserNameTest() {
-		UserProfileSnapshot snapshot = ObjectSnapshotTestUtil.createValidUserProfileSnapshot();
-		snapshot.setUserName(null);
-		assertFalse(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
-	}
-
 	/*
 	 * isValidAclSnapshot() tests
 	 */
@@ -700,5 +693,30 @@ public class ObjectSnapshotUtilsTest {
 	@Test
 	public void idWithWhiteSpaceTest() {
 		assertEquals(123456L, ObjectSnapshotUtils.convertSynapseIdToLong("123456     "));
+	}
+
+	/*
+	 * real data tests
+	 */
+	@Test
+	public void userProfile1Test() {
+		ObjectRecord record = new ObjectRecord();
+		record.setJsonClassName("userprofile");
+		record.setTimestamp(1437751246000L);
+		String jsonString = "{\"lastName\":\"TestUser\",\"etag\":\"7c23e592-5e60-46ed-af4e-ae675b1e7473\",\"ownerId\":\"3320560\",\"firstName\":\"RClient\"}";
+		record.setJsonString(jsonString);
+		UserProfileSnapshot snapshot = ObjectSnapshotUtils.getUserProfileSnapshot(record);
+		assertTrue(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
+	}
+
+	@Test
+	public void userProfile2Test() {
+		ObjectRecord record = new ObjectRecord();
+		record.setJsonClassName("userprofile");
+		record.setTimestamp(1437751246000L);
+		String jsonString = "{\"summary\":\"Have worked in biotech and government since 1994.Have held positions with (at): Battelle (National Cancer Institute), Human Genome Sciences, Gene Logic, and SRA International (National Institutes of Health). Currently hold a full-time position of employment with KELLY Government Solutions, working at the National Institute of Neurological Disorders and Stroke (NINDS) at the National Institutes of Health (NIH) as the intramural resident bioinformatics subject matter expert and mentor; performing omics-based research and support and training of attendees, fellows, staff and visitors from abroad. Notable career accomplishments to date include the co-founding of Gene Logic, co-pioneering of predictive toxicogenomics, and the co-development of the NIH Stem Cell Data Management System.I have also been issued 5 patents in the field of predictive toxicogenomics, 1 patent in the field of Stroke, and have had manuscripts published in:American Journal of Human Genetics American Journal of Physiology - Regulatory, Integrative and Comparative Physiology Blood Brain Brain, Behavior, and Immunity Cancer Research JAMA Neurology Journal of Cerebral Blood Flow & Metabolism Journal of Neuroscience Journal of Neuroimmune Pharmacology Journal of Neuroimmunology Journal of Neurovirology Journal of Virology Molecular Psychiatry Multiple Sclerosis PLoS Genetics PLoS One PLoS Pathogen PNAS Retrovirology Stem Cell Research  Part-time, I provide bioinformatics-related consulting services, engage and support research collaborations and teach graduate-level Bioinformatics at the University of Maryland University College (UMUC) as an Adjunct Professor.\",\"position\":\"\",\"lastName\":\"Johnson, MS, Ph.D.\",\"etag\":\"a2e83977-cbee-4744-a94b-cabb4292a755\",\"location\":\"Washington D.C. Metro Area\",\"ownerId\":\"3330107\",\"company\":\"\",\"profilePicureFileHandleId\":\"4744513\",\"displayName\":\"Kory R. Johnson, MS, Ph.D.\",\"firstName\":\"Kory R.\",\"industry\":\"Biotechnology\",\"url\":\"\"}";
+		record.setJsonString(jsonString);
+		UserProfileSnapshot snapshot = ObjectSnapshotUtils.getUserProfileSnapshot(record);
+		assertTrue(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
 	}
 }

@@ -79,7 +79,6 @@ public class ObjectSnapshotUtils {
 		if (snapshot 					== null) return false;
 		if (snapshot.getTimestamp() 	== null) return false;
 		if (snapshot.getOwnerId() 		== null) return false;
-		if (snapshot.getUserName() 		== null) return false;
 		return true;
 	}
 
