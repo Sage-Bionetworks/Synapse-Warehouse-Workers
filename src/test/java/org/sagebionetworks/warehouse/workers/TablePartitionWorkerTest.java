@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -69,5 +70,15 @@ public class TablePartitionWorkerTest {
 		DateTime dateToDrop = startDate.minusDays(1);
 		String toDrop = PartitionUtil.getPartitionName(Sql.TABLE_ACCESS_RECORD, dateToDrop, Period.DAY);
 		Mockito.verify(mockCreator).dropPartition(Mockito.eq(Sql.TABLE_ACCESS_RECORD), Mockito.eq(toDrop));
+	}
+
+	@Test
+	public void dropNullTest() throws Exception {
+		Set<String> nullSet = new HashSet<String>();
+		nullSet.add("null");
+		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(nullSet);
+		worker.run(mockProgressCallback);
+		Mockito.verify(mockProgressCallback).progressMade(null);
+		Mockito.verify(mockCreator, Mockito.never()).dropPartition(Mockito.anyString(), Mockito.anyString());
 	}
 }

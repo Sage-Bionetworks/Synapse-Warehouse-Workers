@@ -52,7 +52,7 @@ public class TablePartitionWorker implements ProgressingRunner<Void> {
 				creator.addPartition(tableName, partitionName, requiredPartitions.get(partitionName));
 			}
 			for (String partitionName : toDrop) {
-				if (partitionName != null) {
+				if (partitionName != null && !partitionName.toLowerCase().equals("null")) {
 					log.info("Dropping partition "+partitionName+"...");
 					creator.dropPartition(tableName, partitionName);
 				}
