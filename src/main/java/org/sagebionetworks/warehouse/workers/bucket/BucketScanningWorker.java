@@ -3,6 +3,8 @@ package org.sagebionetworks.warehouse.workers.bucket;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
@@ -20,6 +22,7 @@ import com.google.inject.Inject;
  */
 public class BucketScanningWorker implements ProgressingRunner<Void> {
 
+	private static Logger log = LogManager.getLogger(BucketScanningWorker.class);
 	BucketDaoProvider bucketDaoProvider;
 	List<BucketInfo> bucketList;
 	FileManager fileManager;
@@ -45,7 +48,11 @@ public class BucketScanningWorker implements ProgressingRunner<Void> {
 			Iterator<S3ObjectSummary> objectStream = bucketDao
 					.summaryIterator(nullPrefix);
 			// The manager will deal with this stream.
-			this.fileManager.addS3Objects(objectStream, progressCallback);
+			try {
+				this.fileManager.addS3Objects(objectStream, progressCallback);
+			} catch (IllegalArgumentException e) {
+				log.error(e.toString());
+			}
 		}
 	}
 
