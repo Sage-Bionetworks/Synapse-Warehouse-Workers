@@ -224,7 +224,7 @@ public class ObjectSnapshotUtils {
 			snapshot.setPosition(profile.getPosition());
 			return snapshot;
 		} catch (JSONObjectAdapterException e) {
-			throw new RuntimeException(e);
+			return null;
 		}
 	}
 
