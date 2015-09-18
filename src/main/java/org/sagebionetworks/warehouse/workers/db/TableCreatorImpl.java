@@ -20,12 +20,13 @@ public class TableCreatorImpl implements TableCreator {
 	private JdbcTemplate template;
 	private DateTime startDate;
 	private DateTime endDate;
+	private String schema;
 	public static final String CHECK_PARTITION = "SELECT COUNT(*) "
 			+ "FROM INFORMATION_SCHEMA.PARTITIONS "
-			+ "WHERE TABLE_NAME = ? AND PARTITION_NAME = ?";
+			+ "WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND PARTITION_NAME = ?";
 	public static final String ALL_PARTITIONS = "SELECT PARTITION_NAME "
 			+ "FROM INFORMATION_SCHEMA.PARTITIONS "
-			+ "WHERE TABLE_NAME = ?";
+			+ "WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?";
 	public static final String ADD_PARTITION = "ALTER TABLE %1$S "
 			+ "ADD PARTITION (PARTITION %2$S VALUES LESS THAN (%3$d))";
 	public static final String DROP_PARTITION = "ALTER TABLE %1$S DROP PARTITION %2$S";
@@ -35,6 +36,7 @@ public class TableCreatorImpl implements TableCreator {
 		this.template = template;
 		startDate = config.getStartDate();
 		endDate = config.getEndDate();
+		schema = config.getProperty("org.sagebionetworks.warehouse.worker.schema");
 	}
 
 	@Override
@@ -84,7 +86,7 @@ public class TableCreatorImpl implements TableCreator {
 
 	@Override
 	public boolean doesPartitionExist(String tableName, String partitionName) {
-		return template.queryForLong(CHECK_PARTITION, tableName, partitionName) == 1;
+		return template.queryForLong(CHECK_PARTITION, schema, tableName, partitionName) == 1;
 	}
 
 	@Override
@@ -102,7 +104,7 @@ public class TableCreatorImpl implements TableCreator {
 							throws SQLException {
 						return rs.getString(1);
 					}
-				}, tableName));
+				}, schema, tableName));
 	}
 
 	@Override
