@@ -58,6 +58,8 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner, SnapshotW
 		String xml = MessageUtil.extractMessageBodyAsString(message);
 		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, FileSubmissionMessage.ALIAS);
 
+		log.info("Receive message for key: "+ fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
+
 		KeyData keyData = KeyGeneratorUtil.parseKey(fileSubmissionMessage.getKey());
 		if (!dao.doesPartitionExistForTimestamp(keyData.getTimeMS())) {
 			log.info("Missing partition for timestamp: "+keyData.getTimeMS()+". Putting message back...");
@@ -77,6 +79,8 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner, SnapshotW
 			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this);
 			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
+		} catch (Exception e) {
+			log.info(e.toString());
 		} finally {
 			if (reader != null) 	reader.close();
 			if (file != null) 		file.delete();
