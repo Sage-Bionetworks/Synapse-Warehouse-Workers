@@ -54,6 +54,8 @@ public class NodeSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<O
 		String xml = MessageUtil.extractMessageBodyAsString(message);
 		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, FileSubmissionMessage.ALIAS);
 
+		log.info("Receive message for key: "+ fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
+
 		KeyData keyData = KeyGeneratorUtil.parseKey(fileSubmissionMessage.getKey());
 		if (!dao.doesPartitionExistForTimestamp(keyData.getTimeMS())) {
 			log.info("Missing partition for timestamp: "+keyData.getTimeMS()+". Putting message back...");

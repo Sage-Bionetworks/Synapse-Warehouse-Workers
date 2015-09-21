@@ -52,6 +52,8 @@ public class TeamSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<O
 		String xml = MessageUtil.extractMessageBodyAsString(message);
 		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, FileSubmissionMessage.ALIAS);
 
+		log.info("Receive message for key: "+ fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
+
 		// read the file as a stream
 		File file = null;
 		ObjectCSVReader<ObjectRecord> reader = null;
