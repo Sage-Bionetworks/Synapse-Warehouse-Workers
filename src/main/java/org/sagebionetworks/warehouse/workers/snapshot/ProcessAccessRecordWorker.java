@@ -32,7 +32,7 @@ import com.google.inject.Inject;
  */
 public class ProcessAccessRecordWorker implements MessageDrivenRunner, SnapshotWorker<AccessRecord, ProcessedAccessRecord> {
 
-	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecords";
+	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecordsToProcess";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
 	private static final int BATCH_SIZE = 25000;
 	private static Logger log = LogManager.getLogger(ProcessAccessRecordWorker.class);
