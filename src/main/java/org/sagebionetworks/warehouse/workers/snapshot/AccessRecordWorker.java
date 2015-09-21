@@ -69,7 +69,9 @@ public class AccessRecordWorker implements MessageDrivenRunner, SnapshotWorker<A
 		ObjectCSVReader<AccessRecord> reader = null;
 		try {
 			file = streamResourceProvider.createTempFile(TEMP_FILE_NAME_PREFIX, TEMP_FILE_NAME_SUFFIX);
+			log.info("Downloading file: "+ fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
+			log.info("Download completed");
 			reader = streamResourceProvider.createObjectCSVReader(file, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 
 			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
@@ -77,6 +79,8 @@ public class AccessRecordWorker implements MessageDrivenRunner, SnapshotWorker<A
 			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this);
 			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
+		} catch (Exception e) {
+			log.info(e.toString());
 		} finally {
 			if (reader != null) 	reader.close();
 			if (file != null) 		file.delete();

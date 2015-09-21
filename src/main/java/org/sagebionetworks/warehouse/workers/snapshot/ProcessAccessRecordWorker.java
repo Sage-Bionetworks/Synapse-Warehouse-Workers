@@ -79,6 +79,8 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner, SnapshotW
 			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this);
 			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
+		} catch (Exception e) {
+			log.info(e.toString());
 		} finally {
 			if (reader != null) 	reader.close();
 			if (file != null) 		file.delete();
