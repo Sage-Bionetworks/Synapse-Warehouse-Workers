@@ -20,8 +20,7 @@ public class RunDuringNormalStateGate implements Gate{
 
 	@Override
 	public boolean canRun() {
-		return true;
-		//return dao.getState() == WarehouseWorkersState.NORMAL;
+		return dao.getState() == WarehouseWorkersState.NORMAL;
 	}
 
 	@Override
