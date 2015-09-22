@@ -77,7 +77,7 @@ public class AccessRecordWorker implements MessageDrivenRunner, SnapshotWorker<A
 			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 			long start = System.currentTimeMillis();
 			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this);
-			log.info("Inserted (ignored) " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
+			log.info("Inserted (ignore) " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} catch (Exception e) {
 			log.info(e.toString());

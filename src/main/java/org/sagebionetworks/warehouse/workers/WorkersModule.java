@@ -167,8 +167,8 @@ public class WorkersModule extends AbstractModule {
 		list.add(PeriodicRollingFolderConfigurationProvider.class);
 		list.add(CollateFolderConfigurationProvider.class);
 		list.add(AccessRecordConfigurationProvider.class);
-/*		list.add(ProcessAccessRecordConfigurationProvider.class);
-		list.add(NodeSnapshotConfigurationProvider.class);
+		list.add(ProcessAccessRecordConfigurationProvider.class);
+/*		list.add(NodeSnapshotConfigurationProvider.class);
 		list.add(TeamSnapshotConfigurationProvider.class);
 		list.add(TeamMemberSnapshotConfigurationProvider.class);
 		list.add(UserProfileSnapshotConfigurationProvider.class);
