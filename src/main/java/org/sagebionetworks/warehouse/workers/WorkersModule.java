@@ -162,7 +162,7 @@ public class WorkersModule extends AbstractModule {
 	@Provides
 	public WorkerStackConfigurationProviderList getWorkerStackConfigurationProviderList(){
 		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
-		list.add(RealTimeBucketListenerConfigurationProvider.class);
+/*		list.add(RealTimeBucketListenerConfigurationProvider.class);
 		list.add(BucketScanningConfigurationProvider.class);
 		list.add(PeriodicRollingFolderConfigurationProvider.class);
 		list.add(CollateFolderConfigurationProvider.class);
@@ -173,7 +173,8 @@ public class WorkersModule extends AbstractModule {
 		list.add(TeamMemberSnapshotConfigurationProvider.class);
 		list.add(UserProfileSnapshotConfigurationProvider.class);
 		list.add(AclSnapshotConfigurationProvider.class);
-		list.add(TablePartitionConfigurationProvider.class);
+		list.add(TablePartitionConfigurationProvider.class);*/
+		list.add(HealthCheckConfigurationProvider.class);
 		return list;
 	}
 	
