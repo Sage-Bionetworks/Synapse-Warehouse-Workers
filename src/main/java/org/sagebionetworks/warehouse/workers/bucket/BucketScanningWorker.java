@@ -38,6 +38,7 @@ public class BucketScanningWorker implements ProgressingRunner<Void> {
 
 	@Override
 	public void run(ProgressCallback<Void> progressCallback) throws Exception {
+		log.info("Start scanning...");
 		// Scan each bucket looking for files to process
 		for (BucketInfo info : bucketList) {
 			// Helper to scan the files
