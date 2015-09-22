@@ -18,7 +18,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.util.StringInputStream;
 
-@Ignore
 public class RealTimeBucketListenerStackIntegrationTest {
 	
 	private static long MAX_WAIT_MS = 2*60*1000;

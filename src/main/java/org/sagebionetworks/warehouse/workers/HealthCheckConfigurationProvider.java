@@ -24,7 +24,7 @@ public class HealthCheckConfigurationProvider implements WorkerStackConfiguratio
 		this.config.setStartDelayMs(1013);
 		// run once per 10 minutes.
 		this.config.setPeriodMS(10*1000);
-		this.config.setWorkerName(TablePartitionWorker.class.getName());
+		this.config.setWorkerName(HealthCheckWorker.class.getName());
 	}
 
 	@Override
