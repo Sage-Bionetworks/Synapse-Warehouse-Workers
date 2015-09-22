@@ -3,6 +3,8 @@ package org.sagebionetworks.warehouse.workers.collate;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
@@ -22,7 +24,7 @@ import com.google.inject.Inject;
  */
 public class PeriodicRollingFolderMessageGeneratorWorker implements
 		ProgressingRunner<Void> {
-
+	private static Logger log = LogManager.getLogger(PeriodicRollingFolderMessageGeneratorWorker.class);
 	FolderMetadataDao folderDao;
 	List<BucketInfo> bucketList;
 	AmazonSQSClient amazonSQSClient;
@@ -41,6 +43,7 @@ public class PeriodicRollingFolderMessageGeneratorWorker implements
 
 	@Override
 	public void run(ProgressCallback<Void> progressCallback) throws Exception {
+		log.info("Looking for rolling files...");
 		// Find
 		for (BucketInfo bucketInfo : bucketList) {
 			Iterator<FolderState> it = folderDao.listFolders(
