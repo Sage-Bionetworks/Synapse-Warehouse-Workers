@@ -60,6 +60,7 @@ public class FolderCollateWorker implements LockedFolderRunner {
 	@Override
 	public void runWhileHoldingLock(ProgressCallback<Void> progressCallback,
 			FolderState folder) {
+		log.info("Working on folder: "+folder.getPath());
 		// walk all files in this folder
 		BucketDao bucketDao = this.bucketDaoProvider.createBucketDao(folder.getBucket());
 		Iterator<String> keyIterator = bucketDao.keyIterator(folder.getPath());

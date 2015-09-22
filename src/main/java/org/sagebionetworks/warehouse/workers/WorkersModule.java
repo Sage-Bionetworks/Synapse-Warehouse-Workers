@@ -165,8 +165,8 @@ public class WorkersModule extends AbstractModule {
 		list.add(RealTimeBucketListenerConfigurationProvider.class);
 		list.add(BucketScanningConfigurationProvider.class);
 		list.add(PeriodicRollingFolderConfigurationProvider.class);
-/*		list.add(CollateFolderConfigurationProvider.class);
-		list.add(AccessRecordConfigurationProvider.class);
+		list.add(CollateFolderConfigurationProvider.class);
+/*		list.add(AccessRecordConfigurationProvider.class);
 		list.add(ProcessAccessRecordConfigurationProvider.class);
 		list.add(NodeSnapshotConfigurationProvider.class);
 		list.add(TeamSnapshotConfigurationProvider.class);
