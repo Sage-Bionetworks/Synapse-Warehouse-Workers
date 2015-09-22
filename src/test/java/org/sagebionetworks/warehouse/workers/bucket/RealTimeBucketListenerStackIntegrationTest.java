@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.aws.utils.s3.BucketDaoImpl;
@@ -17,6 +18,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.util.StringInputStream;
 
+@Ignore
 public class RealTimeBucketListenerStackIntegrationTest {
 	
 	private static long MAX_WAIT_MS = 2*60*1000;
