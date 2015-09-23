@@ -169,10 +169,10 @@ public class WorkersModule extends AbstractModule {
 		list.add(AccessRecordConfigurationProvider.class);
 		list.add(ProcessAccessRecordConfigurationProvider.class);
 		list.add(NodeSnapshotConfigurationProvider.class);
-/*		list.add(TeamSnapshotConfigurationProvider.class);
+		list.add(TeamSnapshotConfigurationProvider.class);
 		list.add(TeamMemberSnapshotConfigurationProvider.class);
 		list.add(UserProfileSnapshotConfigurationProvider.class);
-		list.add(AclSnapshotConfigurationProvider.class);
+/*		list.add(AclSnapshotConfigurationProvider.class);
 		list.add(TablePartitionConfigurationProvider.class);*/
 		list.add(HealthCheckConfigurationProvider.class);
 		return list;
