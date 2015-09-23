@@ -2,6 +2,8 @@ package org.sagebionetworks.warehouse.workers.bucket;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -17,9 +19,9 @@ import com.google.inject.Inject;
  *
  */
 public class RealTimeBucketWorker implements MessageDrivenRunner {
-	
+	private static Logger log = LogManager.getLogger(RealTimeBucketWorker.class);
 	private FileManager fileManager;
-	
+
 	@Inject
 	public RealTimeBucketWorker(FileManager fileManager) {
 		super();
@@ -30,6 +32,7 @@ public class RealTimeBucketWorker implements MessageDrivenRunner {
 	@Override
 	public void run(final ProgressCallback<Message> progressCallback, final Message message)
 			throws RecoverableMessageException, Exception {
+		log.info("Processing message... ");
 		// let the manger know about the file
 		List<S3ObjectSummary> messageDetails = EventMessageUtils.parseEventJson(message.getBody());
 		// Notify the manger of this stream

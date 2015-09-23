@@ -6,27 +6,25 @@ import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedWorkerStackConfi
 
 import com.google.inject.Inject;
 
-public class TablePartitionConfigurationProvider implements WorkerStackConfigurationProvider{
+public class HealthCheckConfigurationProvider implements WorkerStackConfigurationProvider{
 
 	final WorkerStackConfiguration config;
 
 	@Inject
-	public TablePartitionConfigurationProvider(CountingSemaphore semaphore, TablePartitionWorker worker,
-			RunDuringMaintenanceStateGate gate) {
+	public HealthCheckConfigurationProvider(CountingSemaphore semaphore, HealthCheckWorker worker) {
 		super();
 		SemaphoreGatedWorkerStackConfiguration config = new SemaphoreGatedWorkerStackConfiguration();
-		config.setGate(gate);
 		config.setProgressingRunner(worker);
-		config.setSemaphoreLockKey(SemaphoreKey.TABLE_PARTITION_WORKER.name());
+		config.setSemaphoreLockKey(SemaphoreKey.HEALTH_CHECK.name());
 		config.setSemaphoreLockTimeoutSec(30);
 		config.setSemaphoreMaxLockCount(1);
 		Runnable mainRunner = new SemaphoreGatedWorkerStack(semaphore, config);
 		this.config = new WorkerStackConfiguration();
 		this.config.setRunner(mainRunner);
 		this.config.setStartDelayMs(1013);
-		// run once per 1 minutes.
-		this.config.setPeriodMS(60*1000);
-		this.config.setWorkerName(TablePartitionWorker.class.getName());
+		// run once per 10 seconds.
+		this.config.setPeriodMS(10*1000);
+		this.config.setWorkerName(HealthCheckWorker.class.getName());
 	}
 
 	@Override

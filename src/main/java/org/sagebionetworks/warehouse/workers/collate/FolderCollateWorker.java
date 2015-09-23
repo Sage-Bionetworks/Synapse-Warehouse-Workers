@@ -30,9 +30,9 @@ public class FolderCollateWorker implements LockedFolderRunner {
 	private static final String TEMPLATE_HOURS_OF_DAY_MIN_INTERVAL = "%1$02d-%2$02d-00-000";
 	/*
 	 * Determines how files within the same folder will be collated.
-	 * With a 10 minute interval there will be 6 collated files for each hour.
+	 * With a 5 minute interval there will be 12 collated files for each hour.
 	 */
-	public static int COLLATE_INTERVAL_MINUTES = 10;
+	public static int COLLATE_INTERVAL_MINUTES = 5;
 	/*
 	 * Determines the age a rolling file must be before it will be considered for collation.
 	 */
@@ -60,10 +60,11 @@ public class FolderCollateWorker implements LockedFolderRunner {
 	@Override
 	public void runWhileHoldingLock(ProgressCallback<Void> progressCallback,
 			FolderState folder) {
+		log.info("Working on folder: "+folder.getPath());
 		// walk all files in this folder
 		BucketDao bucketDao = this.bucketDaoProvider.createBucketDao(folder.getBucket());
 		Iterator<String> keyIterator = bucketDao.keyIterator(folder.getPath());
-		// Only rolling files oder thant his will be collated with this run.
+		// Only rolling files oder than this will be collated with this run.
 		long cutOffTimeMS = System.currentTimeMillis()-COLLATE_ROLLING_OLDER_THAN_MS;
 		// groups files to be collated by hour and minute intervals.
 		Map<String, List<String>> toCollateGroups = new HashMap<String, List<String>>();
@@ -74,7 +75,7 @@ public class FolderCollateWorker implements LockedFolderRunner {
 			progressCallback.progressMade(null);
 			String key = keyIterator.next();
 			KeyData keyData = KeyGeneratorUtil.parseKey(key);
-			// only looking fore rolling files
+			// only looking for rolling files
 			if(keyData.isRolling()){
 				// only look at files that are older than the interval.
 				if(keyData.getTimeMS() < cutOffTimeMS){

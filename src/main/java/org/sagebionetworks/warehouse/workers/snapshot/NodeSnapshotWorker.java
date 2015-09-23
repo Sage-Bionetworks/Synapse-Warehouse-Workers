@@ -54,7 +54,7 @@ public class NodeSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<O
 		String xml = MessageUtil.extractMessageBodyAsString(message);
 		FileSubmissionMessage fileSubmissionMessage = XMLUtils.fromXML(xml, FileSubmissionMessage.class, FileSubmissionMessage.ALIAS);
 
-		log.info("Receive message for key: "+ fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
+		log.info("Received message for key: "+ fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 
 		KeyData keyData = KeyGeneratorUtil.parseKey(fileSubmissionMessage.getKey());
 		if (!dao.doesPartitionExistForTimestamp(keyData.getTimeMS())) {
@@ -69,13 +69,13 @@ public class NodeSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<O
 			file = streamResourceProvider.createTempFile(TEMP_FILE_NAME_PREFIX, TEMP_FILE_NAME_SUFFIX);
 			log.info("Downloading file: "+ fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 			s3Client.getObject(new GetObjectRequest(fileSubmissionMessage.getBucket(), fileSubmissionMessage.getKey()), file);
-			log.info("Download completed");
+			log.info("Download completed.");
 			reader = streamResourceProvider.createObjectCSVReader(file, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS);
 
 			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 			long start = System.currentTimeMillis();
 			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this);
-			log.info("Wrote " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
+			log.info("Inserted (ignore) " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} catch (Exception e) {
 			log.info(e.toString());
