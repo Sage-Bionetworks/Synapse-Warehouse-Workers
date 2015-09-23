@@ -114,9 +114,7 @@ public class AclSnapshotDaoImpl implements AclSnapshotDao{
 				}
 				if (snapshot.getResourceAccess() != null) {
 					String xml = XMLUtils.toXML(snapshot.getResourceAccess(), AclSnapshot.RESOURCE_ACCESS_ALIAS);
-					Blob blob = template.getDataSource().getConnection().createBlob();
-					blob.setBytes(1, CompressionUtils.compressStringUTF8(xml));
-					ps.setBlob(5, blob);
+					ps.setBytes(5, CompressionUtils.compressStringUTF8(xml));
 				} else {
 					ps.setNull(5, Types.BLOB);
 				}
