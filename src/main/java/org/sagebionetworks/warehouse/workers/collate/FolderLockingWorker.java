@@ -20,7 +20,7 @@ import com.google.inject.Inject;
  */
 public class FolderLockingWorker implements MessageDrivenRunner {
 
-	public static final int TIMEOUT_SEC = 60;
+	public static final int TIMEOUT_SEC = 2*60;
 
 	SemaphoreGatedRunnerProvider semaphoreProvider;
 	LockedFolderRunner collateWorker;
