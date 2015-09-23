@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.aws.utils.s3.BucketDaoImpl;
