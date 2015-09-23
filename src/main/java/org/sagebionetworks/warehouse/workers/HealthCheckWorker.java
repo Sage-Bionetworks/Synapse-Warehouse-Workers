@@ -11,7 +11,6 @@ public class HealthCheckWorker implements ProgressingRunner<Void>{
 	@Override
 	public void run(ProgressCallback<Void> progressCallback) throws Exception {
 		log.info("ping");
-		System.out.println("printing from health check worker");
 	}
 
 }
