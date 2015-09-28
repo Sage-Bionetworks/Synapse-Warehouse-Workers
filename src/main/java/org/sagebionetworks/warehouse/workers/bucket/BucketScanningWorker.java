@@ -39,6 +39,7 @@ public class BucketScanningWorker implements ProgressingRunner<Void> {
 	@Override
 	public void run(ProgressCallback<Void> progressCallback) throws Exception {
 		log.info("Start scanning...");
+		long start = System.currentTimeMillis();
 		// Scan each bucket looking for files to process
 		for (BucketInfo info : bucketList) {
 			// Helper to scan the files
@@ -55,6 +56,7 @@ public class BucketScanningWorker implements ProgressingRunner<Void> {
 				log.error(e.toString());
 			}
 		}
+		log.info("Finish scanning in "+(System.currentTimeMillis()-start)+" mili seconds.");
 	}
 
 }
