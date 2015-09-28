@@ -37,4 +37,18 @@ public interface Configuration {
 	 * @return
 	 */
 	public DateTime getEndDate();
+
+	/**
+	 * Get the time of the day we start the maintenance process
+	 * 
+	 * @return
+	 */
+	public int getMaintenanceStartTime();
+
+	/**
+	 * Get the time of the day we end the maintenance process
+	 * 
+	 * @return
+	 */
+	public int getMaintenanceEndTime();
 }
