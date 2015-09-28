@@ -18,6 +18,8 @@ import com.google.inject.Singleton;
 @Singleton
 public class ConfigurationImpl implements Configuration {
 
+	private static final int MAINTENANCE_START_TIME = 8;
+	private static final int MAINTENANCE_END_TIME = 9;
 	private static final String CONFIGURATION_PROPERTIES = "configuration.properties";
 	Properties properties;
 	/**
@@ -95,6 +97,16 @@ public class ConfigurationImpl implements Configuration {
 	public DateTime getEndDate() {
 		DateTime nextWeek = new DateTime().plusWeeks(1);
 		return new DateTime(nextWeek.getYear(), nextWeek.getMonthOfYear(), nextWeek.getDayOfMonth(), 0, 0);
+	}
+
+	@Override
+	public int getMaintenanceStartTime() {
+		return MAINTENANCE_START_TIME;
+	}
+
+	@Override
+	public int getMaintenanceEndTime() {
+		return MAINTENANCE_END_TIME;
 	}
 
 }

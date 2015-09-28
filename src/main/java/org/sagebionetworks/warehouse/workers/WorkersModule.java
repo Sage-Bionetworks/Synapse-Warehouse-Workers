@@ -175,6 +175,7 @@ public class WorkersModule extends AbstractModule {
 		list.add(AclSnapshotConfigurationProvider.class);
 		list.add(TablePartitionConfigurationProvider.class);
 		list.add(HealthCheckConfigurationProvider.class);
+		list.add(MaintenanceConfigurationProvider.class);
 		return list;
 	}
 	
