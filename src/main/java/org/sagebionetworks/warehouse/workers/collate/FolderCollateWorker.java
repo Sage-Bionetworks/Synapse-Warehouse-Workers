@@ -95,9 +95,10 @@ public class FolderCollateWorker implements LockedFolderRunner {
 		}
 		// get the sort column for this bucket.
 		int sortColumnIndex = bucketToSortColumnMap.get(folder.getBucket());
-		
+
 		// Collate each group
 		for(String hourMinutesGroup: toCollateGroups.keySet()){
+			progressCallback.progressMade(null);
 			List<String> keysToCollate = toCollateGroups.get(hourMinutesGroup);
 			String destinationKey = createDestinationKey(folder.getPath(), hourMinutesGroup);
 			try {
