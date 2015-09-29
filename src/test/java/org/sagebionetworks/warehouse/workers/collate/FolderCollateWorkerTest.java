@@ -125,7 +125,7 @@ public class FolderCollateWorkerTest {
 		verify(mockFolderMetadataDao, never()).createOrUpdateFolderState(
 				stateCapture.capture());
 		
-		verify(mockProgressCallback, times(5)).progressMade(null);
+		verify(mockProgressCallback, times(7)).progressMade(null);
 	}
 
 	/**
@@ -171,8 +171,8 @@ public class FolderCollateWorkerTest {
 		assertEquals(folder.getBucket(), state.getBucket());
 		assertEquals(folder.getPath(), state.getPath());
 		assertEquals(FolderState.State.COLLATED, state.getState());
-		
-		verify(mockProgressCallback, times(4)).progressMade(null);
+
+		verify(mockProgressCallback, times(6)).progressMade(null);
 	}
 
 	/**
