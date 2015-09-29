@@ -3,6 +3,8 @@ package org.sagebionetworks.warehouse.workers.db;
 import java.sql.Timestamp;
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.aws.utils.s3.KeyData;
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
@@ -20,6 +22,7 @@ import com.google.inject.Inject;
  */
 public class FileManagerImpl implements FileManager{
 	
+	private static Logger log = LogManager.getLogger(FileManagerImpl.class);
 	private FolderMetadataDao folderMetadataDao;
 	private FileMetadataDao fileMetadataDao;
 	private BucketTopicPublisher bucketToTopicManager;
@@ -45,24 +48,28 @@ public class FileManagerImpl implements FileManager{
 			S3ObjectSummary summary = objectStream.next();
 			validateObjectSummary(summary);
 			// parse the key into its parts.
-			KeyData keyData = KeyGeneratorUtil.parseKey(summary.getKey());
-			if(keyData.isRolling()){
-				// For rolling files we need to mark the folder as rolling.
-				if(lastRollingPath != null && lastRollingPath.equals(keyData.getPath())){
-					// This folder was already marked as rolling in this call
-					continue;
+			try {
+				KeyData keyData = KeyGeneratorUtil.parseKey(summary.getKey());
+				if(keyData.isRolling()){
+					// For rolling files we need to mark the folder as rolling.
+					if(lastRollingPath != null && lastRollingPath.equals(keyData.getPath())){
+						// This folder was already marked as rolling in this call
+						continue;
+					}
+					// set this folder to rolling
+					folderMetadataDao.createOrUpdateFolderState(new FolderState(summary.getBucketName(), keyData.getPath(), FolderState.State.ROLLING, new Timestamp(keyData.getTimeMS())));
+					// used to skip folders that have already been marked as rolling.
+					lastRollingPath = keyData.getPath();
+				}else{
+					// This is not a rolling file.
+					FileState state = fileMetadataDao.getFileState(summary.getBucketName(), summary.getKey());
+					if(FileState.State.UNKNOWN.equals(state.getState())){
+						// This is the fist time this file has been found.
+						submitFileToBeProcessed(summary);
+					}
 				}
-				// set this folder to rolling
-				folderMetadataDao.createOrUpdateFolderState(new FolderState(summary.getBucketName(), keyData.getPath(), FolderState.State.ROLLING, new Timestamp(keyData.getTimeMS())));
-				// used to skip folders that have already been marked as rolling.
-				lastRollingPath = keyData.getPath();
-			}else{
-				// This is not a rolling file.
-				FileState state = fileMetadataDao.getFileState(summary.getBucketName(), summary.getKey());
-				if(FileState.State.UNKNOWN.equals(state.getState())){
-					// This is the fist time this file has been found.
-					submitFileToBeProcessed(summary);
-				}
+			} catch (IllegalArgumentException e) {
+				log.error(e.toString());
 			}
 		}
 	}
