@@ -41,6 +41,7 @@ public class S3ObjectCollatorImpl implements S3ObjectCollator {
 		try{
 			// download each input file to a temporary file.
 			for(String key: keysToCollate){
+				progressCallback.progressMade(null);
 				File temp = collateProvider.createTempFile("inputCollate", ".csv.gz");
 				s3Client.getObject(new GetObjectRequest(bucket, key), temp);
 				inputFiles.add(temp);
@@ -93,6 +94,7 @@ public class S3ObjectCollatorImpl implements S3ObjectCollator {
 			writer = collateProvider.createGzipWriter(destination);
 			// This is where collation actually occurs.
 			collateProvider.mergeSortedStreams(progressCallback, readers, writer, sortColumnIndex);
+			progressCallback.progressMade(null);
 			// upload the result file.
 			s3Client.putObject(bucket, destinationKey, destination);
 		}finally{
