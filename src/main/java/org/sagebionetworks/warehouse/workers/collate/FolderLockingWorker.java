@@ -20,7 +20,8 @@ import com.google.inject.Inject;
  */
 public class FolderLockingWorker implements MessageDrivenRunner {
 
-	public static final int TIMEOUT_SEC = 2*60;
+	// this timeout matches collate worker queue's default visibility timeout
+	public static final int TIMEOUT_SEC = 60;
 
 	SemaphoreGatedRunnerProvider semaphoreProvider;
 	LockedFolderRunner collateWorker;
