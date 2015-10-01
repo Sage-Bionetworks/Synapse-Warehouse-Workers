@@ -9,6 +9,7 @@ import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
+import org.sagebionetworks.repo.model.UserGroup;
 import org.sagebionetworks.repo.model.UserGroupHeader;
 import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.AclRecord;
@@ -258,5 +259,17 @@ public class ObjectSnapshotTestUtil {
 			batch.add(createValidAclObjectRecord());
 		}
 		return batch;
+	}
+
+	/**
+	 * 
+	 * @return a unique valid UserGroup snapshot
+	 */
+	public static UserGroup createValidUserGroupSnapshot() {
+		UserGroup ug = new UserGroup();
+		ug.setId("" + random.nextLong());
+		ug.setIsIndividual(true);
+		ug.setCreationDate(new Date());
+		return ug;
 	}
 }

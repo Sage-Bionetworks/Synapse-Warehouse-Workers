@@ -115,4 +115,9 @@ public class Sql {
 	public static final String COL_ACL_SNAPSHOT_CREATED_ON = 		"CREATED_ON";
 	public static final String COL_ACL_SNAPSHOT_RESOURCE_ACCESS = 	"RESOURCE_ACCESS";
 
+	// USER_GROUP
+	public static final String TABLE_USER_GROUP = 				"USER_GROUP";
+	public static final String COL_USER_GROUP_ID = 				"ID";
+	public static final String COL_USER_GROUP_IS_INDIVIDUAL = 	"IS_INDIVIDUAL";
+	public static final String COL_USER_GROUP_CREATED_ON = 		"CREATED_ON";
 }
