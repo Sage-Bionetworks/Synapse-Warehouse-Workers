@@ -38,6 +38,7 @@ import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotConfigur
 import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotTopicBucketInfo;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueConfiguration;
@@ -176,6 +177,7 @@ public class WorkersModule extends AbstractModule {
 		list.add(TablePartitionConfigurationProvider.class);
 		list.add(HealthCheckConfigurationProvider.class);
 		list.add(MaintenanceConfigurationProvider.class);
+		list.add(UserGroupSnapshotConfigurationProvider.class);
 		return list;
 	}
 	
