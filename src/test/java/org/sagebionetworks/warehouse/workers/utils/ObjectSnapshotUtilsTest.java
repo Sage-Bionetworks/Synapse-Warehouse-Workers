@@ -12,6 +12,7 @@ import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.repo.model.ResourceAccess;
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
+import org.sagebionetworks.repo.model.UserGroup;
 import org.sagebionetworks.repo.model.UserGroupHeader;
 import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.AclRecord;
@@ -270,6 +271,41 @@ public class ObjectSnapshotUtilsTest {
 		AclSnapshot snapshot = ObjectSnapshotTestUtil.createValidAclSnapshot();
 		snapshot.setOwnerType(null);
 		assertFalse(ObjectSnapshotUtils.isValidAclSnapshot(snapshot));
+	}
+
+	/*
+	 * isValidUserGroupSnapshot() tests
+	 */
+	@Test
+	public void nullUserGroupSnapshotTest() {
+		assertFalse(ObjectSnapshotUtils.isValidUserGroupSnapshot(null));
+	}
+
+	@Test
+	public void validUserGroupSnapshotTest() {
+		UserGroup snapshot = ObjectSnapshotTestUtil.createValidUserGroupSnapshot();
+		assertTrue(ObjectSnapshotUtils.isValidUserGroupSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidUserGroupSnapshotWithNullIdTest() {
+		UserGroup snapshot = ObjectSnapshotTestUtil.createValidUserGroupSnapshot();
+		snapshot.setId(null);
+		assertFalse(ObjectSnapshotUtils.isValidUserGroupSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidUserGroupSnapshotWithNullIsIndividualTest() {
+		UserGroup snapshot = ObjectSnapshotTestUtil.createValidUserGroupSnapshot();
+		snapshot.setIsIndividual(null);
+		assertFalse(ObjectSnapshotUtils.isValidUserGroupSnapshot(snapshot));
+	}
+
+	@Test
+	public void invalidUserGroupSnapshotWithNullCreationDateTest() {
+		UserGroup snapshot = ObjectSnapshotTestUtil.createValidUserGroupSnapshot();
+		snapshot.setCreationDate(null);
+		assertFalse(ObjectSnapshotUtils.isValidUserGroupSnapshot(snapshot));
 	}
 
 	/*
@@ -665,6 +701,61 @@ public class ObjectSnapshotUtilsTest {
 		assertEquals(acl.getId(), snapshot.getId());
 		assertEquals(acl.getOwnerType(), snapshot.getOwnerType());
 		assertEquals(acl.getResourceAccess(), snapshot.getResourceAccess());
+	}
+
+	/*
+	 * getUserGroupSnapshot() tests
+	 */
+	@Test
+	public void nullJsonStringGetUserGroupSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(UserGroup.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getUserGroupSnapshot(record));
+	}
+
+	@Test
+	public void nullJsonClassNameGetUserGroupSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserGroup ug = new UserGroup();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(ug));
+		assertNull(ObjectSnapshotUtils.getUserGroupSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeNameGetUserGroupSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserGroup ug = new UserGroup();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(ug));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		assertNull(ObjectSnapshotUtils.getUserGroupSnapshot(record));
+	}
+
+	@Test
+	public void wrongTypeGetUserGroupSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(UserGroup.class.getSimpleName().toLowerCase());
+		UserGroup snapshot = ObjectSnapshotUtils.getUserGroupSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(new UserGroup(), snapshot);
+	}
+
+	@Test
+	public void getUserGroupSnapshotTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserGroup ug = ObjectSnapshotTestUtil.createValidUserGroupSnapshot();
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(ug));
+		record.setJsonClassName(UserGroup.class.getSimpleName().toLowerCase());
+		UserGroup snapshot = ObjectSnapshotUtils.getUserGroupSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(ug, snapshot);
 	}
 
 	/*

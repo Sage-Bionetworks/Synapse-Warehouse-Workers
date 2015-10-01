@@ -2,6 +2,7 @@ package org.sagebionetworks.warehouse.workers.utils;
 
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
+import org.sagebionetworks.repo.model.UserGroup;
 import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.AclRecord;
 import org.sagebionetworks.repo.model.audit.NodeRecord;
@@ -93,6 +94,20 @@ public class ObjectSnapshotUtils {
 		if (snapshot.getTimestamp() 	== null) return false;
 		if (snapshot.getId() 			== null) return false;
 		if (snapshot.getOwnerType() 	== null) return false;
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param snapshot
+	 * @return true is the snapshot contains not null values for required fields
+	 *         false otherwise.
+	 */
+	public static boolean isValidUserGroupSnapshot(UserGroup snapshot) {
+		if (snapshot 					== null) return false;
+		if (snapshot.getId() 			== null) return false;
+		if (snapshot.getIsIndividual() 	== null) return false;
+		if (snapshot.getCreationDate() 	== null) return false;
 		return true;
 	}
 
@@ -251,6 +266,27 @@ public class ObjectSnapshotUtils {
 			snapshot.setOwnerType(acl.getOwnerType());
 			snapshot.setResourceAccess(acl.getResourceAccess());
 			return snapshot;
+		} catch (JSONObjectAdapterException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Extract UserGroup record's information
+	 * 
+	 * @param record
+	 * @return
+	 */
+	public static UserGroup getUserGroupSnapshot(ObjectRecord record) {
+		if (record == null || 
+				record.getTimestamp() == null ||
+				record.getJsonString() == null ||
+				record.getJsonClassName() == null || 
+				!record.getJsonClassName().equals(UserGroup.class.getSimpleName().toLowerCase())) {
+			return null;
+		}
+		try {
+			return EntityFactory.createEntityFromJSONString(record.getJsonString(), UserGroup.class);
 		} catch (JSONObjectAdapterException e) {
 			throw new RuntimeException(e);
 		}
