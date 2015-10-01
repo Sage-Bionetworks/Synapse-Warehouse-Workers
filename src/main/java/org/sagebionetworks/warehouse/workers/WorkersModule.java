@@ -39,6 +39,7 @@ import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotTopicBuc
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotConfigurationProvider;
+import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotTopicBucketInfo;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueConfiguration;
@@ -151,6 +152,14 @@ public class WorkersModule extends AbstractModule {
 		AclSnapshotTopicBucketInfo info = new AclSnapshotTopicBucketInfo();
 		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.aclrecord.snapshot"));
 		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.aclrecord.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public UserGroupSnapshotTopicBucketInfo getUserGroupSnapshotConfig(Configuration config){
+		UserGroupSnapshotTopicBucketInfo info = new UserGroupSnapshotTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.usergroup.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.usergroup.snapshot"));
 		return info;
 	}
 
