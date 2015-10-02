@@ -177,19 +177,12 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-		<testSourceDirectory>src/test/java</testSourceDirectory>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
+				<filtering>true</filtering>
 			</resource>
 		</resources>
-		<testResources>
-			<testResource>
-				<directory>src/test/resources</directory>
-			</testResource>
-		</testResources>
 		<plugins>
 			<!-- Build a source jar. -->
 			<plugin>
