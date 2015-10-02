@@ -38,6 +38,8 @@ import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotConfigur
 import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotConfigurationProvider;
+import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotTopicBucketInfo;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueConfiguration;
@@ -153,6 +155,14 @@ public class WorkersModule extends AbstractModule {
 		return info;
 	}
 
+	@Provides
+	public UserGroupSnapshotTopicBucketInfo getUserGroupSnapshotConfig(Configuration config){
+		UserGroupSnapshotTopicBucketInfo info = new UserGroupSnapshotTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.usergroup.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.usergroup.snapshot"));
+		return info;
+	}
+
 	/**
 	 * This the binding for all workers stacks. To add a new worker stack to the the application
 	 * its class must be added to this list.
@@ -176,6 +186,7 @@ public class WorkersModule extends AbstractModule {
 		list.add(TablePartitionConfigurationProvider.class);
 		list.add(HealthCheckConfigurationProvider.class);
 		list.add(MaintenanceConfigurationProvider.class);
+		list.add(UserGroupSnapshotConfigurationProvider.class);
 		return list;
 	}
 	
