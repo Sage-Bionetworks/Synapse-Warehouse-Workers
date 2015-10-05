@@ -31,6 +31,7 @@ public class FileManagerImplTest {
 	
 	S3ObjectSummary fileOne;
 	S3ObjectSummary fileTwo;
+	S3ObjectSummary badKeyFile;
 	
 	FileManagerImpl manger;
 	
@@ -58,6 +59,9 @@ public class FileManagerImplTest {
 		fileTwo.setBucketName("bucketfour");
 		fileTwo.setKey(KeyGeneratorUtil.createNewKey(999, 1, false));
 		
+		badKeyFile = new S3ObjectSummary();
+		badKeyFile.setBucketName("bucketfour");
+		badKeyFile.setKey("this is a bad key");
 	}
 	
 	@Test
@@ -82,7 +86,6 @@ public class FileManagerImplTest {
 		verify(mockFolderMetadataDao, times(1)).createOrUpdateFolderState(new FolderState(rollingOne.getBucketName(), "000000123/1970-01-01", FolderState.State.ROLLING, new Timestamp(1)));
 		verify(mockFolderMetadataDao, times(1)).createOrUpdateFolderState(new FolderState(rollingTwo.getBucketName(), "000000456/1970-01-01", FolderState.State.ROLLING, new Timestamp(1)));
 	}
-	
 	
 	@Test
 	public void testAddFileUnknown(){
@@ -112,6 +115,22 @@ public class FileManagerImplTest {
 		verify(mockCallback, times(1)).progressMade(null);
 		verify(mockFileMetadataDao, never()).setFileState(fileOne.getBucketName(), fileOne.getKey(), State.SUBMITTED);
 		verify(mockBucketToTopicManager, never()).publishS3ObjectToTopic(fileOne.getBucketName(), fileOne.getKey());
+	}
+
+	@Test
+	public void testAddFileWithBadKey(){
+		List<S3ObjectSummary> list = Arrays.asList(fileOne, badKeyFile);
+		// unknown state for a new file.
+		FileState stateOne = new FileState();
+		stateOne.setState(State.UNKNOWN);
+		when(mockFileMetadataDao.getFileState(fileOne.getBucketName(), fileOne.getKey())).thenReturn(stateOne);
+		// call under test
+		manger.addS3Objects(list.iterator(), mockCallback);
+		// progress should be made for each file.
+		verify(mockCallback, times(2)).progressMade(null);
+		verify(mockFileMetadataDao, never()).getFileState(badKeyFile.getBucketName(), badKeyFile.getKey());
+		verify(mockFileMetadataDao).getFileState(fileOne.getBucketName(), fileOne.getKey());
+		verify(mockFolderMetadataDao, never()).createOrUpdateFolderState((FolderState) any());
 	}
 	
 	@Test (expected=IllegalArgumentException.class)
