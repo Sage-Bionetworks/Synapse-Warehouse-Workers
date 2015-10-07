@@ -1,15 +1,15 @@
 package org.sagebionetworks.warehouse.workers.bucket;
 
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import static org.mockito.Mockito.*;
-
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
@@ -66,5 +66,12 @@ public class BucketScanningWorkerTest {
 		verify(mockFileManager).addS3Objects(oneStream, mockProgressCallback);
 		verify(mockFileManager).addS3Objects(twoStream, mockProgressCallback);
 	}
-	
+
+	@Test
+	public void addS3ObjectsThrowsExceptions() throws Exception {
+		doThrow(new IllegalArgumentException()).when(mockFileManager).addS3Objects(oneStream, mockProgressCallback);
+		worker.run(mockProgressCallback);
+		verify(mockFileManager).addS3Objects(oneStream, mockProgressCallback);
+		verify(mockFileManager).addS3Objects(twoStream, mockProgressCallback);
+	}
 }
