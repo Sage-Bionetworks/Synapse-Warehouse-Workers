@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
+import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.warehouse.workers.db.SnapshotDao;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
