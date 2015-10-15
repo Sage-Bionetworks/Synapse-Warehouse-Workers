@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.sagebionetworks.aws.utils.s3.ObjectCSVReader;
-import org.sagebionetworks.aws.utils.s3.ObjectCSVWriter;
+import org.sagebionetworks.csv.utils.ObjectCSVReader;
+import org.sagebionetworks.csv.utils.ObjectCSVWriter;
 import org.sagebionetworks.workers.util.progress.ProgressCallback;
 
 import au.com.bytecode.opencsv.CSVReader;
