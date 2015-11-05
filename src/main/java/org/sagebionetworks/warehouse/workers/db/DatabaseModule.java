@@ -124,6 +124,7 @@ public class DatabaseModule extends AbstractModule {
 		tableConfigList.add(TeamMemberSnapshotDaoImpl.CONFIG);
 		tableConfigList.add(TeamSnapshotDaoImpl.CONFIG);
 		tableConfigList.add(UserProfileSnapshotDaoImpl.CONFIG);
+		tableConfigList.add(UserGroupDaoImpl.CONFIG);
 		return tableConfigList;
 	}
 }
