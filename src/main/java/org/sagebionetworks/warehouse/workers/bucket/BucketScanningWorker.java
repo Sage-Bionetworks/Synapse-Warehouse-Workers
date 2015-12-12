@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
-import org.sagebionetworks.workers.util.progress.ProgressingRunner;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressingRunner;
 
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.google.inject.Inject;

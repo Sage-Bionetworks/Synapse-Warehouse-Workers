@@ -21,7 +21,7 @@ import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
 import org.sagebionetworks.warehouse.workers.model.FolderState;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 public class FolderCollateWorker implements LockedFolderRunner {
 	

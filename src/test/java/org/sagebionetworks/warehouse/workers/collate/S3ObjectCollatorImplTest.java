@@ -14,7 +14,7 @@ import org.mockito.stubbing.Answer;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;

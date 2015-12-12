@@ -18,7 +18,7 @@ import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.warehouse.workers.model.FolderState.State;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageQueue;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.services.sqs.AmazonSQSClient;
 

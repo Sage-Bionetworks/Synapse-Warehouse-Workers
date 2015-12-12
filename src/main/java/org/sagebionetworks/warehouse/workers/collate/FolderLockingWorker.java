@@ -5,8 +5,8 @@ import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
-import org.sagebionetworks.workers.util.progress.ProgressingRunner;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressingRunner;
 import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedRunner;
 import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedRunnerConfiguration;
 

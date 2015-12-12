@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
@@ -33,6 +33,7 @@ public class BucketScanningWorkerTest {
 	
 	BucketScanningWorker worker;
 	
+	@SuppressWarnings("unchecked")
 	@Before
 	public void before(){
 		mockBucketDaoProvider = Mockito.mock(BucketDaoProvider.class);

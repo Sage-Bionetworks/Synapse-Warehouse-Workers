@@ -11,7 +11,7 @@ import static org.mockito.Mockito.*;
 import org.sagebionetworks.warehouse.workers.bucket.RealTimeBucketWorker;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.utils.ClasspathUtils;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.services.sqs.model.Message;
 
@@ -23,6 +23,7 @@ public class RealTimeBucketWorkerTest {
 	RealTimeBucketWorker worker;
 	private String sampleEventJson;
 	
+	@SuppressWarnings("unchecked")
 	@Before
 	public void before(){
 		sampleEventJson = ClasspathUtils.loadStringFromClassPath("SampleS3Event.json");
@@ -33,6 +34,7 @@ public class RealTimeBucketWorkerTest {
 		worker = new RealTimeBucketWorker(mockFileManager);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void tesHappy() throws Exception{
 		worker.run(mockProgressCallback, message);

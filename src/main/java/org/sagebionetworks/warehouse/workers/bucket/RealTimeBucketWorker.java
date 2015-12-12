@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.sqs.model.Message;

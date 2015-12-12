@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.WarehouseWorkersStateDao;
 import org.sagebionetworks.warehouse.workers.model.WarehouseWorkersState;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 public class MaintenanceWorkerTest {
 	private WarehouseWorkersStateDao mockDao;
@@ -15,6 +15,7 @@ public class MaintenanceWorkerTest {
 	private MaintenanceWorker worker;
 	private ProgressCallback<Void> mockProgressCallback;
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void before() {
 		mockDao = Mockito.mock(WarehouseWorkersStateDao.class);

@@ -17,7 +17,7 @@ import org.sagebionetworks.warehouse.workers.db.TableConfigurationList;
 import org.sagebionetworks.warehouse.workers.db.TableCreator;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 public class TablePartitionWorkerTest {
 	private TableConfigurationList mockTableConfigList;
