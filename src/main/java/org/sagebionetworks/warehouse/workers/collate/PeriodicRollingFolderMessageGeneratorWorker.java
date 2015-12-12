@@ -10,8 +10,8 @@ import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
 import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
-import org.sagebionetworks.workers.util.progress.ProgressingRunner;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressingRunner;
 
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.google.inject.Inject;

@@ -4,8 +4,8 @@ import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.WarehouseWorkersStateDao;
 import org.sagebionetworks.warehouse.workers.model.WarehouseWorkersState;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
-import org.sagebionetworks.workers.util.progress.ProgressingRunner;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressingRunner;
 
 import com.google.inject.Inject;
 

@@ -11,7 +11,7 @@ import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
 import org.sagebionetworks.warehouse.workers.model.FileState;
 import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.warehouse.workers.model.FileState.State;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.google.inject.Inject;

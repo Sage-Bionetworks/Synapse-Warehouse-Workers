@@ -3,7 +3,7 @@ package org.sagebionetworks.warehouse.workers.collate;
 import java.io.IOException;
 import java.util.List;
 
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;

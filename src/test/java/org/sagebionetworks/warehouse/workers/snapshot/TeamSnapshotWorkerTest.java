@@ -13,7 +13,7 @@ import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.TeamSnapshotDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3Client;

@@ -15,7 +15,7 @@ import org.mockito.Mockito;
 import static org.mockito.Mockito.*;
 
 import org.sagebionetworks.warehouse.workers.collate.StreamingCollateUtils;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -24,6 +24,7 @@ public class StreamingCollateUtilsTest {
 	
 	ProgressCallback<Void> mockCallback;
 	
+	@SuppressWarnings("unchecked")
 	@Before
 	public void before(){
 		mockCallback = Mockito.mock(ProgressCallback.class);
@@ -156,6 +157,7 @@ public class StreamingCollateUtilsTest {
 	 * @param csvData
 	 * @throws IOException
 	 */
+	@SuppressWarnings("resource")
 	public static void validateExpected(List<String[]> expected, String csvData) throws IOException{
 		StringReader stringReader = new StringReader(csvData);
 		CSVReader reader = new CSVReader(stringReader);

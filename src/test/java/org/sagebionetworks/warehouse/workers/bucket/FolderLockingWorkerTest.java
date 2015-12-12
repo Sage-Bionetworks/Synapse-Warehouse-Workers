@@ -13,8 +13,8 @@ import org.sagebionetworks.warehouse.workers.collate.FolderLockingWorker;
 import org.sagebionetworks.warehouse.workers.collate.LockedFolderRunner;
 import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
-import org.sagebionetworks.workers.util.progress.ProgressingRunner;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressingRunner;
 import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedRunner;
 import org.sagebionetworks.workers.util.semaphore.SemaphoreGatedRunnerConfiguration;
 
@@ -31,6 +31,7 @@ public class FolderLockingWorkerTest {
 	
 	FolderLockingWorker worker;
 	
+	@SuppressWarnings("unchecked")
 	@Before
 	public void before(){
 		mockSemaphoreProvider = Mockito.mock(SemaphoreGatedRunnerProvider.class);
@@ -49,6 +50,7 @@ public class FolderLockingWorkerTest {
 		worker = new FolderLockingWorker(mockSemaphoreProvider, mockCollateWorker);
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testRun() throws Exception {
 		// call under test.

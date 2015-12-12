@@ -12,7 +12,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.csv.utils.ObjectCSVWriter;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;

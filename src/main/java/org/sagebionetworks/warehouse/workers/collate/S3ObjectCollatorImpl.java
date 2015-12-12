@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;

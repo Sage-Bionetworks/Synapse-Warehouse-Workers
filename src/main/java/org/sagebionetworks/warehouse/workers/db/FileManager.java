@@ -2,7 +2,7 @@ package org.sagebionetworks.warehouse.workers.db;
 
 import java.util.Iterator;
 
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 

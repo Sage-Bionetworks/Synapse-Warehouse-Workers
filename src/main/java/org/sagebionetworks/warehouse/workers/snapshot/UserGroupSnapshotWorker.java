@@ -16,7 +16,7 @@ import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;

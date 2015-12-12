@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.warehouse.workers.db.SnapshotDao;
-import org.sagebionetworks.workers.util.progress.ProgressCallback;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.services.sqs.model.Message;
 
