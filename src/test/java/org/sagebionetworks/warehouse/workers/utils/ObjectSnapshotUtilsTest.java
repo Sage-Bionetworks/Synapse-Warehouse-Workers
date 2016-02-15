@@ -2,6 +2,7 @@ package org.sagebionetworks.warehouse.workers.utils;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -610,7 +611,7 @@ public class ObjectSnapshotUtilsTest {
 		profile.setUserName("userName");
 		profile.setFirstName("firstName");
 		profile.setLastName("lastName");
-		profile.setEmail("email");
+		profile.setEmails(Arrays.asList("email"));
 		profile.setLocation("location");
 		profile.setCompany("company");
 		profile.setPosition("position");
@@ -625,7 +626,36 @@ public class ObjectSnapshotUtilsTest {
 		assertEquals(profile.getUserName(), snapshot.getUserName());
 		assertEquals(profile.getFirstName(), snapshot.getFirstName());
 		assertEquals(profile.getLastName(), snapshot.getLastName());
-		assertEquals(profile.getEmail(), snapshot.getEmail());
+		assertEquals(profile.getEmails().get(0), snapshot.getEmail());
+		assertEquals(profile.getLocation(), snapshot.getLocation());
+		assertEquals(profile.getCompany(), snapshot.getCompany());
+		assertEquals(profile.getPosition(), snapshot.getPosition());
+	}
+
+	@Test
+	public void getUserProfileSnapshotTestWithNullEmails() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		UserProfile profile = new UserProfile();
+		profile.setOwnerId("1");
+		profile.setUserName("userName");
+		profile.setFirstName("firstName");
+		profile.setLastName("lastName");
+		profile.setEmails(null);
+		profile.setLocation("location");
+		profile.setCompany("company");
+		profile.setPosition("position");
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(profile));
+		record.setJsonClassName(UserProfile.class.getSimpleName().toLowerCase());
+		UserProfileSnapshot snapshot = ObjectSnapshotUtils.getUserProfileSnapshot(record);
+		assertNotNull(snapshot);
+		assertEquals(timestamp, snapshot.getTimestamp());
+		assertEquals(profile.getOwnerId(), snapshot.getOwnerId());
+		assertEquals(profile.getUserName(), snapshot.getUserName());
+		assertEquals(profile.getFirstName(), snapshot.getFirstName());
+		assertEquals(profile.getLastName(), snapshot.getLastName());
+		assertEquals(null, snapshot.getEmail());
 		assertEquals(profile.getLocation(), snapshot.getLocation());
 		assertEquals(profile.getCompany(), snapshot.getCompany());
 		assertEquals(profile.getPosition(), snapshot.getPosition());
