@@ -233,7 +233,9 @@ public class ObjectSnapshotUtils {
 			snapshot.setUserName(profile.getUserName());
 			snapshot.setFirstName(profile.getFirstName());
 			snapshot.setLastName(profile.getLastName());
-			snapshot.setEmail(profile.getEmail());
+			if (profile.getEmails() != null) {
+				snapshot.setEmail(profile.getEmails().get(0));
+			}
 			snapshot.setLocation(profile.getLocation());
 			snapshot.setCompany(profile.getCompany());
 			snapshot.setPosition(profile.getPosition());
