@@ -2,6 +2,8 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -86,12 +88,12 @@ public class NodeSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<O
 	}
 
 	@Override
-	public NodeSnapshot convert(ObjectRecord record) {
+	public List<NodeSnapshot> convert(ObjectRecord record) {
 		NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
 		if (!ObjectSnapshotUtils.isValidNodeSnapshot(snapshot)) {
 			log.error("Invalid Node Snapshot from Record: " + record.toString());
 			return null;
 		}
-		return snapshot;
+		return Arrays.asList(snapshot);
 	}
 }

@@ -120,4 +120,17 @@ public class Sql {
 	public static final String COL_USER_GROUP_ID = 				"ID";
 	public static final String COL_USER_GROUP_IS_INDIVIDUAL = 	"IS_INDIVIDUAL";
 	public static final String COL_USER_GROUP_CREATED_ON = 		"CREATED_ON";
+
+	// CERTIFIED_QUIZ_RECORD
+	public static final String TABLE_CERTIFIED_QUIZ_RECORD = 				"CERTIFIED_QUIZ_RECORD";
+	public static final String COL_CERTIFIED_QUIZ_RECORD_RESPONSE_ID = 		"RESPONSE_ID";
+	public static final String COL_CERTIFIED_QUIZ_RECORD_USER_ID = 			"USER_ID";
+	public static final String COL_CERTIFIED_QUIZ_RECORD_PASSED = 			"PASSED";
+	public static final String COL_CERTIFIED_QUIZ_RECORD_PASSED_ON = 		"PASSED_ON";
+
+	// CERTIFIED_QUIZ_QUESTION_RECORD
+	public static final String TABLE_CERTIFIED_QUIZ_QUESTION_RECORD = 					"CERTIFIED_QUIZ_QUESTION_RECORD";
+	public static final String COL_CERTIFIED_QUIZ_QUESTION_RECORD_RESPONSE_ID = 		"RESPONSE_ID";
+	public static final String COL_CERTIFIED_QUIZ_QUESTION_RECORD_QUESTION_INDEX = 		"QUESTION_INDEX";
+	public static final String COL_CERTIFIED_QUIZ_QUESTION_RECORD_IS_CORRECT = 			"IS_CORRECT";
 }

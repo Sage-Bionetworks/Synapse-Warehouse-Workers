@@ -2,6 +2,8 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,12 +80,12 @@ public class AclSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<Ob
 	}
 
 	@Override
-	public AclSnapshot convert(ObjectRecord record) {
+	public List<AclSnapshot> convert(ObjectRecord record) {
 		AclSnapshot snapshot = ObjectSnapshotUtils.getAclSnapshot(record);
 		if (!ObjectSnapshotUtils.isValidAclSnapshot(snapshot)) {
 			log.error("Invalid Acl Snapshot from Record: " + record.toString());
 			return null;
 		}
-		return snapshot;
+		return Arrays.asList(snapshot);
 	}
 }

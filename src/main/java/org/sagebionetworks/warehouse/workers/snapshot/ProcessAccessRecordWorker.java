@@ -2,6 +2,8 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,12 +92,12 @@ public class ProcessAccessRecordWorker implements MessageDrivenRunner, SnapshotW
 	}
 
 	@Override
-	public ProcessedAccessRecord convert(AccessRecord record) {
+	public List<ProcessedAccessRecord> convert(AccessRecord record) {
 		if (!AccessRecordUtils.isValidAccessRecord(record)) {
 			log.error("Invalid Access Record: " + record.toString());
 			return null;
 		}
-		return AccessRecordUtils.processAccessRecord(record);
+		return Arrays.asList(AccessRecordUtils.processAccessRecord(record));
 	}
 
 }

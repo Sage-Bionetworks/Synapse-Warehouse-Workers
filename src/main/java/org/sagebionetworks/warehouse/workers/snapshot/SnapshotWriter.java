@@ -37,9 +37,9 @@ public class SnapshotWriter {
 
 		int noRecords = 0;
 		while ((record = reader.next()) != null) {
-			V snapshot = worker.convert(record);
+			List<V> snapshot = worker.convert(record);
 			if (snapshot != null)
-				batch.add(snapshot);
+				batch.addAll(snapshot);
 			if (batch.size() >= batchSize) {
 				callback.progressMade(message);
 				dao.insert(batch);

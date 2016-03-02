@@ -1,6 +1,8 @@
 package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,13 +79,13 @@ public class UserGroupSnapshotWorker implements MessageDrivenRunner, SnapshotWor
 	}
 
 	@Override
-	public UserGroup convert(ObjectRecord record) {
+	public List<UserGroup> convert(ObjectRecord record) {
 		UserGroup snapshot = ObjectSnapshotUtils.getUserGroupSnapshot(record);
 		if (!ObjectSnapshotUtils.isValidUserGroupSnapshot(snapshot)) {
 			log.error("Invalid UserGroup Snapshot from Record: " + record.toString());
 			return null;
 		}
-		return snapshot;
+		return Arrays.asList(snapshot);
 	}
 
 }

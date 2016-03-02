@@ -2,6 +2,8 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,12 +80,12 @@ public class UserProfileSnapshotWorker implements MessageDrivenRunner, SnapshotW
 	}
 
 	@Override
-	public UserProfileSnapshot convert(ObjectRecord record) {
+	public List<UserProfileSnapshot> convert(ObjectRecord record) {
 		UserProfileSnapshot snapshot = ObjectSnapshotUtils.getUserProfileSnapshot(record);
 		if (!ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot)) {
 			log.error("Invalid UserProfile Snapshot from Record: " + record.toString());
 			return null;
 		}
-		return snapshot;
+		return Arrays.asList(snapshot);
 	}
 }
