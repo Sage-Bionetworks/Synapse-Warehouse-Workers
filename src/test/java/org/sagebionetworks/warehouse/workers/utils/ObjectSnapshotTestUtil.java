@@ -18,6 +18,8 @@ import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
+import org.sagebionetworks.warehouse.workers.model.CertifiedQuizQuestionRecord;
+import org.sagebionetworks.warehouse.workers.model.CertifiedQuizRecord;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -271,5 +273,30 @@ public class ObjectSnapshotTestUtil {
 		ug.setIsIndividual(true);
 		ug.setCreationDate(new Date());
 		return ug;
+	}
+
+	/**
+	 * 
+	 * @return a unique valid CertifiedQuizRecord
+	 */
+	public static CertifiedQuizRecord createValidCertifiedQuizRecord() {
+		CertifiedQuizRecord record = new CertifiedQuizRecord();
+		record.setResponseId(random.nextLong());
+		record.setUserId(random.nextLong());
+		record.setPassed(true);
+		record.setPassedOn(System.currentTimeMillis());
+		return record;
+	}
+
+	/**
+	 * 
+	 * @return a unique valid CertifiedQuizQuestionRecord
+	 */
+	public static CertifiedQuizQuestionRecord createValidCertifiedQuizQuestionRecord() {
+		org.sagebionetworks.warehouse.workers.model.CertifiedQuizQuestionRecord record = new CertifiedQuizQuestionRecord();
+		record.setResponseId(random.nextLong());
+		record.setQuestionIndex(random.nextLong());
+		record.setIsCorrect(false);
+		return record;
 	}
 }

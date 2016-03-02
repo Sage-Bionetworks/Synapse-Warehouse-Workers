@@ -43,6 +43,8 @@ public class DatabaseModule extends AbstractModule {
 		bind(AclSnapshotDao.class).to(AclSnapshotDaoImpl.class);
 		bind(WarehouseWorkersStateDao.class).to(WarehouseWorkersStateDaoImpl.class);
 		bind(UserGroupDao.class).to(UserGroupDaoImpl.class);
+		bind(CertifiedQuizRecordDao.class).to(CertifiedQuizRecordDaoImpl.class);
+		bind(CertifiedQuizQuestionRecordDao.class).to(CertifiedQuizQuestionRecordDaoImpl.class);
 	}
 	
 	/**

@@ -840,4 +840,6 @@ public class ObjectSnapshotUtilsTest {
 		UserProfileSnapshot snapshot = ObjectSnapshotUtils.getUserProfileSnapshot(record);
 		assertTrue(ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot));
 	}
+
+
 }
