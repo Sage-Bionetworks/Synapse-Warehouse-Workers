@@ -30,6 +30,8 @@ import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordConfigurationP
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizQuestionRecordConfigurationProvider;
+import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizQuestionRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.NodeSnapshotConfigurationProvider;
@@ -173,6 +175,14 @@ public class WorkersModule extends AbstractModule {
 		return info;
 	}
 
+	@Provides
+	public CertifiedQuizQuestionRecordTopicBucketInfo getCertifiedQuizQuestionRecordConfig(Configuration config){
+		CertifiedQuizQuestionRecordTopicBucketInfo info = new CertifiedQuizQuestionRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.certifiedquizrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.certifiedquizquestionrecord.snapshot"));
+		return info;
+	}
+
 	/**
 	 * This the binding for all workers stacks. To add a new worker stack to the the application
 	 * its class must be added to this list.
@@ -198,6 +208,7 @@ public class WorkersModule extends AbstractModule {
 		list.add(MaintenanceConfigurationProvider.class);
 		list.add(UserGroupSnapshotConfigurationProvider.class);
 		list.add(CertifiedQuizRecordConfigurationProvider.class);
+		list.add(CertifiedQuizQuestionRecordConfigurationProvider.class);
 		return list;
 	}
 	

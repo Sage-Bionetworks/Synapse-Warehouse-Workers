@@ -1,5 +1,8 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.sagebionetworks.repo.model.Team;
 import org.sagebionetworks.repo.model.TeamMember;
 import org.sagebionetworks.repo.model.UserGroup;
@@ -8,9 +11,11 @@ import org.sagebionetworks.repo.model.audit.AclRecord;
 import org.sagebionetworks.repo.model.audit.NodeRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.repo.model.quiz.PassingRecord;
+import org.sagebionetworks.repo.model.quiz.ResponseCorrectness;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
+import org.sagebionetworks.warehouse.workers.model.CertifiedQuizQuestionRecord;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizRecord;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
@@ -336,6 +341,49 @@ public class ObjectSnapshotUtils {
 		if (record.getUserId() 			== null) return false;
 		if (record.getPassed() 			== null) return false;
 		if (record.getPassedOn() 		== null) return false;
+		return true;
+	}
+
+	public static List<CertifiedQuizQuestionRecord> getCertifiedQuizQuestionRecord(
+			ObjectRecord record) {
+		if (record == null || 
+				record.getTimestamp() == null ||
+				record.getJsonString() == null ||
+				record.getJsonClassName() == null || 
+				!record.getJsonClassName().equals(PassingRecord.class.getSimpleName().toLowerCase())) {
+			return null;
+		}
+		try {
+			List<CertifiedQuizQuestionRecord> records = new ArrayList<CertifiedQuizQuestionRecord>();
+			PassingRecord passingRecord = EntityFactory.createEntityFromJSONString(record.getJsonString(), PassingRecord.class);
+			for ( ResponseCorrectness question : passingRecord.getCorrections()) {
+				CertifiedQuizQuestionRecord questionRecord = new CertifiedQuizQuestionRecord();
+				questionRecord.setResponseId(passingRecord.getResponseId());
+				questionRecord.setQuestionIndex(question.getQuestion().getQuestionIndex());
+				questionRecord.setIsCorrect(question.getIsCorrect());
+				records.add(questionRecord);
+			}
+			return records;
+		} catch (JSONObjectAdapterException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static boolean isValidCertifiedQuizQuestionRecords(
+			List<CertifiedQuizQuestionRecord> records) {
+		for (CertifiedQuizQuestionRecord record : records) {
+			if (!isValidCertifiedQuizQuestionRecord(record)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean isValidCertifiedQuizQuestionRecord(
+			CertifiedQuizQuestionRecord record) {
+		if (record.getResponseId() 		== null) return false;
+		if (record.getQuestionIndex() 	== null) return false;
+		if (record.getIsCorrect() 		== null) return false;
 		return true;
 	}
 }
