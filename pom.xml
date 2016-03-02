@@ -262,6 +262,6 @@
 	</distributionManagement>
 	<properties>
 		<spring.version>4.1.6.RELEASE</spring.version>
-		<synapse.version>2015-08-27-1911-4c9ac5b</synapse.version>
+		<synapse.version>2016-02-29-2093-42f4c7b</synapse.version>
 	</properties>
 </project>
