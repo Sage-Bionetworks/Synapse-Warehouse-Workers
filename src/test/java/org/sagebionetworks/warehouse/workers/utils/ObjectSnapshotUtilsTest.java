@@ -16,12 +16,15 @@ import org.sagebionetworks.repo.model.TeamMember;
 import org.sagebionetworks.repo.model.UserGroup;
 import org.sagebionetworks.repo.model.UserGroupHeader;
 import org.sagebionetworks.repo.model.UserProfile;
+import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.repo.model.audit.AclRecord;
 import org.sagebionetworks.repo.model.audit.NodeRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
+import org.sagebionetworks.repo.model.quiz.PassingRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
+import org.sagebionetworks.warehouse.workers.model.CertifiedQuizRecord;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -842,4 +845,112 @@ public class ObjectSnapshotUtilsTest {
 	}
 
 
+	/*
+	 * isValidCertifiedQuizRecord() tests
+	 */
+
+	@Test
+	public void validCertifiedQuizRecord() {
+		CertifiedQuizRecord record = ObjectSnapshotTestUtil.createValidCertifiedQuizRecord();
+		assertTrue(ObjectSnapshotUtils.isValidCertifiedQuizRecord(record));
+	}
+
+	@Test
+	public void invalidCertifiedQuizRecordWithNullResponseId() {
+		CertifiedQuizRecord record = ObjectSnapshotTestUtil.createValidCertifiedQuizRecord();
+		record.setResponseId(null);
+		assertFalse(ObjectSnapshotUtils.isValidCertifiedQuizRecord(record));
+	}
+
+	@Test
+	public void invalidCertifiedQuizRecordWithNullUserId() {
+		CertifiedQuizRecord record = ObjectSnapshotTestUtil.createValidCertifiedQuizRecord();
+		record.setUserId(null);
+		assertFalse(ObjectSnapshotUtils.isValidCertifiedQuizRecord(record));
+	}
+
+	@Test
+	public void invalidCertifiedQuizRecordWithNullPassed() {
+		CertifiedQuizRecord record = ObjectSnapshotTestUtil.createValidCertifiedQuizRecord();
+		record.setPassed(null);
+		assertFalse(ObjectSnapshotUtils.isValidCertifiedQuizRecord(record));
+	}
+
+	@Test
+	public void invalidCertifiedQuizRecordWithNullPassedOn() {
+		CertifiedQuizRecord record = ObjectSnapshotTestUtil.createValidCertifiedQuizRecord();
+		record.setPassedOn(null);
+		assertFalse(ObjectSnapshotUtils.isValidCertifiedQuizRecord(record));
+	}
+
+	/*
+	 * getCertifiedQuizRecord() tests
+	 */
+
+	@Test
+	public void getCertifiedQuizRecordWithNullRecord() {
+		assertNull(ObjectSnapshotUtils.getCertifiedQuizRecord(null));
+	}
+
+	@Test
+	public void getCertifiedQuizRecordWithNullTimestamp() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(null);
+		record.setJsonClassName(PassingRecord.class.getSimpleName().toLowerCase());
+		PassingRecord passingRecord = new PassingRecord();
+		record.setJsonString(EntityFactory.createJSONStringForEntity(passingRecord));
+		assertNull(ObjectSnapshotUtils.getCertifiedQuizRecord(record));
+	}
+
+	@Test
+	public void getCertifiedQuizRecordWithNullJsonString() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(PassingRecord.class.getSimpleName().toLowerCase());
+		record.setJsonString(null);
+		assertNull(ObjectSnapshotUtils.getCertifiedQuizRecord(record));
+	}
+
+	@Test
+	public void getCertifiedQuizRecordWithNullJsonClassName() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(null);
+		PassingRecord passingRecord = new PassingRecord();
+		record.setJsonString(EntityFactory.createJSONStringForEntity(passingRecord));
+		assertNull(ObjectSnapshotUtils.getCertifiedQuizRecord(record));
+	}
+
+	@Test
+	public void getCertifiedQuizRecordWithWrongJsonClassName() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(AccessRecord.class.getSimpleName().toLowerCase());
+		PassingRecord passingRecord = new PassingRecord();
+		record.setJsonString(EntityFactory.createJSONStringForEntity(passingRecord));
+		assertNull(ObjectSnapshotUtils.getCertifiedQuizRecord(record));
+	}
+
+	@Test
+	public void getCertifiedQuizRecord() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(PassingRecord.class.getSimpleName().toLowerCase());
+		Long responseId = 123L;
+		Long userId = 456L;
+		Long passedOn = System.currentTimeMillis();
+		Boolean passed = false;
+		PassingRecord passingRecord = new PassingRecord();
+		passingRecord.setResponseId(responseId);
+		passingRecord.setUserId(""+userId);
+		passingRecord.setPassed(passed);
+		passingRecord.setPassedOn(new Date(passedOn));
+		record.setJsonString(EntityFactory.createJSONStringForEntity(passingRecord));
+		CertifiedQuizRecord certifiedQuizRecord = ObjectSnapshotUtils.getCertifiedQuizRecord(record);
+		assertNotNull(certifiedQuizRecord);
+		assertEquals(responseId, certifiedQuizRecord.getResponseId());
+		assertEquals(userId, certifiedQuizRecord.getUserId());
+		assertEquals(passed, certifiedQuizRecord.getPassed());
+		assertEquals(passedOn, certifiedQuizRecord.getPassedOn());
+	}
 }

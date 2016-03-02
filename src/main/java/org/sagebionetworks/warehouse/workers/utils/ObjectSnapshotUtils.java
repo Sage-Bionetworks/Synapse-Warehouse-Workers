@@ -7,9 +7,11 @@ import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.AclRecord;
 import org.sagebionetworks.repo.model.audit.NodeRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
+import org.sagebionetworks.repo.model.quiz.PassingRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
+import org.sagebionetworks.warehouse.workers.model.CertifiedQuizRecord;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -306,5 +308,34 @@ public class ObjectSnapshotUtils {
 		if (synId.startsWith("syn"))
 			synId = synId.substring(3);
 		return Long.parseLong(synId);
+	}
+
+	public static CertifiedQuizRecord getCertifiedQuizRecord(ObjectRecord record) {
+		if (record == null || 
+				record.getTimestamp() == null ||
+				record.getJsonString() == null ||
+				record.getJsonClassName() == null || 
+				!record.getJsonClassName().equals(PassingRecord.class.getSimpleName().toLowerCase())) {
+			return null;
+		}
+		try {
+			PassingRecord passingRecord = EntityFactory.createEntityFromJSONString(record.getJsonString(), PassingRecord.class);
+			CertifiedQuizRecord certifiedQuizRecord = new CertifiedQuizRecord();
+			certifiedQuizRecord.setResponseId(passingRecord.getResponseId());
+			certifiedQuizRecord.setUserId(Long.parseLong(passingRecord.getUserId()));
+			certifiedQuizRecord.setPassed(passingRecord.getPassed());
+			certifiedQuizRecord.setPassedOn(passingRecord.getPassedOn().getTime());
+			return certifiedQuizRecord;
+		} catch (JSONObjectAdapterException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static boolean isValidCertifiedQuizRecord(CertifiedQuizRecord record) {
+		if (record.getResponseId() 		== null) return false;
+		if (record.getUserId() 			== null) return false;
+		if (record.getPassed() 			== null) return false;
+		if (record.getPassedOn() 		== null) return false;
+		return true;
 	}
 }

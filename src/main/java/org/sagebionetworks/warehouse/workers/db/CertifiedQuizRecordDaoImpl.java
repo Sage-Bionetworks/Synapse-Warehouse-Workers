@@ -17,6 +17,12 @@ import com.google.inject.Inject;
 public class CertifiedQuizRecordDaoImpl implements CertifiedQuizRecordDao{
 
 	public static final String CERTIFIED_QUIZ_RECORD_DDL_SQL = "CertifiedQuizRecord.ddl.sql";
+	public static final TableConfiguration CONFIG = new TableConfiguration(
+			TABLE_CERTIFIED_QUIZ_RECORD,
+			CERTIFIED_QUIZ_RECORD_DDL_SQL,
+			false,
+			null,
+			null);
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_CERTIFIED_QUIZ_RECORD;
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_CERTIFIED_QUIZ_RECORD
