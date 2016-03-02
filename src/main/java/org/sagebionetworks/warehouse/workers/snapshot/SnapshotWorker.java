@@ -1,5 +1,7 @@
 package org.sagebionetworks.warehouse.workers.snapshot;
 
+import java.util.List;
+
 public interface SnapshotWorker<K,V> {
 
 	/**
@@ -8,5 +10,5 @@ public interface SnapshotWorker<K,V> {
 	 * @param record
 	 * @return
 	 */
-	public V convert(K record);
+	public List<V> convert(K record);
 }

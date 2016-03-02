@@ -2,6 +2,7 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,12 +79,12 @@ public class TeamMemberSnapshotWorker implements MessageDrivenRunner, SnapshotWo
 	}
 
 	@Override
-	public TeamMemberSnapshot convert(ObjectRecord record) {
+	public List<TeamMemberSnapshot> convert(ObjectRecord record) {
 		TeamMemberSnapshot snapshot = ObjectSnapshotUtils.getTeamMemberSnapshot(record);
 		if (!ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot)) {
 			log.error("Invalid Team Snapshot from Record: " + record.toString());
 			return null;
 		}
-		return snapshot;
+		return Arrays.asList(snapshot);
 	}
 }
