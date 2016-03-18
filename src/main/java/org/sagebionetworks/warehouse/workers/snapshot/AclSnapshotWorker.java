@@ -15,7 +15,7 @@ import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.AclSnapshotDao;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
+import org.sagebionetworks.warehouse.workers.utils.AclSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -81,8 +81,8 @@ public class AclSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<Ob
 
 	@Override
 	public List<AclSnapshot> convert(ObjectRecord record) {
-		AclSnapshot snapshot = ObjectSnapshotUtils.getAclSnapshot(record);
-		if (!ObjectSnapshotUtils.isValidAclSnapshot(snapshot)) {
+		AclSnapshot snapshot = AclSnapshotUtils.getAclSnapshot(record);
+		if (!AclSnapshotUtils.isValidAclSnapshot(snapshot)) {
 			log.error("Invalid Acl Snapshot from Record: " + record.toString());
 			return null;
 		}

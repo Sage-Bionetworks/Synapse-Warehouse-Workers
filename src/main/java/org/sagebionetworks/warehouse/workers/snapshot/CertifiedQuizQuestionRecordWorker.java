@@ -15,7 +15,7 @@ import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.CertifiedQuizQuestionRecordDao;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizQuestionRecord;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
+import org.sagebionetworks.warehouse.workers.utils.PassingRecordSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -80,8 +80,8 @@ public class CertifiedQuizQuestionRecordWorker implements MessageDrivenRunner, S
 
 	@Override
 	public List<CertifiedQuizQuestionRecord> convert(ObjectRecord record) {
-		List<CertifiedQuizQuestionRecord> records = ObjectSnapshotUtils.getCertifiedQuizQuestionRecord(record);
-		if (!ObjectSnapshotUtils.isValidCertifiedQuizQuestionRecords(records)) {
+		List<CertifiedQuizQuestionRecord> records = PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecord(record);
+		if (!PassingRecordSnapshotUtils.isValidCertifiedQuizQuestionRecords(records)) {
 			log.error("Invalid Certified Quiz Question Record from: " + record.toString());
 			return null;
 		}

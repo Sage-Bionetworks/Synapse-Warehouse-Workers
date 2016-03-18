@@ -15,7 +15,7 @@ import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.UserProfileSnapshotDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
+import org.sagebionetworks.warehouse.workers.utils.PrincipalSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -81,8 +81,8 @@ public class UserProfileSnapshotWorker implements MessageDrivenRunner, SnapshotW
 
 	@Override
 	public List<UserProfileSnapshot> convert(ObjectRecord record) {
-		UserProfileSnapshot snapshot = ObjectSnapshotUtils.getUserProfileSnapshot(record);
-		if (!ObjectSnapshotUtils.isValidUserProfileSnapshot(snapshot)) {
+		UserProfileSnapshot snapshot = PrincipalSnapshotUtils.getUserProfileSnapshot(record);
+		if (!PrincipalSnapshotUtils.isValidUserProfileSnapshot(snapshot)) {
 			log.error("Invalid UserProfile Snapshot from Record: " + record.toString());
 			return null;
 		}

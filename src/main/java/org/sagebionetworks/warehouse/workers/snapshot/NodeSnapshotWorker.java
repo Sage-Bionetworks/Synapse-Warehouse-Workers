@@ -17,7 +17,7 @@ import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.NodeSnapshotDao;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
+import org.sagebionetworks.warehouse.workers.utils.NodeSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -89,8 +89,8 @@ public class NodeSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<O
 
 	@Override
 	public List<NodeSnapshot> convert(ObjectRecord record) {
-		NodeSnapshot snapshot = ObjectSnapshotUtils.getNodeSnapshot(record);
-		if (!ObjectSnapshotUtils.isValidNodeSnapshot(snapshot)) {
+		NodeSnapshot snapshot = NodeSnapshotUtils.getNodeSnapshot(record);
+		if (!NodeSnapshotUtils.isValidNodeSnapshot(snapshot)) {
 			log.error("Invalid Node Snapshot from Record: " + record.toString());
 			return null;
 		}

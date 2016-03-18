@@ -15,7 +15,7 @@ import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.TeamSnapshotDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
+import org.sagebionetworks.warehouse.workers.utils.PrincipalSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -81,8 +81,8 @@ public class TeamSnapshotWorker implements MessageDrivenRunner, SnapshotWorker<O
 
 	@Override
 	public List<TeamSnapshot> convert(ObjectRecord record) {
-		TeamSnapshot snapshot = ObjectSnapshotUtils.getTeamSnapshot(record);
-		if (!ObjectSnapshotUtils.isValidTeamSnapshot(snapshot)) {
+		TeamSnapshot snapshot = PrincipalSnapshotUtils.getTeamSnapshot(record);
+		if (!PrincipalSnapshotUtils.isValidTeamSnapshot(snapshot)) {
 			log.error("Invalid Team Snapshot from Record: " + record.toString());
 			return null;
 		}
