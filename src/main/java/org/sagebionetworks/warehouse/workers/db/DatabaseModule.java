@@ -26,8 +26,6 @@ import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDaoImpl;
-import org.sagebionetworks.warehouse.workers.db.snapshot.WarehouseWorkersStateDao;
-import org.sagebionetworks.warehouse.workers.db.snapshot.WarehouseWorkersStateDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.transaction.Required;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.springframework.jdbc.core.JdbcTemplate;

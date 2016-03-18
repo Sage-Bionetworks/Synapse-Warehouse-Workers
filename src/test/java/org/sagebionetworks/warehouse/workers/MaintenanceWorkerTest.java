@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
-import org.sagebionetworks.warehouse.workers.db.snapshot.WarehouseWorkersStateDao;
+import org.sagebionetworks.warehouse.workers.db.WarehouseWorkersStateDao;
 import org.sagebionetworks.warehouse.workers.model.WarehouseWorkersState;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 

@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db.snapshot;
+package org.sagebionetworks.warehouse.workers.db;
 
 import org.sagebionetworks.warehouse.workers.model.WarehouseWorkersState;
 

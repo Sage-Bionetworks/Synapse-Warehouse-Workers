@@ -1,10 +1,9 @@
-package org.sagebionetworks.warehouse.workers.db.snapshot;
+package org.sagebionetworks.warehouse.workers.db;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 
 import java.sql.SQLException;
 
-import org.sagebionetworks.warehouse.workers.db.TableCreator;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.sagebionetworks.warehouse.workers.model.WarehouseWorkersState;
 import org.springframework.jdbc.core.JdbcTemplate;
