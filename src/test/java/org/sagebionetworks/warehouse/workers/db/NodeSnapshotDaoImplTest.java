@@ -8,6 +8,8 @@ import java.util.Random;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.sagebionetworks.warehouse.workers.db.snapshot.NodeSnapshotDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.NodeSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotTestUtil;
 import org.springframework.dao.EmptyResultDataAccessException;

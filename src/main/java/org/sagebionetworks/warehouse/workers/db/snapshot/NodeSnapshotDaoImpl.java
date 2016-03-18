@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 
@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.sagebionetworks.repo.model.EntityType;
+import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
+import org.sagebionetworks.warehouse.workers.db.TableCreator;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;

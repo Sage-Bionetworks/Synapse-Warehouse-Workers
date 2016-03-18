@@ -7,6 +7,8 @@ import java.util.Arrays;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.sagebionetworks.warehouse.workers.db.snapshot.ProcessedAccessRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.ProcessedAccessRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;

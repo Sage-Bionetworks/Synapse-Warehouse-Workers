@@ -8,6 +8,8 @@ import java.util.Random;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizQuestionRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizQuestionRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizQuestionRecord;
 import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotTestUtil;
 import org.springframework.dao.EmptyResultDataAccessException;

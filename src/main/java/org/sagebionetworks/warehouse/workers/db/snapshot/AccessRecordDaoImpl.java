@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_DATE;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_ELAPSE_MS;
@@ -29,6 +29,8 @@ import java.sql.Types;
 import java.util.List;
 
 import org.sagebionetworks.repo.model.audit.AccessRecord;
+import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
+import org.sagebionetworks.warehouse.workers.db.TableCreator;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;

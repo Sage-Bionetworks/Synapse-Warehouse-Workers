@@ -1,6 +1,7 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import org.sagebionetworks.repo.model.audit.AccessRecord;
+import org.sagebionetworks.warehouse.workers.db.HasPartitions;
 
 public interface AccessRecordDao extends HasPartitions, SnapshotDao<AccessRecord> {
 

@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACL_SNAPSHOT_CREATED_ON;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACL_SNAPSHOT_OWNER_ID;
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sagebionetworks.repo.model.ObjectType;
+import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.utils.CompressionUtils;
 import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;

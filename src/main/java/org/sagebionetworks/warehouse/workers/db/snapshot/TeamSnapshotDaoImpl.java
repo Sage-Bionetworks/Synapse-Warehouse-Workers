@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 
@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;

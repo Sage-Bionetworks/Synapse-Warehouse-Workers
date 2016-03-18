@@ -12,7 +12,7 @@ import org.sagebionetworks.repo.model.UserGroup;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.UserGroupDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.utils.PrincipalSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;

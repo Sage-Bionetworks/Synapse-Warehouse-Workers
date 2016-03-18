@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;

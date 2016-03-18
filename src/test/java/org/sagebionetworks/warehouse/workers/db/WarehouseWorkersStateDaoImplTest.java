@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.sagebionetworks.warehouse.workers.db.snapshot.WarehouseWorkersStateDao;
 import org.sagebionetworks.warehouse.workers.model.WarehouseWorkersState;
 
 public class WarehouseWorkersStateDaoImplTest {

@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.repo.model.ResourceAccess;
+import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotTestUtil;
 import org.springframework.dao.EmptyResultDataAccessException;

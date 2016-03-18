@@ -10,7 +10,7 @@ import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.CertifiedQuizRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizRecordDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.common.util.progress.ProgressCallback;

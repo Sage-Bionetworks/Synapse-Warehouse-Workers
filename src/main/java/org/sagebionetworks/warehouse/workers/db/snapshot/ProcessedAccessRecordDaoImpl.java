@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_CLIENT;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_ENTITY_ID;
@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
+import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
+import org.sagebionetworks.warehouse.workers.db.TableCreator;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
