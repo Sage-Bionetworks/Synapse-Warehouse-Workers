@@ -42,7 +42,7 @@ public class PassingRecordSnapshotUtils {
 		return true;
 	}
 
-	public static List<CertifiedQuizQuestionRecord> getCertifiedQuizQuestionRecord(
+	public static List<CertifiedQuizQuestionRecord> getCertifiedQuizQuestionRecords(
 			ObjectRecord record) {
 		if (record == null || 
 				record.getTimestamp() == null ||

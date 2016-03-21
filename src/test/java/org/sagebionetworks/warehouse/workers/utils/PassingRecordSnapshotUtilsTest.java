@@ -170,7 +170,7 @@ public class PassingRecordSnapshotUtilsTest {
 	
 	@Test
 	public void getCertifiedQuizQuestionRecordWithNullRecord() {
-		assertNull(PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecord(null));
+		assertNull(PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecords(null));
 	}
 
 	@Test
@@ -180,7 +180,7 @@ public class PassingRecordSnapshotUtilsTest {
 		record.setJsonClassName(PassingRecord.class.getSimpleName().toLowerCase());
 		PassingRecord passingRecord = new PassingRecord();
 		record.setJsonString(EntityFactory.createJSONStringForEntity(passingRecord));
-		assertNull(PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecord(record));
+		assertNull(PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecords(record));
 	}
 
 	@Test
@@ -189,7 +189,7 @@ public class PassingRecordSnapshotUtilsTest {
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonClassName(PassingRecord.class.getSimpleName().toLowerCase());
 		record.setJsonString(null);
-		assertNull(PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecord(record));
+		assertNull(PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecords(record));
 	}
 
 	@Test
@@ -199,7 +199,7 @@ public class PassingRecordSnapshotUtilsTest {
 		record.setJsonClassName(null);
 		PassingRecord passingRecord = new PassingRecord();
 		record.setJsonString(EntityFactory.createJSONStringForEntity(passingRecord));
-		assertNull(PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecord(record));
+		assertNull(PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecords(record));
 	}
 
 	@Test
@@ -209,7 +209,7 @@ public class PassingRecordSnapshotUtilsTest {
 		record.setJsonClassName(AccessRecord.class.getSimpleName().toLowerCase());
 		PassingRecord passingRecord = new PassingRecord();
 		record.setJsonString(EntityFactory.createJSONStringForEntity(passingRecord));
-		assertNull(PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecord(record));
+		assertNull(PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecords(record));
 	}
 
 	@Test
@@ -229,7 +229,7 @@ public class PassingRecordSnapshotUtilsTest {
 		correctness.setQuestion(question);
 		passingRecord.setCorrections(Arrays.asList(correctness));
 		record.setJsonString(EntityFactory.createJSONStringForEntity(passingRecord));
-		List<CertifiedQuizQuestionRecord> certifiedQuizRecords = PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecord(record);
+		List<CertifiedQuizQuestionRecord> certifiedQuizRecords = PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecords(record);
 		assertNotNull(certifiedQuizRecords);
 		assertEquals(1L, certifiedQuizRecords.size());
 		CertifiedQuizQuestionRecord certifiedQuizRecord = certifiedQuizRecords.get(0);
