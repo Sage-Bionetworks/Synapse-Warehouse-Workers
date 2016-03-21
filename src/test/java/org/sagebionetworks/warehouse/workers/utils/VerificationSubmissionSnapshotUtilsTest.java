@@ -123,7 +123,7 @@ public class VerificationSubmissionSnapshotUtilsTest {
 	}
 
 	/*
-	 * isValidVerificationSubmissionRecord() tests
+	 * isValidVerificationSubmissionStateRecord() tests
 	 */
 	
 	@Test
@@ -161,7 +161,7 @@ public class VerificationSubmissionSnapshotUtilsTest {
 	}	
 
 	/*
-	 * getVerificationSubmissionStateRecord() tests
+	 * getVerificationSubmissionStateRecords() tests
 	 */
 	
 	@Test
