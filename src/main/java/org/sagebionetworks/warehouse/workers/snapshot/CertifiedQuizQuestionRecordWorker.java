@@ -80,7 +80,7 @@ public class CertifiedQuizQuestionRecordWorker implements MessageDrivenRunner, S
 
 	@Override
 	public List<CertifiedQuizQuestionRecord> convert(ObjectRecord record) {
-		List<CertifiedQuizQuestionRecord> records = PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecord(record);
+		List<CertifiedQuizQuestionRecord> records = PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecords(record);
 		if (!PassingRecordSnapshotUtils.isValidCertifiedQuizQuestionRecords(records)) {
 			log.error("Invalid Certified Quiz Question Record from: " + record.toString());
 			return null;
