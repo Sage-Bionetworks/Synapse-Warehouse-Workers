@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.repo.model.ResourceAccess;
+import org.sagebionetworks.warehouse.workers.db.TableCreator;
+import org.sagebionetworks.warehouse.workers.db.TestContext;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;

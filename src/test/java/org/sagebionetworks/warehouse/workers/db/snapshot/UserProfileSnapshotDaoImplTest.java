@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,8 @@ import java.util.Random;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.sagebionetworks.warehouse.workers.db.TableCreator;
+import org.sagebionetworks.warehouse.workers.db.TestContext;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;

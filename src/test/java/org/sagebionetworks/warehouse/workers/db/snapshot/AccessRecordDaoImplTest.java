@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db;
+package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
+import org.sagebionetworks.warehouse.workers.db.TableCreator;
+import org.sagebionetworks.warehouse.workers.db.TestContext;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
