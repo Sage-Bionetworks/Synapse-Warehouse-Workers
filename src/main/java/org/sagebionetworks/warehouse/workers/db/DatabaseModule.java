@@ -28,6 +28,8 @@ import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.VerificationSubmissionRecordDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.VerificationSubmissionRecordDaoImpl;
+import org.sagebionetworks.warehouse.workers.db.snapshot.VerificationSubmissionStateRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.VerificationSubmissionStateRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.transaction.Required;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -68,6 +70,7 @@ public class DatabaseModule extends AbstractModule {
 		bind(CertifiedQuizRecordDao.class).to(CertifiedQuizRecordDaoImpl.class);
 		bind(CertifiedQuizQuestionRecordDao.class).to(CertifiedQuizQuestionRecordDaoImpl.class);
 		bind(VerificationSubmissionRecordDao.class).to(VerificationSubmissionRecordDaoImpl.class);
+		bind(VerificationSubmissionStateRecordDao.class).to(VerificationSubmissionStateRecordDaoImpl.class);
 	}
 	
 	/**
