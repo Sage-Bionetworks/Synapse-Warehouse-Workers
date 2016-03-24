@@ -66,7 +66,7 @@ public class VerificationSubmissionSnapshotUtils {
 		}
 	}
 
-	public static boolean isValiderificationSubmissionStateRecords(
+	public static boolean isValidVerificationSubmissionStateRecords(
 			List<VerificationSubmissionStateRecord> records) {
 		for (VerificationSubmissionStateRecord record : records) {
 			if (!isValidVerificationSubmissionStateRecord(record)) {

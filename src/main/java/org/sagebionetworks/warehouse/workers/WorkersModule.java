@@ -47,6 +47,7 @@ import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotTopicBuck
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.VerificationSubmissionRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.VerificationSubmissionStateRecordTopicBucketInfo;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueConfiguration;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueImpl;
 
@@ -189,6 +190,14 @@ public class WorkersModule extends AbstractModule {
 		VerificationSubmissionRecordTopicBucketInfo info = new VerificationSubmissionRecordTopicBucketInfo();
 		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.verificationsubmission.snapshot"));
 		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.verificationsubmission.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public VerificationSubmissionStateRecordTopicBucketInfo getVerificationSubmissionStateRecordConfig(Configuration config){
+		VerificationSubmissionStateRecordTopicBucketInfo info = new VerificationSubmissionStateRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.verificationsubmission.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.verificationsubmissionstate.snapshot"));
 		return info;
 	}
 
