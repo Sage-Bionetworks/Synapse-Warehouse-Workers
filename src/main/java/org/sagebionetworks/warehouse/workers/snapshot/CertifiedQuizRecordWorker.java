@@ -13,10 +13,10 @@ import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.CertifiedQuizRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizRecordDao;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizRecord;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
+import org.sagebionetworks.warehouse.workers.utils.PassingRecordSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -81,8 +81,8 @@ public class CertifiedQuizRecordWorker implements MessageDrivenRunner, SnapshotW
 
 	@Override
 	public List<CertifiedQuizRecord> convert(ObjectRecord record) {
-		CertifiedQuizRecord snapshot = ObjectSnapshotUtils.getCertifiedQuizRecord(record);
-		if (!ObjectSnapshotUtils.isValidCertifiedQuizRecord(snapshot)) {
+		CertifiedQuizRecord snapshot = PassingRecordSnapshotUtils.getCertifiedQuizRecord(record);
+		if (!PassingRecordSnapshotUtils.isValidCertifiedQuizRecord(snapshot)) {
 			log.error("Invalid Certified Quiz Record from: " + record.toString());
 			return null;
 		}

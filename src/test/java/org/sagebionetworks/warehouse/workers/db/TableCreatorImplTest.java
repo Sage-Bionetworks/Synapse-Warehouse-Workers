@@ -2,7 +2,7 @@ package org.sagebionetworks.warehouse.workers.db;
 
 import static org.junit.Assert.*;
 import static org.sagebionetworks.warehouse.workers.db.Sql.*;
-import static org.sagebionetworks.warehouse.workers.db.AccessRecordDaoImpl.ACCESS_RECORD_DDL_SQL;
+import static org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDaoImpl.ACCESS_RECORD_DDL_SQL;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
+import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDaoImpl;
+import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.JdbcTemplate;

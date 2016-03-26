@@ -15,6 +15,7 @@ import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.AclRecord;
 import org.sagebionetworks.repo.model.audit.NodeRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
+import org.sagebionetworks.repo.model.verification.VerificationStateEnum;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
@@ -24,6 +25,8 @@ import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
+import org.sagebionetworks.warehouse.workers.model.VerificationSubmissionRecord;
+import org.sagebionetworks.warehouse.workers.model.VerificationSubmissionStateRecord;
 
 public class ObjectSnapshotTestUtil {
 	private static Random random = new Random(1);
@@ -293,10 +296,35 @@ public class ObjectSnapshotTestUtil {
 	 * @return a unique valid CertifiedQuizQuestionRecord
 	 */
 	public static CertifiedQuizQuestionRecord createValidCertifiedQuizQuestionRecord() {
-		org.sagebionetworks.warehouse.workers.model.CertifiedQuizQuestionRecord record = new CertifiedQuizQuestionRecord();
+		CertifiedQuizQuestionRecord record = new CertifiedQuizQuestionRecord();
 		record.setResponseId(random.nextLong());
 		record.setQuestionIndex(random.nextLong());
 		record.setIsCorrect(false);
+		return record;
+	}
+
+	/**
+	 * 
+	 * @return a valid VerificationSubmissionRecord
+	 */
+	public static VerificationSubmissionRecord createValidVerificationSubmissionRecord() {
+		VerificationSubmissionRecord record = new VerificationSubmissionRecord();
+		record.setId(random.nextLong());
+		record.setCreatedOn(new Date().getTime());
+		record.setCreatedBy(random.nextLong());
+		return record;
+	}
+
+	/**
+	 * 
+	 * @return a valid VerificationSubmissionStateRecord
+	 */
+	public static VerificationSubmissionStateRecord createValidVerificationSubmissionStateRecord() {
+		VerificationSubmissionStateRecord record = new VerificationSubmissionStateRecord();
+		record.setId(random.nextLong());
+		record.setCreatedOn(new Date().getTime());
+		record.setCreatedBy(random.nextLong());
+		record.setState(VerificationStateEnum.SUBMITTED);
 		return record;
 	}
 }

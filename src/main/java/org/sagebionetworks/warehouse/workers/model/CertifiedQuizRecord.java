@@ -1,5 +1,21 @@
 package org.sagebionetworks.warehouse.workers.model;
 
+/**
+ * This class represents the certified quiz record.
+ * 
+ * While capturing the passing record snapshot in a json format,
+ * there are many fields that are not being used to generate meaningful metrics.
+ * This class only contains the fields that are used to generate metrics.
+ * 
+ * A unique passing record contains a unique certified quiz record.
+ * 
+ * A certified quiz record represents a user taking a quiz. It contains
+ * information about the user, the time the quiz was taken, and either the user
+ * has passed the quiz.
+ * 
+ * @author kimyentruong
+ *
+ */
 public class CertifiedQuizRecord {
 
 	private Long responseId;

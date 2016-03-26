@@ -14,7 +14,7 @@ import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.AccessRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;

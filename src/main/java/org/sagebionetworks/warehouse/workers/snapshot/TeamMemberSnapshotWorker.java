@@ -12,10 +12,10 @@ import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.TeamMemberSnapshotDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.TeamMemberSnapshotDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
+import org.sagebionetworks.warehouse.workers.utils.TeamMemberSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -81,8 +81,8 @@ public class TeamMemberSnapshotWorker implements MessageDrivenRunner, SnapshotWo
 
 	@Override
 	public List<TeamMemberSnapshot> convert(ObjectRecord record) {
-		TeamMemberSnapshot snapshot = ObjectSnapshotUtils.getTeamMemberSnapshot(record);
-		if (!ObjectSnapshotUtils.isValidTeamMemberSnapshot(snapshot)) {
+		TeamMemberSnapshot snapshot = TeamMemberSnapshotUtils.getTeamMemberSnapshot(record);
+		if (!TeamMemberSnapshotUtils.isValidTeamMemberSnapshot(snapshot)) {
 			log.error("Invalid Team Snapshot from Record: " + record.toString());
 			return null;
 		}

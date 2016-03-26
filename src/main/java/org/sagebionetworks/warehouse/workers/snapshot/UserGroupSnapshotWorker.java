@@ -12,9 +12,9 @@ import org.sagebionetworks.repo.model.UserGroup;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.UserGroupDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotUtils;
+import org.sagebionetworks.warehouse.workers.utils.PrincipalSnapshotUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -80,8 +80,8 @@ public class UserGroupSnapshotWorker implements MessageDrivenRunner, SnapshotWor
 
 	@Override
 	public List<UserGroup> convert(ObjectRecord record) {
-		UserGroup snapshot = ObjectSnapshotUtils.getUserGroupSnapshot(record);
-		if (!ObjectSnapshotUtils.isValidUserGroupSnapshot(snapshot)) {
+		UserGroup snapshot = PrincipalSnapshotUtils.getUserGroupSnapshot(record);
+		if (!PrincipalSnapshotUtils.isValidUserGroupSnapshot(snapshot)) {
 			log.error("Invalid UserGroup Snapshot from Record: " + record.toString());
 			return null;
 		}
