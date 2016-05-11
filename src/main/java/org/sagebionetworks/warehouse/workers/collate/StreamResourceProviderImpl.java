@@ -10,12 +10,11 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.sagebionetworks.csv.utils.CSVReader;
+import org.sagebionetworks.csv.utils.CSVWriter;
 import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.csv.utils.ObjectCSVWriter;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
-
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * A simple wrapper for resource generation.
