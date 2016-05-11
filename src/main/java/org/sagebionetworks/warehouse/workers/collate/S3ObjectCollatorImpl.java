@@ -8,9 +8,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
-
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
+import org.sagebionetworks.csv.utils.CSVReader;
+import org.sagebionetworks.csv.utils.CSVWriter;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
