@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -19,7 +20,9 @@ import org.sagebionetworks.csv.utils.CSVReader;
 import org.sagebionetworks.csv.utils.CSVWriter;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 
 /**
  * Unit test for the S3ObjectCollatorImpl
@@ -84,7 +87,13 @@ public class S3ObjectCollatorImplTest {
 		// collate should be called.
 		verify(mockCollateProvider).mergeSortedStreams(mockProgressCallback, mockReaders, mockWriter, sortColumnIndex);
 		// the results should be pushed to S3 with the last file
-		verify(mockS3Client).putObject(bucket, destinationKey, mockFiles.get(mockFiles.size()-1));
+		ArgumentCaptor<PutObjectRequest> captor = ArgumentCaptor.forClass(PutObjectRequest.class);
+		verify(mockS3Client).putObject(captor.capture());
+		PutObjectRequest actual = captor.getValue();
+		assertEquals(bucket, actual.getBucketName());
+		assertEquals(destinationKey, actual.getKey());
+		assertEquals(mockFiles.get(mockFiles.size()-1), actual.getFile());
+		assertEquals(CannedAccessControlList.BucketOwnerFullControl, actual.getCannedAcl());
 		// The input objects should be deleted in S3.
 		for(String key: keysToCollate){
 			verify(mockS3Client).deleteObject(bucket, key);
@@ -105,7 +114,7 @@ public class S3ObjectCollatorImplTest {
 	public void testReplaceCSVsWithCollatedCSVException() throws IOException{
 		// simulate an error
 		RuntimeException error = new RuntimeException("some error");
-		doThrow(error).when(mockS3Client).putObject(any(String.class), any(String.class), any(File.class));
+		doThrow(error).when(mockS3Client).putObject(any(PutObjectRequest.class));
 		// call under test.
 		try {
 			collator.replaceCSVsWithCollatedCSV(mockProgressCallback, bucket, keysToCollate, destinationKey, sortColumnIndex);
