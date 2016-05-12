@@ -12,7 +12,9 @@ import org.sagebionetworks.csv.utils.CSVReader;
 import org.sagebionetworks.csv.utils.CSVWriter;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.google.inject.Inject;
 
 public class S3ObjectCollatorImpl implements S3ObjectCollator {
@@ -95,7 +97,10 @@ public class S3ObjectCollatorImpl implements S3ObjectCollator {
 			collateProvider.mergeSortedStreams(progressCallback, readers, writer, sortColumnIndex);
 			progressCallback.progressMade(null);
 			// upload the result file.
-			s3Client.putObject(bucket, destinationKey, destination);
+			PutObjectRequest request = new PutObjectRequest(bucket, destinationKey, destination)
+					// Both the object owner and the bucket owner get FULL_CONTROL over the object.
+					.withCannedAcl(CannedAccessControlList.BucketOwnerFullControl);
+			s3Client.putObject(request);
 		}finally{
 			// unconditionally close all readers and writers.
 			for(CSVReader reader: readers){
