@@ -16,13 +16,14 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import org.sagebionetworks.common.util.progress.ProgressCallback;
-import org.sagebionetworks.csv.utils.CSVReader;
-import org.sagebionetworks.csv.utils.CSVWriter;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Unit test for the S3ObjectCollatorImpl
