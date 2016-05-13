@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.sagebionetworks.csv.utils.CSVReader;
-import org.sagebionetworks.csv.utils.CSVWriter;
 import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.csv.utils.ObjectCSVWriter;
+
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 /**

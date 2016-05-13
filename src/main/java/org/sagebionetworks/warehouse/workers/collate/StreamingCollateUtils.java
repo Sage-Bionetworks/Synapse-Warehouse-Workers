@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.sagebionetworks.common.util.progress.ProgressCallback;
-import org.sagebionetworks.csv.utils.CSVReader;
-import org.sagebionetworks.csv.utils.CSVWriter;
+
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * A Utility for collating CSV files as streams.
