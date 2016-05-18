@@ -21,6 +21,9 @@ public class AccessRecordUtils {
 
 	private static final Pattern ENTITY_PATTERN = Pattern.compile("/entity/(syn\\d+|\\d+)");
 	private static final Pattern NUMERIC_PARAM_PATTERN = Pattern.compile("/(syn\\d+|\\d+)");
+	private static final String GET_MD5_URL_PART = "/entity/md5";
+	private static final String GET_EVALUATION_NAME_URL_PART = "/evaluation/name";
+	private static final String GET_ENTITY_ALIAS_URL_PART = "/entity/alias";
 	private static final String NUMBER_REPLACEMENT = "/#";
 
 	/**
@@ -50,6 +53,15 @@ public class AccessRecordUtils {
 		requestURL = requestURL.toLowerCase();
 		if (requestURL.startsWith(REPO_V1) || requestURL.startsWith(FILE_V1) || requestURL.startsWith(AUTH_V1)) {
 			requestURL = requestURL.substring(8);
+		}
+		if (method.equals("GET") && requestURL.startsWith(GET_MD5_URL_PART)) {
+			return method + " " + GET_MD5_URL_PART + NUMBER_REPLACEMENT;
+		}
+		if (method.equals("GET") && requestURL.startsWith(GET_EVALUATION_NAME_URL_PART)) {
+			return method + " " + GET_EVALUATION_NAME_URL_PART + NUMBER_REPLACEMENT;
+		}
+		if (method.equals("GET") && requestURL.startsWith(GET_ENTITY_ALIAS_URL_PART)) {
+			return method + " " + GET_ENTITY_ALIAS_URL_PART + NUMBER_REPLACEMENT;
 		}
 		Matcher matcher = NUMERIC_PARAM_PATTERN.matcher(requestURL);
 		StringBuffer buffer = new StringBuffer();
