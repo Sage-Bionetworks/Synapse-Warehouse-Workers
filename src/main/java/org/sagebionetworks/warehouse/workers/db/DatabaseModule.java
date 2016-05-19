@@ -10,6 +10,8 @@ import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDaoImpl;
+import org.sagebionetworks.warehouse.workers.db.snapshot.BulkFileDownloadRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.BulkFileDownloadRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizQuestionRecordDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizQuestionRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizRecordDao;
@@ -71,6 +73,7 @@ public class DatabaseModule extends AbstractModule {
 		bind(CertifiedQuizQuestionRecordDao.class).to(CertifiedQuizQuestionRecordDaoImpl.class);
 		bind(VerificationSubmissionRecordDao.class).to(VerificationSubmissionRecordDaoImpl.class);
 		bind(VerificationSubmissionStateRecordDao.class).to(VerificationSubmissionStateRecordDaoImpl.class);
+		bind(BulkFileDownloadRecordDao.class).to(BulkFileDownloadRecordDaoImpl.class);
 	}
 	
 	/**

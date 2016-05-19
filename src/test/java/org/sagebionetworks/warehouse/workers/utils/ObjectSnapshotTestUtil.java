@@ -15,10 +15,12 @@ import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.AclRecord;
 import org.sagebionetworks.repo.model.audit.NodeRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
+import org.sagebionetworks.repo.model.file.FileHandleAssociateType;
 import org.sagebionetworks.repo.model.verification.VerificationStateEnum;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
+import org.sagebionetworks.warehouse.workers.model.BulkFileDownloadRecord;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizQuestionRecord;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizRecord;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
@@ -325,6 +327,18 @@ public class ObjectSnapshotTestUtil {
 		record.setCreatedOn(new Date().getTime());
 		record.setCreatedBy(random.nextLong());
 		record.setState(VerificationStateEnum.SUBMITTED);
+		return record;
+	}
+
+	/**
+	 * 
+	 * @return a valid BulkFileDownloadRecord
+	 */
+	public static BulkFileDownloadRecord createValidBulkFileDownloadRecord() {
+		BulkFileDownloadRecord record = new BulkFileDownloadRecord();
+		record.setObjectId(random.nextLong());
+		record.setUserId(random.nextLong());
+		record.setObjectType(FileHandleAssociateType.TableEntity);
 		return record;
 	}
 }
