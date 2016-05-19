@@ -125,6 +125,21 @@ public class AccessRecordUtilsTest {
 		assertEquals("POST /session", AccessRecordUtils.normalizeMethodSignature("/auth/v1/session", "POST"));
 	}
 
+	@Test
+	public void md5UrlTest() {
+		assertEquals("GET /entity/md5/#", AccessRecordUtils.normalizeMethodSignature("/repo/v1/entity/md5/0b3ea097271bd405839fca053688c5aa", "GET"));
+	}
+
+	@Test
+	public void evaluationNameUrlTest() {
+		assertEquals("GET /evaluation/name/#", AccessRecordUtils.normalizeMethodSignature("/repo/v1/evaluation/name/challenge0evaluation", "GET"));
+	}
+
+	@Test
+	public void entityAliasUrlTest() {
+		assertEquals("GET /entity/alias/#", AccessRecordUtils.normalizeMethodSignature("/repo/v1/entity/alias/auditData", "GET"));
+	}
+
 	/*
 	 * processAccessRecord() Test
 	 */
