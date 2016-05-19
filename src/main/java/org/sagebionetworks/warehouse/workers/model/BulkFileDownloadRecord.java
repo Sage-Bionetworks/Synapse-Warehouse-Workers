@@ -2,6 +2,19 @@ package org.sagebionetworks.warehouse.workers.model;
 
 import org.sagebionetworks.repo.model.file.FileHandleAssociateType;
 
+/**
+ * This class represents a bulk file download record.
+ * 
+ * While capturing the bulk file download response snapshot in a json format,
+ * our goal is to answer the question who download what. This record captures
+ * the information needed to answer that question.
+ * 
+ * A unique download record includes user ID who performed the download, the objectID
+ * and objectType that the user had download.
+ * 
+ * @author kimyentruong
+ *
+ */
 public class BulkFileDownloadRecord {
 
 	Long userId;

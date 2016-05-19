@@ -52,7 +52,7 @@ public class TeamMemberSnapshotUtilsTest {
 	 * getTeamMemberSnapshot() tests
 	 */
 	@Test
-	public void nullTimstampGetTeamMemberSnapshotTest() throws JSONObjectAdapterException {
+	public void nullTimestampGetTeamMemberSnapshotTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		TeamMember teamMember = new TeamMember();
 		record.setJsonString(EntityFactory.createJSONStringForEntity(teamMember));
