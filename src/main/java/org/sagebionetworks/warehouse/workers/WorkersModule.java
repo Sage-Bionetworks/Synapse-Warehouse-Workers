@@ -30,6 +30,7 @@ import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordConfigurationP
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.BulkFileDownloadRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizQuestionRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizQuestionRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizRecordConfigurationProvider;
@@ -198,6 +199,14 @@ public class WorkersModule extends AbstractModule {
 		VerificationSubmissionStateRecordTopicBucketInfo info = new VerificationSubmissionStateRecordTopicBucketInfo();
 		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.verificationsubmission.snapshot"));
 		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.verificationsubmissionstate.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public BulkFileDownloadRecordTopicBucketInfo getBulkFileDownloadRecordConfig(Configuration config){
+		BulkFileDownloadRecordTopicBucketInfo info = new BulkFileDownloadRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.bulkfiledownloadresponse.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.bulkfiledownloadresponse.snapshot"));
 		return info;
 	}
 
