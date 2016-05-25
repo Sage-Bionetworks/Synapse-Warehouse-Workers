@@ -30,6 +30,7 @@ import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordConfigurationP
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.BulkFileDownloadRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.BulkFileDownloadRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizQuestionRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizQuestionRecordTopicBucketInfo;
@@ -47,7 +48,9 @@ import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotConfigura
 import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.VerificationSubmissionRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.VerificationSubmissionRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.VerificationSubmissionStateRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.VerificationSubmissionStateRecordTopicBucketInfo;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueConfiguration;
 import org.sagebionetworks.workers.util.aws.message.MessageQueueImpl;
@@ -236,6 +239,9 @@ public class WorkersModule extends AbstractModule {
 		list.add(UserGroupSnapshotConfigurationProvider.class);
 		list.add(CertifiedQuizRecordConfigurationProvider.class);
 		list.add(CertifiedQuizQuestionRecordConfigurationProvider.class);
+		list.add(VerificationSubmissionRecordConfigurationProvider.class);
+		list.add(VerificationSubmissionStateRecordConfigurationProvider.class);
+		list.add(BulkFileDownloadRecordConfigurationProvider.class);
 		return list;
 	}
 	
