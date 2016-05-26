@@ -55,6 +55,25 @@ public class FolderStateDaoImplTest {
 		assertEquals(nowPlus, state.getUpdatedOn().getTime());
 		assertEquals(FolderState.State.ROLLING, state.getState());
 	}
+
+	@Test
+	public void testUpdate() {
+		long now = 1437462333000L;
+		String bucket = "someBucket";
+		String path = "somePath";
+		dao.createOrUpdateFolderState(new FolderState(bucket, path, FolderState.State.ROLLING, new Timestamp(now)));
+		Iterator<FolderState> iterator = dao.listFolders(bucket, FolderState.State.ROLLING);
+		List<FolderState> list = createListFromIterator(iterator);
+		FolderState rollingState = list.get(0);
+		assertEquals(FolderState.State.ROLLING, rollingState.getState());
+		dao.createOrUpdateFolderState(new FolderState(bucket, path, FolderState.State.COLLATED, new Timestamp(now+5000)));
+		iterator = dao.listFolders(bucket, FolderState.State.COLLATED);
+		list = createListFromIterator(iterator);
+		assertNotNull(list);
+		assertEquals(1, list.size());
+		FolderState collatedState = list.get(0);
+		assertEquals(FolderState.State.COLLATED, collatedState.getState());
+	}
 	
 	/**
 	 * Convert an interator to a list.
