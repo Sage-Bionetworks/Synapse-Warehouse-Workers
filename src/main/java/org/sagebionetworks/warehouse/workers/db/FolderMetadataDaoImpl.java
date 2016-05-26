@@ -70,7 +70,7 @@ public class FolderMetadataDaoImpl implements FolderMetadataDao {
 		}
 		String stateString = FolderState.State.ROLLING.name();
 		template.update(SQL_INSERT_DUPLICATE_UPDATE, state.getBucket(), state.getPath(), stateString,
-				state.getUpdatedOn(), stateString, state.getUpdatedOn());
+				state.getUpdatedOn(), state.getState().name(), state.getUpdatedOn());
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class FolderMetadataDaoImpl implements FolderMetadataDao {
 	@Override
 	public Iterator<FolderState> listFolders(String bucketName, State state) {
 		// return the query with an iterator.
-		return new PagingQueryIterator<FolderState>(MAX_PAGE_SIZE, template, SQL_LIST_FOLDER_FOR_BUCKET_AND_STATE, rowMapper, bucketName, FolderState.State.ROLLING.name());
+		return new PagingQueryIterator<FolderState>(MAX_PAGE_SIZE, template, SQL_LIST_FOLDER_FOR_BUCKET_AND_STATE, rowMapper, bucketName, state.name());
 	}
 
 }
