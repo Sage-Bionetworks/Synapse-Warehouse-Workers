@@ -82,6 +82,11 @@ public class AccessRecordUtilsTest {
 		assertNull(AccessRecordUtils.getEntityId("/repo/v1/version"));
 	}
 
+	@Test
+	public void entityIdWithVersion() {
+		assertEquals((Long)123L, AccessRecordUtils.getEntityId("/repo/v1/entity/syn123.4/bundle"));
+	}
+
 	/*
 	 * Synapse API Tests
 	 */
@@ -139,6 +144,11 @@ public class AccessRecordUtilsTest {
 	public void entityAliasUrlTest() {
 		assertEquals("GET /entity/alias/#", AccessRecordUtils.normalizeMethodSignature("/repo/v1/entity/alias/auditData", "GET"));
 	}
+
+	@Test
+	public void urlWithEntityDotVersion() {
+		assertEquals("GET /entity/#/bundle", AccessRecordUtils.normalizeMethodSignature("/repo/v1/entity/syn123.4/bundle", "GET"));
+		}
 
 	/*
 	 * processAccessRecord() Test
