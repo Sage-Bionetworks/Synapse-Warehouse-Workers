@@ -19,8 +19,8 @@ public class AccessRecordUtils {
 	private static final String COMMAND_LINE_CLIENT = "synapsecommandlineclient";
 	private static final String ELB_CLIENT = "ELB-HealthChecker";
 
-	private static final Pattern ENTITY_PATTERN = Pattern.compile("/entity/(syn\\d+|\\d+)");
-	private static final Pattern NUMERIC_PARAM_PATTERN = Pattern.compile("/(syn\\d+|\\d+)");
+	private static final Pattern ENTITY_PATTERN = Pattern.compile("/entity/(syn\\d+|\\d+)[.\\d+]*");
+	private static final Pattern NUMERIC_PARAM_PATTERN = Pattern.compile("/(syn\\d+[.\\d+]*|\\d+[.\\d+]*)");
 	private static final String GET_MD5_URL_PART = "/entity/md5";
 	private static final String GET_EVALUATION_NAME_URL_PART = "/evaluation/name";
 	private static final String GET_ENTITY_ALIAS_URL_PART = "/entity/alias";
