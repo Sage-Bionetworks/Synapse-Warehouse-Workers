@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
+import org.sagebionetworks.warehouse.workers.model.UserAccessRecord;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
 
 public class AccessRecordUtilsTest {
@@ -158,6 +159,24 @@ public class AccessRecordUtilsTest {
 		expected.setNormalizedMethodSignature("GET /entity/#/descendants");
 
 		assertEquals(expected, AccessRecordUtils.processAccessRecord(ar));
+	}
+
+	/*
+	 * getUserAccessRecord() Test
+	 */
+	@Test
+	public void getUserAccessRecordTest() {
+		AccessRecord ar = new AccessRecord();
+		ar.setUserAgent("Synpase-Java-Client/64.0  Synapse-Web-Client/67.0");
+		ar.setUserId(123L);
+		ar.setDate("date");
+
+		UserAccessRecord expected = new UserAccessRecord();
+		expected.setUserId(123L);
+		expected.setDate("date");
+		expected.setClient(Client.WEB);
+
+		assertEquals(expected, AccessRecordUtils.getUserAccessRecord(ar));
 	}
 
 	/*

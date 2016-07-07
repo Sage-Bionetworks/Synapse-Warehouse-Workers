@@ -24,6 +24,8 @@ import org.sagebionetworks.warehouse.workers.db.snapshot.TeamMemberSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.TeamMemberSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.TeamSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.TeamSnapshotDaoImpl;
+import org.sagebionetworks.warehouse.workers.db.snapshot.UserAccessRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.UserAccessRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDao;
@@ -74,6 +76,7 @@ public class DatabaseModule extends AbstractModule {
 		bind(VerificationSubmissionRecordDao.class).to(VerificationSubmissionRecordDaoImpl.class);
 		bind(VerificationSubmissionStateRecordDao.class).to(VerificationSubmissionStateRecordDaoImpl.class);
 		bind(BulkFileDownloadRecordDao.class).to(BulkFileDownloadRecordDaoImpl.class);
+		bind(UserAccessRecordDao.class).to(UserAccessRecordDaoImpl.class);
 	}
 	
 	/**
