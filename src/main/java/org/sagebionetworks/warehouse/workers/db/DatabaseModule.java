@@ -164,6 +164,7 @@ public class DatabaseModule extends AbstractModule {
 		tableConfigList.add(VerificationSubmissionRecordDaoImpl.CONFIG);
 		tableConfigList.add(VerificationSubmissionStateRecordDaoImpl.CONFIG);
 		tableConfigList.add(BulkFileDownloadRecordDaoImpl.CONFIG);
+		tableConfigList.add(UserAccessRecordDaoImpl.CONFIG);
 		return tableConfigList;
 	}
 }
