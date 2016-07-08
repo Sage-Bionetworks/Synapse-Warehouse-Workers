@@ -44,7 +44,8 @@ import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotConfigur
 import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotTopicBucketInfo;
-import org.sagebionetworks.warehouse.workers.snapshot.UserAccessRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.UserActivityPerClientPerDayConfigurationProvider;
+import org.sagebionetworks.warehouse.workers.snapshot.UserActivityPerClientPerDayTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotConfigurationProvider;
@@ -127,10 +128,10 @@ public class WorkersModule extends AbstractModule {
 	}
 
 	@Provides
-	public UserAccessRecordTopicBucketInfo getUserAccessRecordConfig(Configuration config){
-		UserAccessRecordTopicBucketInfo info = new UserAccessRecordTopicBucketInfo();
+	public UserActivityPerClientPerDayTopicBucketInfo getUserActivityPerClientPerDayConfig(Configuration config){
+		UserActivityPerClientPerDayTopicBucketInfo info = new UserActivityPerClientPerDayTopicBucketInfo();
 		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.accessrecord.snapshot"));
-		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.useraccessrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.useractivityperclientperday.snapshot"));
 		return info;
 	}
 
@@ -251,6 +252,7 @@ public class WorkersModule extends AbstractModule {
 		list.add(VerificationSubmissionRecordConfigurationProvider.class);
 		list.add(VerificationSubmissionStateRecordConfigurationProvider.class);
 		list.add(BulkFileDownloadRecordConfigurationProvider.class);
+		list.add(UserActivityPerClientPerDayConfigurationProvider.class);
 		return list;
 	}
 	

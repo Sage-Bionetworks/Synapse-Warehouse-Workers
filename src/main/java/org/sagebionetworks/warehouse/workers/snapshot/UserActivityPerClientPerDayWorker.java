@@ -15,9 +15,9 @@ import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.snapshot.UserAccessRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerClientPerDayDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
-import org.sagebionetworks.warehouse.workers.model.UserAccessRecord;
+import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
@@ -32,18 +32,18 @@ import com.google.inject.Inject;
  * This worker reader a collated access record file from S3, extract user info
  * from it, and write the user data to USER_ACCESS_RECORD table.
  */
-public class UserAccessRecordWorker implements MessageDrivenRunner, SnapshotWorker<AccessRecord, UserAccessRecord> {
+public class UserActivityPerClientPerDayWorker implements MessageDrivenRunner, SnapshotWorker<AccessRecord, UserActivityPerClientPerDay> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecordsToProcess";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
 	private static final int BATCH_SIZE = 25000;
-	private static Logger log = LogManager.getLogger(UserAccessRecordWorker.class);
+	private static Logger log = LogManager.getLogger(UserActivityPerClientPerDayWorker.class);
 	private AmazonS3Client s3Client;
-	private UserAccessRecordDao dao;
+	private UserActivityPerClientPerDayDao dao;
 	private StreamResourceProvider streamResourceProvider;
 
 	@Inject
-	public UserAccessRecordWorker(AmazonS3Client s3Client, UserAccessRecordDao dao,
+	public UserActivityPerClientPerDayWorker(AmazonS3Client s3Client, UserActivityPerClientPerDayDao dao,
 			StreamResourceProvider streamResourceProvider) {
 		super();
 		this.s3Client = s3Client;
@@ -92,7 +92,7 @@ public class UserAccessRecordWorker implements MessageDrivenRunner, SnapshotWork
 	}
 
 	@Override
-	public List<UserAccessRecord> convert(AccessRecord record) {
+	public List<UserActivityPerClientPerDay> convert(AccessRecord record) {
 		if (!AccessRecordUtils.isValidAccessRecord(record)) {
 			log.error("Invalid Access Record: " + record.toString());
 			return null;

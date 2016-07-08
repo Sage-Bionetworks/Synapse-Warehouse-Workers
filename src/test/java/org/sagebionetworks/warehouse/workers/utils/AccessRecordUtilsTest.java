@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
-import org.sagebionetworks.warehouse.workers.model.UserAccessRecord;
+import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
 
 public class AccessRecordUtilsTest {
@@ -171,7 +171,7 @@ public class AccessRecordUtilsTest {
 		ar.setUserId(123L);
 		ar.setDate("date");
 
-		UserAccessRecord expected = new UserAccessRecord();
+		UserActivityPerClientPerDay expected = new UserActivityPerClientPerDay();
 		expected.setUserId(123L);
 		expected.setDate("date");
 		expected.setClient(Client.WEB);

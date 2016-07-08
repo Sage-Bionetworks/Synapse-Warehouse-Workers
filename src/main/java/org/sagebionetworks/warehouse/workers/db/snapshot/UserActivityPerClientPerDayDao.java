@@ -2,15 +2,15 @@ package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import org.sagebionetworks.warehouse.workers.db.HasPartitions;
 import org.sagebionetworks.warehouse.workers.model.Client;
-import org.sagebionetworks.warehouse.workers.model.UserAccessRecord;
+import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
 
-public interface UserAccessRecordDao extends HasPartitions, SnapshotDao<UserAccessRecord>{
+public interface UserActivityPerClientPerDayDao extends HasPartitions, SnapshotDao<UserActivityPerClientPerDay>{
 
 	/**
 	 * 
 	 * @return a UserAccessRecord given the userId, date and client
 	 */
-	public UserAccessRecord get(Long userId, String date, Client client);
+	public UserActivityPerClientPerDay get(Long userId, String date, Client client);
 
 	/**
 	 * Truncate all of the data.

@@ -24,8 +24,8 @@ import org.sagebionetworks.warehouse.workers.db.snapshot.TeamMemberSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.TeamMemberSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.TeamSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.TeamSnapshotDaoImpl;
-import org.sagebionetworks.warehouse.workers.db.snapshot.UserAccessRecordDao;
-import org.sagebionetworks.warehouse.workers.db.snapshot.UserAccessRecordDaoImpl;
+import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerClientPerDayDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerClientPerDayDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDao;
@@ -76,7 +76,7 @@ public class DatabaseModule extends AbstractModule {
 		bind(VerificationSubmissionRecordDao.class).to(VerificationSubmissionRecordDaoImpl.class);
 		bind(VerificationSubmissionStateRecordDao.class).to(VerificationSubmissionStateRecordDaoImpl.class);
 		bind(BulkFileDownloadRecordDao.class).to(BulkFileDownloadRecordDaoImpl.class);
-		bind(UserAccessRecordDao.class).to(UserAccessRecordDaoImpl.class);
+		bind(UserActivityPerClientPerDayDao.class).to(UserActivityPerClientPerDayDaoImpl.class);
 	}
 	
 	/**
@@ -164,7 +164,7 @@ public class DatabaseModule extends AbstractModule {
 		tableConfigList.add(VerificationSubmissionRecordDaoImpl.CONFIG);
 		tableConfigList.add(VerificationSubmissionStateRecordDaoImpl.CONFIG);
 		tableConfigList.add(BulkFileDownloadRecordDaoImpl.CONFIG);
-		tableConfigList.add(UserAccessRecordDaoImpl.CONFIG);
+		tableConfigList.add(UserActivityPerClientPerDayDaoImpl.CONFIG);
 		return tableConfigList;
 	}
 }
