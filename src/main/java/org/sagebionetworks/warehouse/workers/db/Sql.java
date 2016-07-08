@@ -152,4 +152,10 @@ public class Sql {
 	public static final String COL_BULK_FILE_DOWNLOAD_RECORD_USER_ID = "USER_ID";
 	public static final String COL_BULK_FILE_DOWNLOAD_RECORD_OBJECT_ID = "OBJECT_ID";
 	public static final String COL_BULK_FILE_DOWNLOAD_RECORD_OBJECT_TYPE = "OBJECT_TYPE";
+
+	// USER_ACCESS_RECORD
+	public static final String TABLE_USER_ACCESS_RECORD = "USER_ACCESS_RECORD";
+	public static final String COL_USER_ACCESS_RECORD_USER_ID = "USER_ID";
+	public static final String COL_USER_ACCESS_RECORD_DATE = "DATE";
+	public static final String COL_USER_ACCESS_RECORD_CLIENT = "CLIENT";
 }

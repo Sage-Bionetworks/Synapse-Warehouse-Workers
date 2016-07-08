@@ -2,12 +2,14 @@ package org.sagebionetworks.warehouse.workers.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 
 public class AccessRecordTestUtil {
 
+	static Random random = new Random();
 
 	/**
 	 * Create a unique valid access record.
@@ -32,6 +34,7 @@ public class AccessRecordTestUtil {
 		// non required fields
 		ar.setHost("repo-staging.prod.sagebase.org");
 		ar.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36");
+		ar.setUserId(random.nextLong());
 		return ar;
 	}
 

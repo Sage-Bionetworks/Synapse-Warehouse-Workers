@@ -44,6 +44,7 @@ import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotConfigur
 import org.sagebionetworks.warehouse.workers.snapshot.TeamMemberSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.TeamSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.UserAccessRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.UserGroupSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.UserProfileSnapshotConfigurationProvider;
@@ -122,6 +123,14 @@ public class WorkersModule extends AbstractModule {
 		ProcessAccessRecordTopicBucketInfo info = new ProcessAccessRecordTopicBucketInfo();
 		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.accessrecord.snapshot"));
 		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.processaccessrecord.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public UserAccessRecordTopicBucketInfo getUserAccessRecordConfig(Configuration config){
+		UserAccessRecordTopicBucketInfo info = new UserAccessRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.accessrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.useraccessrecord.snapshot"));
 		return info;
 	}
 
