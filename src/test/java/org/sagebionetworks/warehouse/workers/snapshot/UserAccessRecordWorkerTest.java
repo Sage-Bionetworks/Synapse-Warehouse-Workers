@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.snapshot.UserAccessRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerClientPerDayDao;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
@@ -22,8 +22,8 @@ import com.amazonaws.services.sqs.model.Message;
 public class UserAccessRecordWorkerTest {
 
 	AmazonS3Client mockS3Client;
-	UserAccessRecordDao mockDao;
-	UserAccessRecordWorker worker;
+	UserActivityPerClientPerDayDao mockDao;
+	UserActivityPerClientPerDayWorker worker;
 	ProgressCallback<Message> mockCallback;
 	Message message;
 	String messageBody;
@@ -35,9 +35,9 @@ public class UserAccessRecordWorkerTest {
 	@Before
 	public void before() {
 		mockS3Client = Mockito.mock(AmazonS3Client.class);
-		mockDao = Mockito.mock(UserAccessRecordDao.class);
+		mockDao = Mockito.mock(UserActivityPerClientPerDayDao.class);
 		mockStreamResourceProvider = Mockito.mock(StreamResourceProvider.class);
-		worker = new UserAccessRecordWorker(mockS3Client, mockDao, mockStreamResourceProvider);
+		worker = new UserActivityPerClientPerDayWorker(mockS3Client, mockDao, mockStreamResourceProvider);
 		mockCallback = Mockito.mock(ProgressCallback.class);
 
 		messageBody = "<Message>\n"
@@ -49,7 +49,7 @@ public class UserAccessRecordWorkerTest {
 
 		mockFile = Mockito.mock(File.class);
 		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
-		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(UserAccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(UserAccessRecordWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
+		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(UserActivityPerClientPerDayWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(UserActivityPerClientPerDayWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
 		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
 		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(true);
 	}
@@ -57,7 +57,7 @@ public class UserAccessRecordWorkerTest {
 	@Test
 	public void runTest() throws RecoverableMessageException, IOException {
 		worker.run(mockCallback, message);
-		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(UserAccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(UserAccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
+		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(UserActivityPerClientPerDayWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(UserActivityPerClientPerDayWorker.TEMP_FILE_NAME_SUFFIX));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
 		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 		Mockito.verify(mockFile).delete();
@@ -78,7 +78,7 @@ public class UserAccessRecordWorkerTest {
 		} catch (AmazonClientException e) {
 			// expected
 		}
-		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(UserAccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(UserAccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
+		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(UserActivityPerClientPerDayWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(UserActivityPerClientPerDayWorker.TEMP_FILE_NAME_SUFFIX));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
 		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 		Mockito.verify(mockFile).delete();

@@ -2,6 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import org.sagebionetworks.warehouse.workers.bucket.TopicBucketInfo;
 
-public class UserAccessRecordTopicBucketInfo extends TopicBucketInfo {
+public class UserActivityPerClientPerDayTopicBucketInfo extends TopicBucketInfo {
 
 }

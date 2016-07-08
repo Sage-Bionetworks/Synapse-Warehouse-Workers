@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
-import org.sagebionetworks.warehouse.workers.model.UserAccessRecord;
+import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
 
 public class AccessRecordUtils {
 
@@ -137,8 +137,8 @@ public class AccessRecordUtils {
 		return true;
 	}
 
-	public static UserAccessRecord getUserAccessRecord(AccessRecord accessRecord) {
-		UserAccessRecord uar = new UserAccessRecord();
+	public static UserActivityPerClientPerDay getUserAccessRecord(AccessRecord accessRecord) {
+		UserActivityPerClientPerDay uar = new UserActivityPerClientPerDay();
 		uar.setClient(getClient(accessRecord.getUserAgent()));
 		uar.setUserId(accessRecord.getUserId());
 		uar.setDate(accessRecord.getDate());

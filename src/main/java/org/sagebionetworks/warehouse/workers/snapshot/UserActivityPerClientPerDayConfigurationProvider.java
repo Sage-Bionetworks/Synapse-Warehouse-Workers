@@ -14,14 +14,14 @@ import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.google.inject.Inject;
 
-public class UserAccessRecordConfigurationProvider implements WorkerStackConfigurationProvider {
+public class UserActivityPerClientPerDayConfigurationProvider implements WorkerStackConfigurationProvider {
 
 	final WorkerStackConfiguration config;
 
 	@Inject
-	public UserAccessRecordConfigurationProvider (CountingSemaphore semaphore,
+	public UserActivityPerClientPerDayConfigurationProvider (CountingSemaphore semaphore,
 			AmazonSQSClient awsSQSClient, AmazonSNSClient awsSNClient,
-			UserAccessRecordWorker worker, UserAccessRecordTopicBucketInfo config,
+			UserActivityPerClientPerDayWorker worker, UserActivityPerClientPerDayTopicBucketInfo config,
 			RunDuringNormalStateGate gate) {
 
 		MessageDrivenWorkerStackConfiguration mdwsc = new MessageDrivenWorkerStackConfiguration();
@@ -30,7 +30,7 @@ public class UserAccessRecordConfigurationProvider implements WorkerStackConfigu
 		mdwsc.setTopicNamesToSubscribe(Arrays.asList(config.getTopicName()));
 		mdwsc.setRunner(worker);
 		mdwsc.setSemaphoreLockAndMessageVisibilityTimeoutSec(10*60);
-		mdwsc.setSemaphoreLockKey(SemaphoreKey.USER_ACCESS_RECORD_WORKER.name());
+		mdwsc.setSemaphoreLockKey(SemaphoreKey.USER_ACTIVITY_PER_CLIENT_PER_DAY_WORKER.name());
 		mdwsc.setSemaphoreMaxLockCount(1);
 
 		Runnable runner = new MessageDrivenWorkerStack(semaphore, awsSQSClient,
@@ -39,7 +39,7 @@ public class UserAccessRecordConfigurationProvider implements WorkerStackConfigu
 		this.config.setRunner(runner);
 		this.config.setStartDelayMs(371);
 		this.config.setPeriodMS(10*1000);
-		this.config.setWorkerName(UserAccessRecordWorker.class.getName());
+		this.config.setWorkerName(UserActivityPerClientPerDayWorker.class.getName());
 	}
 
 	@Override

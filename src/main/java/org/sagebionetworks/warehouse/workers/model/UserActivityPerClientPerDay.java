@@ -1,6 +1,6 @@
 package org.sagebionetworks.warehouse.workers.model;
 
-public class UserAccessRecord {
+public class UserActivityPerClientPerDay {
 
 	private Client client;
 	private Long userId;
@@ -40,7 +40,7 @@ public class UserAccessRecord {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UserAccessRecord other = (UserAccessRecord) obj;
+		UserActivityPerClientPerDay other = (UserActivityPerClientPerDay) obj;
 		if (client != other.client)
 			return false;
 		if (date == null) {
