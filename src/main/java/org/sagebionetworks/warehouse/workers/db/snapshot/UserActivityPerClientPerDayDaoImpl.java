@@ -29,10 +29,10 @@ import com.google.inject.Singleton;
 @Singleton
 public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClientPerDayDao {
 
-	public static final String USER_ACCESS_RECORD_DDL_SQL = "UserActivityPerClientPerDay.ddl.sql";
+	public static final String USER_ACTIVITY_PER_CLIENT_PER_DAY_DDL_SQL = "UserActivityPerClientPerDay.ddl.sql";
 	public static final TableConfiguration CONFIG = new TableConfiguration(
 			TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY,
-			USER_ACCESS_RECORD_DDL_SQL,
+			USER_ACTIVITY_PER_CLIENT_PER_DAY_DDL_SQL,
 			true,
 			COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE,
 			Period.MONTH);

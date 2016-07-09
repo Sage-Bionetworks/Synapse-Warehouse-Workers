@@ -26,6 +26,8 @@ import org.sagebionetworks.warehouse.workers.db.snapshot.TeamSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.TeamSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerClientPerDayDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerClientPerDayDaoImpl;
+import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerMonthDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerMonthDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDao;
@@ -77,6 +79,7 @@ public class DatabaseModule extends AbstractModule {
 		bind(VerificationSubmissionStateRecordDao.class).to(VerificationSubmissionStateRecordDaoImpl.class);
 		bind(BulkFileDownloadRecordDao.class).to(BulkFileDownloadRecordDaoImpl.class);
 		bind(UserActivityPerClientPerDayDao.class).to(UserActivityPerClientPerDayDaoImpl.class);
+		bind(UserActivityPerMonthDao.class).to(UserActivityPerMonthDaoImpl.class);
 	}
 	
 	/**
@@ -165,6 +168,7 @@ public class DatabaseModule extends AbstractModule {
 		tableConfigList.add(VerificationSubmissionStateRecordDaoImpl.CONFIG);
 		tableConfigList.add(BulkFileDownloadRecordDaoImpl.CONFIG);
 		tableConfigList.add(UserActivityPerClientPerDayDaoImpl.CONFIG);
+		tableConfigList.add(UserActivityPerMonthDaoImpl.CONFIG);
 		return tableConfigList;
 	}
 }

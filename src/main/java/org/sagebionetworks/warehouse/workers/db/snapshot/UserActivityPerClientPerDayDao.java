@@ -8,7 +8,7 @@ public interface UserActivityPerClientPerDayDao extends HasPartitions, SnapshotD
 
 	/**
 	 * 
-	 * @return a UserAccessRecord given the userId, date and client
+	 * @return a UserActivityPerClientPerDay given the userId, date and client
 	 */
 	public UserActivityPerClientPerDay get(Long userId, String date, Client client);
 

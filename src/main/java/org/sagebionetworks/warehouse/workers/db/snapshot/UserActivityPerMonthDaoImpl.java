@@ -1,0 +1,110 @@
+package org.sagebionetworks.warehouse.workers.db.snapshot;
+
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_MONTH;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_UNIQUE_DATE;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_USER_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_USER_ACTIVITY_PER_MONTH;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
+import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
+import org.sagebionetworks.warehouse.workers.model.UserActivityPerMonth;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+@Singleton
+public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
+
+	public static final String USER_ACTIVITY_PER_MONTH_DDL_SQL = "UserActivityPerMonth.ddl.sql";
+	public static final TableConfiguration CONFIG = new TableConfiguration(
+			TABLE_USER_ACTIVITY_PER_MONTH,
+			USER_ACTIVITY_PER_MONTH_DDL_SQL,
+			false,
+			null,
+			null);
+
+	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_USER_ACTIVITY_PER_MONTH;
+	private static final String INSERT = "INSERT INTO " + TABLE_USER_ACTIVITY_PER_MONTH + " ("
+			+ COL_USER_ACTIVITY_PER_MONTH_USER_ID + ","
+			+ COL_USER_ACTIVITY_PER_MONTH_MONTH + ","
+			+ COL_USER_ACTIVITY_PER_MONTH_UNIQUE_DATE + ")"
+			+ " VALUES (?,?,?) ON DUPLICATE KEY UPDATE "
+			+ COL_USER_ACTIVITY_PER_MONTH_UNIQUE_DATE + " = ?";
+	private static final String SQL_GET = "SELECT *"
+			+ " FROM " + TABLE_USER_ACTIVITY_PER_MONTH
+			+ " WHERE " + COL_USER_ACTIVITY_PER_MONTH_USER_ID + " = ?"
+			+ " AND " + COL_USER_ACTIVITY_PER_MONTH_MONTH + " = ?";
+
+	private JdbcTemplate template;
+	private TransactionTemplate transactionTemplate;
+
+	@Inject
+	UserActivityPerMonthDaoImpl(JdbcTemplate template, @RequiresNew TransactionTemplate transactionTemplate) throws SQLException {
+		super();
+		this.template = template;
+		this.transactionTemplate = transactionTemplate;
+	}
+
+	@Override
+	public void insert(final List<UserActivityPerMonth> batch) {
+		transactionTemplate.execute(new TransactionCallback<Void>() {
+
+			@Override
+			public Void doInTransaction(TransactionStatus status) {
+				template.batchUpdate(INSERT, new BatchPreparedStatementSetter() {
+
+					@Override
+					public int getBatchSize() {
+						return batch.size();
+					}
+		
+					@Override
+					public void setValues(PreparedStatement ps, int i)
+							throws SQLException {
+						UserActivityPerMonth uar = batch.get(i);
+						ps.setLong(1, uar.getUserId());
+						ps.setString(2, uar.getMonth());
+						ps.setLong(3, uar.getUniqueDate());
+						ps.setLong(4, uar.getUniqueDate());
+					}
+				});
+				return null;
+			}
+		});
+	}
+
+	@Override
+	public void truncateAll() {
+		template.update(TRUNCATE);
+	}
+
+	@Override
+	public UserActivityPerMonth get(Long userId, String month) {
+		return template.queryForObject(SQL_GET, this.rowMapper, userId, month);
+	}
+
+	/*
+	 * Map all columns to the dbo.
+	 */
+	RowMapper<UserActivityPerMonth> rowMapper = new RowMapper<UserActivityPerMonth>() {
+
+		public UserActivityPerMonth mapRow(ResultSet rs, int arg1) throws SQLException {
+			UserActivityPerMonth uar = new UserActivityPerMonth();
+			uar.setUserId(rs.getLong(COL_USER_ACTIVITY_PER_MONTH_USER_ID));
+			uar.setMonth(rs.getString(COL_USER_ACTIVITY_PER_MONTH_MONTH));
+			uar.setUniqueDate(rs.getLong(COL_USER_ACTIVITY_PER_MONTH_UNIQUE_DATE));
+			return uar;
+		}
+	};
+}
