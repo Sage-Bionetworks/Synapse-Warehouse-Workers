@@ -137,7 +137,7 @@ public class AccessRecordUtils {
 		return true;
 	}
 
-	public static UserActivityPerClientPerDay getUserAccessRecord(AccessRecord accessRecord) {
+	public static UserActivityPerClientPerDay getUserActivityPerClientPerDay(AccessRecord accessRecord) {
 		UserActivityPerClientPerDay uar = new UserActivityPerClientPerDay();
 		uar.setClient(getClient(accessRecord.getUserAgent()));
 		uar.setUserId(accessRecord.getUserId());

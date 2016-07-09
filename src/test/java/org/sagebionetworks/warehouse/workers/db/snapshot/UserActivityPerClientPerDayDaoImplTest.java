@@ -15,14 +15,14 @@ import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
 
-public class UserAccessRecordDaoImplTest {
+public class UserActivityPerClientPerDayDaoImplTest {
 
 	UserActivityPerClientPerDayDao dao = TestContext.singleton().getInstance(UserActivityPerClientPerDayDao.class);
 	TableCreator creator = TestContext.singleton().getInstance(TableCreator.class);
 
 	@Before
 	public void before(){
-		creator.createTableWithoutPartitions(UserActivityPerClientPerDayDaoImpl.USER_ACCESS_RECORD_DDL_SQL);
+		creator.createTableWithoutPartitions(UserActivityPerClientPerDayDaoImpl.USER_ACTIVITY_PER_CLIENT_PER_DAY_DDL_SQL);
 		dao.truncateAll();
 	}
 
@@ -33,8 +33,8 @@ public class UserAccessRecordDaoImplTest {
 
 	@Test
 	public void test() {
-		UserActivityPerClientPerDay uar1 = AccessRecordUtils.getUserAccessRecord(AccessRecordTestUtil.createValidAccessRecord());
-		UserActivityPerClientPerDay uar2 = AccessRecordUtils.getUserAccessRecord(AccessRecordTestUtil.createValidAccessRecord());
+		UserActivityPerClientPerDay uar1 = AccessRecordUtils.getUserActivityPerClientPerDay(AccessRecordTestUtil.createValidAccessRecord());
+		UserActivityPerClientPerDay uar2 = AccessRecordUtils.getUserActivityPerClientPerDay(AccessRecordTestUtil.createValidAccessRecord());
 
 		dao.insert(Arrays.asList(uar1, uar2));
 
