@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db.snapshot;
+package org.sagebionetworks.warehouse.workers.db.audit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sagebionetworks.warehouse.workers.db.TableCreator;
 import org.sagebionetworks.warehouse.workers.db.TestContext;
+import org.sagebionetworks.warehouse.workers.db.audit.UserActivityPerMonthDao;
+import org.sagebionetworks.warehouse.workers.db.audit.UserActivityPerMonthDaoImpl;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerMonth;
 
 public class UserActivityPerMonthDaoImplTest {
