@@ -5,6 +5,7 @@ import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_CLIENT;
 import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY;
 
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +16,8 @@ import org.sagebionetworks.warehouse.workers.db.TableCreator;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
+import org.sagebionetworks.warehouse.workers.model.UserActivityPerMonth;
+import org.sagebionetworks.warehouse.workers.utils.DateTimeUtils;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -48,6 +51,14 @@ public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClient
 			+ " WHERE " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID + " = ?"
 			+ " AND " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE + " = ?"
 			+ " AND " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_CLIENT + " = ?";
+	private static final String UNIQUE_DATE = "UNIQUE_DATE";
+	private static final String SQL_GET_USER_ACTIVITY_PER_MONTH = "SELECT "
+			+ COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID + ","
+			+ " COUNT(DISTINCT " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE + ") AS " + UNIQUE_DATE
+			+ " FROM " + TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY
+			+ " WHERE " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE
+			+ " BETWEEN ? AND ?"
+			+ " GROUP BY " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID;
 
 	private JdbcTemplate template;
 	private TransactionTemplate transactionTemplate;
@@ -115,5 +126,21 @@ public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClient
 	@Override
 	public boolean doesPartitionExistForTimestamp(long timeMS) {
 		return creator.doesPartitionExist(TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY, timeMS, CONFIG.getPartitionPeriod());
+	}
+
+	@Override
+	public List<UserActivityPerMonth> getUserActivityPerMonth(final Date month) {
+		Date nextMonth = DateTimeUtils.getNextMonth(month);
+		return template.query(SQL_GET_USER_ACTIVITY_PER_MONTH, new RowMapper<UserActivityPerMonth>(){
+
+			@Override
+			public UserActivityPerMonth mapRow(ResultSet rs, int rowNum) throws SQLException {
+				UserActivityPerMonth uapm = new UserActivityPerMonth();
+				uapm.setMonth(DateTimeUtils.toDateString(month));
+				uapm.setUniqueDate(rs.getLong(UNIQUE_DATE));
+				uapm.setUserId(rs.getLong(COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID));
+				return uapm;
+			}
+		}, month, nextMonth);
 	}
 }
