@@ -2,9 +2,12 @@ package org.sagebionetworks.warehouse.workers.db.audit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.Arrays;
 
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +34,7 @@ public class UserActivityPerMonthDaoImplTest {
 	}
 
 	@Test
-	public void test() {
+	public void testRoundTrip() {
 		UserActivityPerMonth uar1 = createUserActivityPerMonth(1L, "2016-01-01", 2L);
 		UserActivityPerMonth uar2 = createUserActivityPerMonth(2L, "2016-01-01", 1L);
 
@@ -50,6 +53,20 @@ public class UserActivityPerMonthDaoImplTest {
 		UserActivityPerMonth actualUar3 = dao.get(uar3.getUserId(), uar3.getMonth());
 		assertEquals(uar3, actualUar3);
 		assertFalse(actualUar2.equals(actualUar3));
+	}
+
+	@Test
+	public void testHasRecordForMonthFalse() {
+		Date month = new DateTime().withDate(2016, 1, 1).withTime(0, 0, 0, 0).toDate();
+		assertFalse(dao.hasRecordForMonth(month));
+	}
+
+	@Test
+	public void testHasRecordForMonthTrue() {
+		Date month = new DateTime().withDate(2016, 1, 1).withTime(0, 0, 0, 0).toDate();
+		UserActivityPerMonth uar = createUserActivityPerMonth(1L, "2016-01-01", 2L);
+		dao.insert(Arrays.asList(uar));
+		assertTrue(dao.hasRecordForMonth(month));
 	}
 
 	private UserActivityPerMonth createUserActivityPerMonth(long userId, String month, long uniqueDate) {

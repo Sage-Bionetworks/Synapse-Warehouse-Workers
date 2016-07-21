@@ -5,15 +5,16 @@ import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_USER_ID;
 import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_USER_ACTIVITY_PER_MONTH;
 
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerMonth;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -46,6 +47,11 @@ public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
 			+ " FROM " + TABLE_USER_ACTIVITY_PER_MONTH
 			+ " WHERE " + COL_USER_ACTIVITY_PER_MONTH_USER_ID + " = ?"
 			+ " AND " + COL_USER_ACTIVITY_PER_MONTH_MONTH + " = ?";
+	private static final String SQL_CHECK_RECORD_FOR_MONTH =
+			"SELECT " + COL_USER_ACTIVITY_PER_MONTH_MONTH
+			+ " FROM " + TABLE_USER_ACTIVITY_PER_MONTH
+			+ " WHERE " + COL_USER_ACTIVITY_PER_MONTH_MONTH + " >= ?"
+			+ " LIMIT 1";
 
 	private JdbcTemplate template;
 	private TransactionTemplate transactionTemplate;
@@ -110,8 +116,12 @@ public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
 	};
 
 	@Override
-	public boolean hasRecordForMonth(DateTime prevMonth) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean hasRecordForMonth(Date month) {
+		try {
+			template.queryForObject(SQL_CHECK_RECORD_FOR_MONTH, String.class, month);
+			return true;
+		} catch (EmptyResultDataAccessException e) {
+			return false;
+		}
 	}
 }

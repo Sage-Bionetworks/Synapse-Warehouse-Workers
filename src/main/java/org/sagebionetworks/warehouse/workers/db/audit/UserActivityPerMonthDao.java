@@ -1,8 +1,8 @@
 package org.sagebionetworks.warehouse.workers.db.audit;
 
+import java.util.Date;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerMonth;
 
 public interface UserActivityPerMonthDao {
@@ -20,11 +20,11 @@ public interface UserActivityPerMonthDao {
 
 	/**
 	 * 
-	 * @param prevMonth
+	 * @param month
 	 * @return true if there exists records for prevMonth in the database,
 	 *         false otherwise.
 	 */
-	public boolean hasRecordForMonth(DateTime prevMonth);
+	public boolean hasRecordForMonth(Date month);
 
 	/**
 	 * Insert on duplicate key update a batch of UserActivityPerMonth to the DB.
