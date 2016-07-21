@@ -1,4 +1,4 @@
-package org.sagebionetworks.warehouse.workers.db.snapshot;
+package org.sagebionetworks.warehouse.workers.db.audit;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_MONTH;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_UNIQUE_DATE;
@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerMonth;
@@ -107,4 +108,10 @@ public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
 			return uar;
 		}
 	};
+
+	@Override
+	public boolean hasRecordForMonth(DateTime prevMonth) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

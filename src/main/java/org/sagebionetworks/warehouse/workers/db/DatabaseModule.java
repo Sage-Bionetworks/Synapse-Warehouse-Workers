@@ -6,6 +6,8 @@ import javax.sql.DataSource;
 
 import org.sagebionetworks.database.semaphore.CountingSemaphore;
 import org.sagebionetworks.database.semaphore.CountingSemaphoreImpl;
+import org.sagebionetworks.warehouse.workers.db.audit.UserActivityPerMonthDao;
+import org.sagebionetworks.warehouse.workers.db.audit.UserActivityPerMonthDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDao;
@@ -26,8 +28,6 @@ import org.sagebionetworks.warehouse.workers.db.snapshot.TeamSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.TeamSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerClientPerDayDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerClientPerDayDaoImpl;
-import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerMonthDao;
-import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerMonthDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDao;
