@@ -51,4 +51,9 @@ public interface Configuration {
 	 * @return
 	 */
 	public int getMaintenanceEndTime();
+
+	/**
+	 * @return the day of the month that we will run the audit queries
+	 */
+	public int getMonthlyAuditDay();
 }
