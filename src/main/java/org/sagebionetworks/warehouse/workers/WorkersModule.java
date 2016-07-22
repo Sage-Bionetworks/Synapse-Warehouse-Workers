@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.sagebionetworks.database.semaphore.CountingSemaphore;
+import org.sagebionetworks.warehouse.workers.audit.UserActivityPerMonthWorkerConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.bucket.BucketScanningConfigurationProvider;
@@ -253,6 +254,7 @@ public class WorkersModule extends AbstractModule {
 		list.add(VerificationSubmissionStateRecordConfigurationProvider.class);
 		list.add(BulkFileDownloadRecordConfigurationProvider.class);
 		list.add(UserActivityPerClientPerDayConfigurationProvider.class);
+		list.add(UserActivityPerMonthWorkerConfigurationProvider.class);
 		return list;
 	}
 	
