@@ -27,4 +27,19 @@ public class DateTimeUtils {
 		DateTime time = new DateTime(date);
 		return String.format(DATE_FORMAT, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
 	}
+
+	/**
+	 * 
+	 * @param time
+	 * @return the first day of the previous month
+	 */
+	public static DateTime getPrevMonthAndFloor(DateTime time) {
+		DateTime prevMonth = time.minusMonths(1)
+				.withDayOfMonth(1)
+				.withHourOfDay(0)
+				.withMinuteOfHour(0)
+				.withSecondOfMinute(0)
+				.withMillisOfSecond(0);
+		return prevMonth;
+	}
 }

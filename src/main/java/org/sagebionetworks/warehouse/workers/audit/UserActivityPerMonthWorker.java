@@ -1,5 +1,7 @@
 package org.sagebionetworks.warehouse.workers.audit;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -8,6 +10,8 @@ import org.sagebionetworks.common.util.progress.ProgressingRunner;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.audit.UserActivityPerMonthDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerClientPerDayDao;
+import org.sagebionetworks.warehouse.workers.model.UserActivityPerMonth;
+import org.sagebionetworks.warehouse.workers.utils.DateTimeUtils;
 
 import com.google.inject.Inject;
 
@@ -33,19 +37,14 @@ public class UserActivityPerMonthWorker implements ProgressingRunner<Void>{
 		if (time.getDayOfMonth() != config.getMonthlyAuditDay()) {
 			return;
 		}
-		DateTime prevMonth = time.minusMonths(1)
-				.withDayOfMonth(0)
-				.withHourOfDay(0)
-				.withMinuteOfHour(0)
-				.withSecondOfMinute(0)
-				.withMillisOfSecond(0);
-		// find out if there are records for prev month
-		if (userActivityPerMonthDao.hasRecordForMonth(prevMonth)) {
+		DateTime prevMonth = DateTimeUtils.getPrevMonthAndFloor(time);
+		if (userActivityPerMonthDao.hasRecordForMonth(prevMonth.toDate())) {
 			return;
 		}
-		// find all records for prev month
-		// insert all records for prev month
+		log.trace("Processing UserActivityPerMonth for "+prevMonth.toString());
+		List<UserActivityPerMonth> batch = userActivityPerClientPerDayDao.getUserActivityPerMonth(prevMonth.toDate());
+		userActivityPerMonthDao.insert(batch);
+		log.info("Inserted "+batch.size()+" records for "+prevMonth.toString());
 	}
-
 
 }
