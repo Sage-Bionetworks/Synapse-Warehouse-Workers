@@ -6,6 +6,8 @@ import javax.sql.DataSource;
 
 import org.sagebionetworks.database.semaphore.CountingSemaphore;
 import org.sagebionetworks.database.semaphore.CountingSemaphoreImpl;
+import org.sagebionetworks.warehouse.workers.db.audit.UserActivityPerMonthDao;
+import org.sagebionetworks.warehouse.workers.db.audit.UserActivityPerMonthDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDao;
@@ -77,6 +79,7 @@ public class DatabaseModule extends AbstractModule {
 		bind(VerificationSubmissionStateRecordDao.class).to(VerificationSubmissionStateRecordDaoImpl.class);
 		bind(BulkFileDownloadRecordDao.class).to(BulkFileDownloadRecordDaoImpl.class);
 		bind(UserActivityPerClientPerDayDao.class).to(UserActivityPerClientPerDayDaoImpl.class);
+		bind(UserActivityPerMonthDao.class).to(UserActivityPerMonthDaoImpl.class);
 	}
 	
 	/**
@@ -165,6 +168,7 @@ public class DatabaseModule extends AbstractModule {
 		tableConfigList.add(VerificationSubmissionStateRecordDaoImpl.CONFIG);
 		tableConfigList.add(BulkFileDownloadRecordDaoImpl.CONFIG);
 		tableConfigList.add(UserActivityPerClientPerDayDaoImpl.CONFIG);
+		tableConfigList.add(UserActivityPerMonthDaoImpl.CONFIG);
 		return tableConfigList;
 	}
 }

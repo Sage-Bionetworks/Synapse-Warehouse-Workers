@@ -176,7 +176,7 @@ public class AccessRecordUtilsTest {
 		expected.setDate("date");
 		expected.setClient(Client.WEB);
 
-		assertEquals(expected, AccessRecordUtils.getUserAccessRecord(ar));
+		assertEquals(expected, AccessRecordUtils.getUserActivityPerClientPerDay(ar));
 	}
 
 	/*

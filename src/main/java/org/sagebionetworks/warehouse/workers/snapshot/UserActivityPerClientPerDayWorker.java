@@ -97,7 +97,7 @@ public class UserActivityPerClientPerDayWorker implements MessageDrivenRunner, S
 			log.error("Invalid Access Record: " + record.toString());
 			return null;
 		}
-		return Arrays.asList(AccessRecordUtils.getUserAccessRecord(record));
+		return Arrays.asList(AccessRecordUtils.getUserActivityPerClientPerDay(record));
 	}
 
 }

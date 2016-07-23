@@ -18,6 +18,7 @@ import com.google.inject.Singleton;
 @Singleton
 public class ConfigurationImpl implements Configuration {
 
+	private static final int MONTHLY_AUDIT_DAY = 7;
 	private static final int MAINTENANCE_START_TIME = 8;
 	private static final int MAINTENANCE_END_TIME = 9;
 	private static final String CONFIGURATION_PROPERTIES = "configuration.properties";
@@ -107,6 +108,11 @@ public class ConfigurationImpl implements Configuration {
 	@Override
 	public int getMaintenanceEndTime() {
 		return MAINTENANCE_END_TIME;
+	}
+
+	@Override
+	public int getMonthlyAuditDay() {
+		return MONTHLY_AUDIT_DAY;
 	}
 
 }
