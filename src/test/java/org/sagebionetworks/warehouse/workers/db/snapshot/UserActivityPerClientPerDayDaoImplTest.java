@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -65,9 +66,9 @@ public class UserActivityPerClientPerDayDaoImplTest {
 	@Test
 	public void testGetUserActivityPerMonthNoRecords(){
 		Date month = new DateTime().withDate(2016, 1, 1).withTime(0, 0, 0, 0).toDate();
-		List<UserActivityPerMonth> results = dao.getUserActivityPerMonth(month);
+		Iterator<UserActivityPerMonth> results = dao.getUserActivityPerMonth(month);
 		assertNotNull(results);
-		assertTrue(results.isEmpty());
+		assertFalse(results.hasNext());
 	}
 
 	@Test
@@ -84,17 +85,18 @@ public class UserActivityPerClientPerDayDaoImplTest {
 
 		dao.insert(Arrays.asList(uar1, uar2, uar3, uar4, uar5, uar6));
 		Date month = new DateTime().withDate(2016, 1, 1).withTime(0, 0, 0, 0).toDate();
-		List<UserActivityPerMonth> results = dao.getUserActivityPerMonth(month);
+		Iterator<UserActivityPerMonth> results = dao.getUserActivityPerMonth(month);
 		assertNotNull(results);
-		assertEquals(3, results.size());
 
 		UserActivityPerMonth ua1 = createUserActivityPerMonth(1L, "2016-01-01", 2L);
 		UserActivityPerMonth ua2 = createUserActivityPerMonth(2L, "2016-01-01", 1L);
 		UserActivityPerMonth ua3 = createUserActivityPerMonth(3L, "2016-01-01", 1L);
+		List<UserActivityPerMonth> expected = Arrays.asList(ua1, ua2, ua3);
 
-		assertTrue(results.contains(ua1));
-		assertTrue(results.contains(ua2));
-		assertTrue(results.contains(ua3));
+		assertTrue(expected.contains(results.next()));
+		assertTrue(expected.contains(results.next()));
+		assertTrue(expected.contains(results.next()));
+		assertFalse(results.hasNext());
 	}
 
 	private UserActivityPerMonth createUserActivityPerMonth(long userId, String month, long uniqueDate) {

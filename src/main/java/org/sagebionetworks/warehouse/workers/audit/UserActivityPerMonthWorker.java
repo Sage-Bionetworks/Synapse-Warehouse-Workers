@@ -1,5 +1,7 @@
 package org.sagebionetworks.warehouse.workers.audit;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +18,8 @@ import org.sagebionetworks.warehouse.workers.utils.DateTimeUtils;
 import com.google.inject.Inject;
 
 public class UserActivityPerMonthWorker implements ProgressingRunner<Void>{
+	public static final int MONTHS_TO_PROCESS = 24;
+	private static final int BATCH_SIZE = 1000;
 	private static Logger log = LogManager.getLogger(UserActivityPerMonthWorker.class);
 
 	UserActivityPerMonthDao userActivityPerMonthDao;
@@ -34,17 +38,34 @@ public class UserActivityPerMonthWorker implements ProgressingRunner<Void>{
 	@Override
 	public void run(ProgressCallback<Void> progressCallback) throws Exception {
 		DateTime time = new DateTime();
-		if (time.getDayOfMonth() != config.getMonthlyAuditDay()) {
-			return;
+		DateTime prevMonth = DateTimeUtils.getFirstDayOfPreviousMonth(time);
+		if (time.getDayOfMonth() < config.getMonthlyAuditDay()) {
+			prevMonth = prevMonth.minusMonths(1);
 		}
-		DateTime prevMonth = DateTimeUtils.getPrevMonthAndFloor(time);
-		if (userActivityPerMonthDao.hasRecordForMonth(prevMonth.toDate())) {
-			return;
+		for (int i = 0; i < MONTHS_TO_PROCESS; i++) {
+			if (!userActivityPerMonthDao.hasRecordForMonth(prevMonth.toDate())) {
+				updateUserActivityForMonth(prevMonth, BATCH_SIZE);
+			}
+			prevMonth = prevMonth.minusMonths(1);
 		}
-		log.trace("Processing UserActivityPerMonth for "+prevMonth.toString());
-		List<UserActivityPerMonth> batch = userActivityPerClientPerDayDao.getUserActivityPerMonth(prevMonth.toDate());
-		userActivityPerMonthDao.insert(batch);
-		log.info("Inserted "+batch.size()+" records for "+prevMonth.toString());
+	}
+
+	public void updateUserActivityForMonth(DateTime month, int batchSize) {
+		log.trace("Processing UserActivityPerMonth for "+month.toString());
+		Iterator<UserActivityPerMonth> it = userActivityPerClientPerDayDao.getUserActivityPerMonth(month.toDate());
+		List<UserActivityPerMonth> batch = new ArrayList<UserActivityPerMonth>();
+		while (it.hasNext()) {
+			batch.add(it.next());
+			if (batch.size() == batchSize) {
+				userActivityPerMonthDao.insert(batch);
+				log.info("Inserted "+batch.size()+" records for "+month.toString());
+				batch.clear();
+			}
+		}
+		if (batch.size() > 0) {
+			userActivityPerMonthDao.insert(batch);
+			log.info("Inserted "+batch.size()+" records for "+month.toString());
+		}
 	}
 
 }

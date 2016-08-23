@@ -163,5 +163,5 @@ public class Sql {
 	public static final String TABLE_USER_ACTIVITY_PER_MONTH = "USER_ACTIVITY_PER_MONTH";
 	public static final String COL_USER_ACTIVITY_PER_MONTH_USER_ID = "USER_ID";
 	public static final String COL_USER_ACTIVITY_PER_MONTH_MONTH = "MONTH";
-	public static final String COL_USER_ACTIVITY_PER_MONTH_UNIQUE_DATE = "UNIQUE_DATE";
+	public static final String COL_USER_ACTIVITY_PER_MONTH_ACTIVE_DAY_COUNT = "ACTIVE_DAY_COUNT";
 }

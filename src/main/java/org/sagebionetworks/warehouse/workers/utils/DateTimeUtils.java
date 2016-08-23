@@ -33,7 +33,7 @@ public class DateTimeUtils {
 	 * @param time
 	 * @return the first day of the previous month
 	 */
-	public static DateTime getPrevMonthAndFloor(DateTime time) {
+	public static DateTime getFirstDayOfPreviousMonth(DateTime time) {
 		DateTime prevMonth = time.minusMonths(1)
 				.withDayOfMonth(1)
 				.withHourOfDay(0)

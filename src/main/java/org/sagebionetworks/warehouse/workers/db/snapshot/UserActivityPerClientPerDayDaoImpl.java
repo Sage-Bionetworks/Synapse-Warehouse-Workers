@@ -6,11 +6,13 @@ import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER
 import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.sagebionetworks.warehouse.workers.db.PagingQueryIterator;
 import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
 import org.sagebionetworks.warehouse.workers.db.TableCreator;
 import org.sagebionetworks.warehouse.workers.db.transaction.RequiresNew;
@@ -32,6 +34,7 @@ import com.google.inject.Singleton;
 @Singleton
 public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClientPerDayDao {
 
+	private static final long MAX_PAGE_SIZE = 1000L;
 	public static final String USER_ACTIVITY_PER_CLIENT_PER_DAY_DDL_SQL = "UserActivityPerClientPerDay.ddl.sql";
 	public static final TableConfiguration CONFIG = new TableConfiguration(
 			TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY,
@@ -129,9 +132,10 @@ public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClient
 	}
 
 	@Override
-	public List<UserActivityPerMonth> getUserActivityPerMonth(final Date month) {
+	public Iterator<UserActivityPerMonth> getUserActivityPerMonth(final Date month) {
 		Date nextMonth = DateTimeUtils.getNextMonth(month);
-		return template.query(SQL_GET_USER_ACTIVITY_PER_MONTH, new RowMapper<UserActivityPerMonth>(){
+		return new PagingQueryIterator<UserActivityPerMonth>(MAX_PAGE_SIZE,
+				template, SQL_GET_USER_ACTIVITY_PER_MONTH, new RowMapper<UserActivityPerMonth>(){
 
 			@Override
 			public UserActivityPerMonth mapRow(ResultSet rs, int rowNum) throws SQLException {

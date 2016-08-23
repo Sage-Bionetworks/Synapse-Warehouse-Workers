@@ -1,7 +1,7 @@
 package org.sagebionetworks.warehouse.workers.db.audit;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_MONTH;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_UNIQUE_DATE;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_ACTIVE_DAY_COUNT;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_USER_ID;
 import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_USER_ACTIVITY_PER_MONTH;
 
@@ -40,9 +40,9 @@ public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
 	private static final String INSERT = "INSERT INTO " + TABLE_USER_ACTIVITY_PER_MONTH + " ("
 			+ COL_USER_ACTIVITY_PER_MONTH_USER_ID + ","
 			+ COL_USER_ACTIVITY_PER_MONTH_MONTH + ","
-			+ COL_USER_ACTIVITY_PER_MONTH_UNIQUE_DATE + ")"
+			+ COL_USER_ACTIVITY_PER_MONTH_ACTIVE_DAY_COUNT + ")"
 			+ " VALUES (?,?,?) ON DUPLICATE KEY UPDATE "
-			+ COL_USER_ACTIVITY_PER_MONTH_UNIQUE_DATE + " = ?";
+			+ COL_USER_ACTIVITY_PER_MONTH_ACTIVE_DAY_COUNT + " = ?";
 	private static final String SQL_GET = "SELECT *"
 			+ " FROM " + TABLE_USER_ACTIVITY_PER_MONTH
 			+ " WHERE " + COL_USER_ACTIVITY_PER_MONTH_USER_ID + " = ?"
@@ -110,7 +110,7 @@ public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
 			UserActivityPerMonth uar = new UserActivityPerMonth();
 			uar.setUserId(rs.getLong(COL_USER_ACTIVITY_PER_MONTH_USER_ID));
 			uar.setMonth(rs.getString(COL_USER_ACTIVITY_PER_MONTH_MONTH));
-			uar.setUniqueDate(rs.getLong(COL_USER_ACTIVITY_PER_MONTH_UNIQUE_DATE));
+			uar.setUniqueDate(rs.getLong(COL_USER_ACTIVITY_PER_MONTH_ACTIVE_DAY_COUNT));
 			return uar;
 		}
 	};
