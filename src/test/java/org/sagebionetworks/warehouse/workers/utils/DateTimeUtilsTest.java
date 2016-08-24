@@ -30,12 +30,12 @@ public class DateTimeUtilsTest {
 	@Test
 	public void testGetPreviousMonthSameYear() {
 		DateTime date = new DateTime(2016, 2, 21, 0, 0);
-		assertEquals(new DateTime(2016, 1, 1, 0, 0), DateTimeUtils.getPrevMonthAndFloor(date));
+		assertEquals(new DateTime(2016, 1, 1, 0, 0), DateTimeUtils.getFirstDayOfPreviousMonth(date));
 	}
 
 	@Test
 	public void testGetPreviousMonthDifferentYear() {
 		DateTime date = new DateTime(2016, 1, 21, 0, 0);
-		assertEquals(new DateTime(2015, 12, 1, 0, 0), DateTimeUtils.getPrevMonthAndFloor(date));
+		assertEquals(new DateTime(2015, 12, 1, 0, 0), DateTimeUtils.getFirstDayOfPreviousMonth(date));
 	}
 }

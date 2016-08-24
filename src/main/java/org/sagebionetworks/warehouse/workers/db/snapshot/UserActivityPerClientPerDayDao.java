@@ -1,7 +1,7 @@
 package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Iterator;
 
 import org.sagebionetworks.warehouse.workers.db.HasPartitions;
 import org.sagebionetworks.warehouse.workers.model.Client;
@@ -23,7 +23,7 @@ public interface UserActivityPerClientPerDayDao extends HasPartitions, SnapshotD
 
 	/**
 	 * @param month
-	 * @return a batch of UserActivityPerMonth for the given month
+	 * @return an iterator of all UserActivityPerMonth for the given month
 	 */
-	public List<UserActivityPerMonth> getUserActivityPerMonth(Date month);
+	public Iterator<UserActivityPerMonth> getUserActivityPerMonth(Date month);
 }
