@@ -3,6 +3,7 @@ package org.sagebionetworks.warehouse.workers.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.sagebionetworks.common.util.PathNormalizer;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
@@ -10,9 +11,6 @@ import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
 
 public class AccessRecordUtils {
 
-	private static final String AUTH_V1 = "/auth/v1";
-	private static final String FILE_V1 = "/file/v1";
-	private static final String REPO_V1 = "/repo/v1";
 	private static final String R_CLIENT = "synapseRClient";
 	private static final String PYTHON_CLIENT = "python-requests";
 	private static final String WEB_CLIENT = "Synapse-Web-Client";
@@ -21,11 +19,6 @@ public class AccessRecordUtils {
 	private static final String ELB_CLIENT = "ELB-HealthChecker";
 
 	private static final Pattern ENTITY_PATTERN = Pattern.compile("/entity/(syn\\d+|\\d+)");
-	private static final Pattern NUMERIC_PARAM_PATTERN = Pattern.compile("/(syn\\d+|\\d+)");
-	private static final String GET_MD5_URL_PART = "/entity/md5";
-	private static final String GET_EVALUATION_NAME_URL_PART = "/evaluation/name";
-	private static final String GET_ENTITY_ALIAS_URL_PART = "/entity/alias";
-	private static final String NUMBER_REPLACEMENT = "/#";
 
 	/**
 	 * Extract useful information from the access record.
@@ -39,38 +32,8 @@ public class AccessRecordUtils {
 		processed.setTimestamp(accessRecord.getTimestamp());
 		processed.setClient(getClient(accessRecord.getUserAgent()));
 		processed.setEntityId(getEntityId(accessRecord.getRequestURL()));
-		processed.setNormalizedMethodSignature(normalizeMethodSignature(accessRecord.getRequestURL(), accessRecord.getMethod()));
+		processed.setNormalizedMethodSignature(accessRecord.getMethod() + " " +PathNormalizer.normalizeMethodSignature(accessRecord.getRequestURL()) );
 		return processed;
-	}
-
-	/**
-	 * Normalize the access record's request URL and concatenate it with method
-	 * 
-	 * @param requestURL
-	 * @param method
-	 * @return
-	 */
-	public static String normalizeMethodSignature(String requestURL, String method) {
-		requestURL = requestURL.toLowerCase();
-		if (requestURL.startsWith(REPO_V1) || requestURL.startsWith(FILE_V1) || requestURL.startsWith(AUTH_V1)) {
-			requestURL = requestURL.substring(8);
-		}
-		if (method.equals("GET") && requestURL.startsWith(GET_MD5_URL_PART)) {
-			return method + " " + GET_MD5_URL_PART + NUMBER_REPLACEMENT;
-		}
-		if (method.equals("GET") && requestURL.startsWith(GET_EVALUATION_NAME_URL_PART)) {
-			return method + " " + GET_EVALUATION_NAME_URL_PART + NUMBER_REPLACEMENT;
-		}
-		if (method.equals("GET") && requestURL.startsWith(GET_ENTITY_ALIAS_URL_PART)) {
-			return method + " " + GET_ENTITY_ALIAS_URL_PART + NUMBER_REPLACEMENT;
-		}
-		Matcher matcher = NUMERIC_PARAM_PATTERN.matcher(requestURL);
-		StringBuffer buffer = new StringBuffer();
-		while (matcher.find()) {
-			matcher.appendReplacement(buffer, NUMBER_REPLACEMENT);
-		}
-		matcher.appendTail(buffer);
-		return method + " " + buffer;
 	}
 
 	/**

@@ -84,64 +84,6 @@ public class AccessRecordUtilsTest {
 	}
 
 	/*
-	 * Synapse API Tests
-	 */
-	@Test
-	public void urlWithoutParameters() {
-		assertEquals("POST /certifiedusertestresponse", AccessRecordUtils.normalizeMethodSignature("/repo/v1/certifiedUserTestResponse", "POST"));
-	}
-
-	@Test
-	public void urlWithSynId() {
-		assertEquals("GET /entity/#/bundle", AccessRecordUtils.normalizeMethodSignature("/repo/v1/entity/syn1571204/bundle", "GET"));
-	}
-
-	@Test
-	public void urlWithEvaluationSubmissionId() {
-		assertEquals("GET /evaluation/submission/#/status", AccessRecordUtils.normalizeMethodSignature("/repo/v1/evaluation/submission/2813223/status", "GET"));
-	}
-
-	@Test
-	public void urlWithEntityIdAndVersionNumber() {
-		assertEquals("GET /entity/#/version/#/filepreview", AccessRecordUtils.normalizeMethodSignature("/repo/v1/entity/syn2785825/version/1/filepreview", "GET"));
-	}
-
-	@Test
-	public void urlWithWiki2AndWikiVersionNumber() {
-		assertEquals("PUT /evaluation/#/wiki2/#/#", AccessRecordUtils.normalizeMethodSignature("/repo/v1/evaluation/2785825/wiki2/2813234/2", "PUT"));
-	}
-
-	@Test
-	public void urlWith4IdFields() {
-		assertEquals("GET /entity/#/table/column/#/row/#/version/#/filepreview", AccessRecordUtils.normalizeMethodSignature("/repo/v1/entity/syn3456789/table/column/1/row/12/version/2/filepreview", "GET"));
-	}
-
-	@Test
-	public void urlStartWithFileV1() {
-		assertEquals("POST /createchunkedfileuploadchunkurl", AccessRecordUtils.normalizeMethodSignature("/file/v1/createChunkedFileUploadChunkURL", "POST"));
-	}
-
-	@Test
-	public void urlStartWithAuthV1() {
-		assertEquals("POST /session", AccessRecordUtils.normalizeMethodSignature("/auth/v1/session", "POST"));
-	}
-
-	@Test
-	public void md5UrlTest() {
-		assertEquals("GET /entity/md5/#", AccessRecordUtils.normalizeMethodSignature("/repo/v1/entity/md5/0b3ea097271bd405839fca053688c5aa", "GET"));
-	}
-
-	@Test
-	public void evaluationNameUrlTest() {
-		assertEquals("GET /evaluation/name/#", AccessRecordUtils.normalizeMethodSignature("/repo/v1/evaluation/name/challenge0evaluation", "GET"));
-	}
-
-	@Test
-	public void entityAliasUrlTest() {
-		assertEquals("GET /entity/alias/#", AccessRecordUtils.normalizeMethodSignature("/repo/v1/entity/alias/auditData", "GET"));
-	}
-
-	/*
 	 * processAccessRecord() Test
 	 */
 	@Test
