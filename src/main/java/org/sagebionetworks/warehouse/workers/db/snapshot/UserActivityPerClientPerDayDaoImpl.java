@@ -39,9 +39,9 @@ public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClient
 	public static final TableConfiguration CONFIG = new TableConfiguration(
 			TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY,
 			USER_ACTIVITY_PER_CLIENT_PER_DAY_DDL_SQL,
-			true,
-			COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE,
-			Period.MONTH);
+			false,
+			null,
+			null);
 
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY;
 	private static final String INSERT = "INSERT IGNORE INTO " + TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY + " ("
