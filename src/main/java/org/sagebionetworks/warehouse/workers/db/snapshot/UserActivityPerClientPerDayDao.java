@@ -3,12 +3,11 @@ package org.sagebionetworks.warehouse.workers.db.snapshot;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.sagebionetworks.warehouse.workers.db.HasPartitions;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerMonth;
 
-public interface UserActivityPerClientPerDayDao extends HasPartitions, SnapshotDao<UserActivityPerClientPerDay>{
+public interface UserActivityPerClientPerDayDao extends SnapshotDao<UserActivityPerClientPerDay>{
 
 	/**
 	 * 

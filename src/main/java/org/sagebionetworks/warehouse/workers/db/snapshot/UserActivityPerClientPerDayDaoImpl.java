@@ -20,7 +20,6 @@ import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerMonth;
 import org.sagebionetworks.warehouse.workers.utils.DateTimeUtils;
-import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -125,11 +124,6 @@ public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClient
 			return uar;
 		}
 	};
-
-	@Override
-	public boolean doesPartitionExistForTimestamp(long timeMS) {
-		return creator.doesPartitionExist(TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY, timeMS, CONFIG.getPartitionPeriod());
-	}
 
 	@Override
 	public Iterator<UserActivityPerMonth> getUserActivityPerMonth(final Date month) {
