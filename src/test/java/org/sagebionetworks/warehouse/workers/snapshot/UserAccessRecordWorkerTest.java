@@ -51,7 +51,6 @@ public class UserAccessRecordWorkerTest {
 		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
 		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(UserActivityPerClientPerDayWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(UserActivityPerClientPerDayWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
 		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
-		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(true);
 	}
 
 	@Test
@@ -62,12 +61,6 @@ public class UserAccessRecordWorkerTest {
 		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader).close();
-	}
-
-	@Test (expected=RecoverableMessageException.class)
-	public void invalidTimeTest() throws RecoverableMessageException, IOException {
-		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(false);
-		worker.run(mockCallback, message);
 	}
 
 	@Test
