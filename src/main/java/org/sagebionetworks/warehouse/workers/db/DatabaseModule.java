@@ -18,6 +18,8 @@ import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizQuestionRe
 import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizQuestionRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizRecordDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizRecordDaoImpl;
+import org.sagebionetworks.warehouse.workers.db.snapshot.DeletedNodeSnapshotDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.DeletedNodeSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.NodeSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.NodeSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.ProcessedAccessRecordDao;
@@ -80,6 +82,7 @@ public class DatabaseModule extends AbstractModule {
 		bind(BulkFileDownloadRecordDao.class).to(BulkFileDownloadRecordDaoImpl.class);
 		bind(UserActivityPerClientPerDayDao.class).to(UserActivityPerClientPerDayDaoImpl.class);
 		bind(UserActivityPerMonthDao.class).to(UserActivityPerMonthDaoImpl.class);
+		bind(DeletedNodeSnapshotDao.class).to(DeletedNodeSnapshotDaoImpl.class);
 	}
 	
 	/**
@@ -169,6 +172,7 @@ public class DatabaseModule extends AbstractModule {
 		tableConfigList.add(BulkFileDownloadRecordDaoImpl.CONFIG);
 		tableConfigList.add(UserActivityPerClientPerDayDaoImpl.CONFIG);
 		tableConfigList.add(UserActivityPerMonthDaoImpl.CONFIG);
+		tableConfigList.add(DeletedNodeSnapshotDaoImpl.CONFIG);
 		return tableConfigList;
 	}
 }
