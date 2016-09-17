@@ -14,7 +14,7 @@ import org.sagebionetworks.warehouse.workers.utils.PrincipalSnapshotUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.google.inject.Inject;
 
-public class TeamSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, TeamSnapshot> implements SnapshotWorker<ObjectRecord, TeamSnapshot> {
+public class TeamSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, TeamSnapshot> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedTeamSnapshot";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -34,7 +34,7 @@ public class TeamSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, Tea
 	public List<TeamSnapshot> convert(ObjectRecord record) {
 		TeamSnapshot snapshot = PrincipalSnapshotUtils.getTeamSnapshot(record);
 		if (!PrincipalSnapshotUtils.isValidTeamSnapshot(snapshot)) {
-			log.error("Invalid Team Snapshot from Record: " + record.toString());
+			log.error("Invalid Team Snapshot from Record: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return Arrays.asList(snapshot);

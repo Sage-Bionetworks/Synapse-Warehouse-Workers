@@ -53,6 +53,11 @@ public class BulkFileDownloadRecordUtilsTest {
 		assertFalse(BulkFileDownloadRecordUtils.isValidBulkFileDownloadRecord(snapshot));
 	}
 
+	@Test
+	public void invalidBulkFileDownloadRecordsWithNullObject() {
+		assertFalse(BulkFileDownloadRecordUtils.isValidBulkFileDownloadRecords(null));
+	}
+
 	/*
 	 * getBulkFileDownloadRecords() tests
 	 */

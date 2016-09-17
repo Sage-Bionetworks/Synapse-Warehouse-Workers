@@ -13,7 +13,7 @@ import org.sagebionetworks.warehouse.workers.utils.PassingRecordSnapshotUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.google.inject.Inject;
 
-public class CertifiedQuizQuestionRecordWorker extends AbstractSnapshotWorker<ObjectRecord, CertifiedQuizQuestionRecord> implements SnapshotWorker<ObjectRecord, CertifiedQuizQuestionRecord> {
+public class CertifiedQuizQuestionRecordWorker extends AbstractSnapshotWorker<ObjectRecord, CertifiedQuizQuestionRecord> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedCertifiedQuizQuestionRecord";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -33,7 +33,7 @@ public class CertifiedQuizQuestionRecordWorker extends AbstractSnapshotWorker<Ob
 	public List<CertifiedQuizQuestionRecord> convert(ObjectRecord record) {
 		List<CertifiedQuizQuestionRecord> records = PassingRecordSnapshotUtils.getCertifiedQuizQuestionRecords(record);
 		if (!PassingRecordSnapshotUtils.isValidCertifiedQuizQuestionRecords(records)) {
-			log.error("Invalid Certified Quiz Question Record from: " + record.toString());
+			log.error("Invalid Certified Quiz Question Record from: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return records;

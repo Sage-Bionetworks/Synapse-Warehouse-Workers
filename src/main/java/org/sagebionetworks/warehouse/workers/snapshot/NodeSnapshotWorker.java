@@ -14,7 +14,7 @@ import org.sagebionetworks.warehouse.workers.utils.NodeSnapshotUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.google.inject.Inject;
 
-public class NodeSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, NodeSnapshot> implements SnapshotWorker<ObjectRecord, NodeSnapshot> {
+public class NodeSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, NodeSnapshot> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedNodeSnapshot";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -34,7 +34,7 @@ public class NodeSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, Nod
 	public List<NodeSnapshot> convert(ObjectRecord record) {
 		NodeSnapshot snapshot = NodeSnapshotUtils.getNodeSnapshot(record);
 		if (!NodeSnapshotUtils.isValidNodeSnapshot(snapshot)) {
-			log.error("Invalid Node Snapshot from Record: " + record.toString());
+			log.error("Invalid Node Snapshot from Record: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return Arrays.asList(snapshot);

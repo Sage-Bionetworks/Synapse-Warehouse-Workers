@@ -14,7 +14,7 @@ import org.sagebionetworks.warehouse.workers.utils.PrincipalSnapshotUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.google.inject.Inject;
 
-public class UserProfileSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, UserProfileSnapshot> implements SnapshotWorker<ObjectRecord, UserProfileSnapshot> {
+public class UserProfileSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, UserProfileSnapshot> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedUserProfileSnapshot";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -34,7 +34,7 @@ public class UserProfileSnapshotWorker extends AbstractSnapshotWorker<ObjectReco
 	public List<UserProfileSnapshot> convert(ObjectRecord record) {
 		UserProfileSnapshot snapshot = PrincipalSnapshotUtils.getUserProfileSnapshot(record);
 		if (!PrincipalSnapshotUtils.isValidUserProfileSnapshot(snapshot)) {
-			log.error("Invalid UserProfile Snapshot from Record: " + record.toString());
+			log.error("Invalid UserProfile Snapshot from Record: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return Arrays.asList(snapshot);

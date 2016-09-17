@@ -1,7 +1,6 @@
 package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
-import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.aws.utils.s3.KeyData;
@@ -21,7 +20,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.sqs.model.Message;
 
-public class AbstractSnapshotWorker<K,V> implements MessageDrivenRunner, SnapshotWorker<K,V> {
+public abstract class AbstractSnapshotWorker<K,V> implements MessageDrivenRunner, SnapshotWorker<K,V> {
 	private static final int BATCH_SIZE = 25000;
 	private SnapshotDao<V> dao;
 	private StreamResourceProvider streamResourceProvider;
@@ -80,10 +79,5 @@ public class AbstractSnapshotWorker<K,V> implements MessageDrivenRunner, Snapsho
 			if (reader != null) 	reader.close();
 			if (file != null) 		file.delete();
 		}
-	}
-
-	@Override
-	public List<V> convert(K record) {
-		return null;
 	}
 }

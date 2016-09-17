@@ -14,7 +14,7 @@ import org.sagebionetworks.warehouse.workers.utils.PrincipalSnapshotUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.google.inject.Inject;
 
-public class UserGroupSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, UserGroup> implements SnapshotWorker<ObjectRecord, UserGroup> {
+public class UserGroupSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, UserGroup> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedUserGroupSnapshot";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -34,7 +34,7 @@ public class UserGroupSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord
 	public List<UserGroup> convert(ObjectRecord record) {
 		UserGroup snapshot = PrincipalSnapshotUtils.getUserGroupSnapshot(record);
 		if (!PrincipalSnapshotUtils.isValidUserGroupSnapshot(snapshot)) {
-			log.error("Invalid UserGroup Snapshot from Record: " + record.toString());
+			log.error("Invalid UserGroup Snapshot from Record: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return Arrays.asList(snapshot);

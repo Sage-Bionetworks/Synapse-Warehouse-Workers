@@ -18,7 +18,7 @@ import com.google.inject.Inject;
  * This worker reader a collated access record file from S3, processes it,
  * and write the processed data to PROCESSED_ACCESS_RECORD table.
  */
-public class ProcessAccessRecordWorker extends AbstractSnapshotWorker<AccessRecord, ProcessedAccessRecord> implements SnapshotWorker<AccessRecord, ProcessedAccessRecord> {
+public class ProcessAccessRecordWorker extends AbstractSnapshotWorker<AccessRecord, ProcessedAccessRecord> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecordsToProcess";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -37,7 +37,7 @@ public class ProcessAccessRecordWorker extends AbstractSnapshotWorker<AccessReco
 	@Override
 	public List<ProcessedAccessRecord> convert(AccessRecord record) {
 		if (!AccessRecordUtils.isValidAccessRecord(record)) {
-			log.error("Invalid Access Record: " + record.toString());
+			log.error("Invalid Access Record: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return Arrays.asList(AccessRecordUtils.processAccessRecord(record));

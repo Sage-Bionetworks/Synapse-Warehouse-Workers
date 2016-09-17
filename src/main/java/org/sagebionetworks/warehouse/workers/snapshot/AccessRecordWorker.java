@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 /**
  * This worker reader a collated access record file from S3 and write the data to ACCESS_RECORD table.
  */
-public class AccessRecordWorker extends AbstractSnapshotWorker<AccessRecord, AccessRecord> implements SnapshotWorker<AccessRecord, AccessRecord> {
+public class AccessRecordWorker extends AbstractSnapshotWorker<AccessRecord, AccessRecord>{
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecords";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -35,7 +35,7 @@ public class AccessRecordWorker extends AbstractSnapshotWorker<AccessRecord, Acc
 	@Override
 	public List<AccessRecord> convert(AccessRecord record) {
 		if (!AccessRecordUtils.isValidAccessRecord(record)) {
-			log.error("Invalid Access Record: " + record.toString());
+			log.error("Invalid Access Record: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return Arrays.asList(record);

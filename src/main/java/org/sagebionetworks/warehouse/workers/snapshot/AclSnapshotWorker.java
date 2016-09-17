@@ -14,7 +14,7 @@ import org.sagebionetworks.warehouse.workers.utils.AclSnapshotUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.google.inject.Inject;
 
-public class AclSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, AclSnapshot> implements SnapshotWorker<ObjectRecord, AclSnapshot> {
+public class AclSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, AclSnapshot>{
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedAclRecordSnapshot";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -34,7 +34,7 @@ public class AclSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, AclS
 	public List<AclSnapshot> convert(ObjectRecord record) {
 		AclSnapshot snapshot = AclSnapshotUtils.getAclSnapshot(record);
 		if (!AclSnapshotUtils.isValidAclSnapshot(snapshot)) {
-			log.error("Invalid Acl Snapshot from Record: " + record.toString());
+			log.error("Invalid Acl Snapshot from Record: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return Arrays.asList(snapshot);

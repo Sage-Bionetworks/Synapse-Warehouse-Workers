@@ -13,7 +13,7 @@ import org.sagebionetworks.warehouse.workers.utils.BulkFileDownloadRecordUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.google.inject.Inject;
 
-public class BulkFileDownloadRecordWorker extends AbstractSnapshotWorker<ObjectRecord, BulkFileDownloadRecord> implements SnapshotWorker<ObjectRecord, BulkFileDownloadRecord> {
+public class BulkFileDownloadRecordWorker extends AbstractSnapshotWorker<ObjectRecord, BulkFileDownloadRecord> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedBulkFileDownloadRecord";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -33,7 +33,7 @@ public class BulkFileDownloadRecordWorker extends AbstractSnapshotWorker<ObjectR
 	public List<BulkFileDownloadRecord> convert(ObjectRecord record) {
 		List<BulkFileDownloadRecord> records = BulkFileDownloadRecordUtils.getBulkFileDownloadRecords(record);
 		if (!BulkFileDownloadRecordUtils.isValidBulkFileDownloadRecords(records)) {
-			log.error("Invalid BulkFileDownloadRecord from Record: " + record.toString());
+			log.error("Invalid BulkFileDownloadRecord from Record: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return records;

@@ -1,15 +1,17 @@
 package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.sagebionetworks.csv.utils.ObjectCSVReader;
-import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDao;
-import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
+import org.sagebionetworks.warehouse.workers.db.HasPartitions;
+import org.sagebionetworks.warehouse.workers.db.snapshot.SnapshotDao;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 
@@ -20,24 +22,60 @@ import com.amazonaws.services.sqs.model.Message;
 
 public class AbstractSnapshotWorkerTest {
 
+	class StringWithPartitionsDao implements HasPartitions, SnapshotDao<String> {
+
+		@Override
+		public void insert(List<String> batch) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public boolean doesPartitionExistForTimestamp(long timeMS) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+	}
+
+	class IntToStringWorker extends AbstractSnapshotWorker<Integer, String> {
+
+		public IntToStringWorker(AmazonS3Client s3Client, SnapshotDao<String> dao,
+				StreamResourceProvider streamResourceProvider) {
+			super(s3Client, dao, streamResourceProvider);
+			log = LogManager.getLogger(IntToStringWorker.class);
+			tempFileNamePrefix = "prefix";
+			tempFileNameSuffix = "suffix";
+			snapshotHeader = new String[]{"int"};
+			clazz = Integer.class;
+		}
+
+		@Override
+		public List<String> convert(Integer record) {
+			return Arrays.asList(record.toString());
+		}
+		
+	}
+
 	AmazonS3Client mockS3Client;
-	AccessRecordDao mockDao;
-	AbstractSnapshotWorker<AccessRecord, AccessRecord> worker;
+	StringWithPartitionsDao mockDao;
+	AbstractSnapshotWorker<Integer, String> worker;
 	ProgressCallback<Message> mockCallback;
 	Message message;
 	String messageBody;
 	StreamResourceProvider mockStreamResourceProvider;
 	File mockFile;
-	ObjectCSVReader<AccessRecord> mockObjectCSVReader;
+	ObjectCSVReader<Integer> mockObjectCSVReader;
+	String[] headers = new String[]{"int"};
 
 
 	@SuppressWarnings("unchecked")
 	@Before
 	public void before() {
 		mockS3Client = Mockito.mock(AmazonS3Client.class);
-		mockDao = Mockito.mock(AccessRecordDao.class);
+		mockDao = Mockito.mock(StringWithPartitionsDao.class);
 		mockStreamResourceProvider = Mockito.mock(StreamResourceProvider.class);
-		worker = new AccessRecordWorker(mockS3Client, mockDao, mockStreamResourceProvider);
+		worker = new IntToStringWorker(mockS3Client, mockDao, mockStreamResourceProvider);
 		mockCallback = Mockito.mock(ProgressCallback.class);
 
 		messageBody = "<Message>\n"
@@ -49,18 +87,17 @@ public class AbstractSnapshotWorkerTest {
 
 		mockFile = Mockito.mock(File.class);
 		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
-		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
-		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
+		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq("prefix"), Mockito.eq("suffix"))).thenReturn(mockFile);
+		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, Integer.class, headers)).thenReturn(mockObjectCSVReader);
 		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(true);
-
 	}
 
 	@Test
 	public void runTest() throws Exception {
 		worker.run(mockCallback, message);
-		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
+		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq("prefix"), Mockito.eq("suffix"));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
-		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
+		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, Integer.class, headers);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader).close();
 	}
@@ -79,9 +116,9 @@ public class AbstractSnapshotWorkerTest {
 		} catch (AmazonClientException e) {
 			// expected
 		}
-		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
+		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq("prefix"), Mockito.eq("suffix"));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
-		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, AccessRecord.class, SnapshotHeader.ACCESS_RECORD_HEADERS);
+		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, Integer.class, headers);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader, Mockito.never()).close();
 	}

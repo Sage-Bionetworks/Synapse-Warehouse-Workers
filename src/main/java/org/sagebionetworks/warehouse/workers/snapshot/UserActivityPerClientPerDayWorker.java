@@ -18,7 +18,7 @@ import com.google.inject.Inject;
  * This worker reader a collated access record file from S3, extract user info
  * from it, and write the user data to USER_ACCESS_RECORD table.
  */
-public class UserActivityPerClientPerDayWorker extends AbstractSnapshotWorker<AccessRecord, UserActivityPerClientPerDay> implements SnapshotWorker<AccessRecord, UserActivityPerClientPerDay> {
+public class UserActivityPerClientPerDayWorker extends AbstractSnapshotWorker<AccessRecord, UserActivityPerClientPerDay> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedAccessRecordsToProcess";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -37,7 +37,7 @@ public class UserActivityPerClientPerDayWorker extends AbstractSnapshotWorker<Ac
 	@Override
 	public List<UserActivityPerClientPerDay> convert(AccessRecord record) {
 		if (!AccessRecordUtils.isValidAccessRecord(record)) {
-			log.error("Invalid Access Record: " + record.toString());
+			log.error("Invalid Access Record: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return Arrays.asList(AccessRecordUtils.getUserActivityPerClientPerDay(record));

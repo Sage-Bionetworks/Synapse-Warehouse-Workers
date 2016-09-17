@@ -14,7 +14,7 @@ import org.sagebionetworks.warehouse.workers.utils.VerificationSubmissionSnapsho
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.google.inject.Inject;
 
-public class VerificationSubmissionRecordWorker extends AbstractSnapshotWorker<ObjectRecord, VerificationSubmissionRecord> implements SnapshotWorker<ObjectRecord, VerificationSubmissionRecord> {
+public class VerificationSubmissionRecordWorker extends AbstractSnapshotWorker<ObjectRecord, VerificationSubmissionRecord> {
 
 	public static final String TEMP_FILE_NAME_PREFIX = "collatedVerificationSubmissionRecord";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
@@ -34,7 +34,7 @@ public class VerificationSubmissionRecordWorker extends AbstractSnapshotWorker<O
 	public List<VerificationSubmissionRecord> convert(ObjectRecord record) {
 		VerificationSubmissionRecord snapshot = VerificationSubmissionSnapshotUtils.getVerificationSubmissionRecord(record);
 		if (!VerificationSubmissionSnapshotUtils.isValidVerificationSubmissionRecord(snapshot)) {
-			log.error("Invalid Verification Submission Record from: " + record.toString());
+			log.error("Invalid Verification Submission Record from: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return Arrays.asList(snapshot);
