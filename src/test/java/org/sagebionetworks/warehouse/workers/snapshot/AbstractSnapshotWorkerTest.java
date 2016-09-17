@@ -1,7 +1,6 @@
 package org.sagebionetworks.warehouse.workers.snapshot;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,11 +18,11 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.sqs.model.Message;
 
-public class AccessRecordWorkerTest {
+public class AbstractSnapshotWorkerTest {
 
 	AmazonS3Client mockS3Client;
 	AccessRecordDao mockDao;
-	AccessRecordWorker worker;
+	AbstractSnapshotWorker<AccessRecord, AccessRecord> worker;
 	ProgressCallback<Message> mockCallback;
 	Message message;
 	String messageBody;
@@ -57,7 +56,7 @@ public class AccessRecordWorkerTest {
 	}
 
 	@Test
-	public void runTest() throws RecoverableMessageException, IOException {
+	public void runTest() throws Exception {
 		worker.run(mockCallback, message);
 		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(AccessRecordWorker.TEMP_FILE_NAME_SUFFIX));
 		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
@@ -67,13 +66,13 @@ public class AccessRecordWorkerTest {
 	}
 
 	@Test (expected=RecoverableMessageException.class)
-	public void invalidTimeTest() throws RecoverableMessageException, IOException {
+	public void invalidTimeTest() throws Exception {
 		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(false);
 		worker.run(mockCallback, message);
 	}
 
 	@Test
-	public void deleteFileTest() throws RecoverableMessageException, IOException {
+	public void deleteFileTest() throws Exception {
 		Mockito.when(mockS3Client.getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile))).thenThrow(new AmazonClientException(""));
 		try {
 			worker.run(mockCallback, message);
