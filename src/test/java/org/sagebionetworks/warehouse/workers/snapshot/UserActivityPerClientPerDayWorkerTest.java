@@ -8,30 +8,30 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sagebionetworks.repo.model.audit.ObjectRecord;
+import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
-import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
-import org.sagebionetworks.warehouse.workers.utils.ObjectSnapshotTestUtil;
+import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
+import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
 
-public class AclSnapshotWorkerTest {
+public class UserActivityPerClientPerDayWorkerTest {
 
-	AclSnapshotWorker worker;
+	UserActivityPerClientPerDayWorker worker;
 
 	@Before
 	public void before() {
-		worker = new AclSnapshotWorker(null, null, null);
+		worker = new UserActivityPerClientPerDayWorker(null, null, null);
 	}
 
 	@Test
 	public void testConvertValidRecord() throws JSONObjectAdapterException {
-		List<AclSnapshot> actual = worker.convert(ObjectSnapshotTestUtil.createValidAclObjectRecord());
+		List<UserActivityPerClientPerDay> actual = worker.convert(AccessRecordTestUtil.createValidAccessRecord());
 		assertNotNull(actual);
 		assertEquals(actual.size(), 1);
 	}
 
 	@Test
 	public void testConvertInvalidRecord() throws JSONObjectAdapterException {
-		ObjectRecord record = ObjectSnapshotTestUtil.createValidAclObjectRecord();
+		AccessRecord record = AccessRecordTestUtil.createValidAccessRecord();
 		record.setTimestamp(null);
 		assertNull(worker.convert(record));
 	}

@@ -35,6 +35,7 @@ public class PassingRecordSnapshotUtils {
 	}
 
 	public static boolean isValidCertifiedQuizRecord(CertifiedQuizRecord record) {
+		if (record 						== null) return false;
 		if (record.getResponseId() 		== null) return false;
 		if (record.getUserId() 			== null) return false;
 		if (record.getPassed() 			== null) return false;
@@ -69,6 +70,9 @@ public class PassingRecordSnapshotUtils {
 
 	public static boolean isValidCertifiedQuizQuestionRecords(
 			List<CertifiedQuizQuestionRecord> records) {
+		if (records == null) {
+			return false;
+		}
 		for (CertifiedQuizQuestionRecord record : records) {
 			if (!isValidCertifiedQuizQuestionRecord(record)) {
 				return false;
