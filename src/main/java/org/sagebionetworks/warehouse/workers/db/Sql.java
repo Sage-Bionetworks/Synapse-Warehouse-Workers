@@ -164,4 +164,9 @@ public class Sql {
 	public static final String COL_USER_ACTIVITY_PER_MONTH_USER_ID = "USER_ID";
 	public static final String COL_USER_ACTIVITY_PER_MONTH_MONTH = "MONTH";
 	public static final String COL_USER_ACTIVITY_PER_MONTH_ACTIVE_DAY_COUNT = "ACTIVE_DAY_COUNT";
+
+	// DELETED_NODE_SNAPSHOT
+	public static final String TABLE_DELETED_NODE_SNAPSHOT = 			"DELETED_NODE_SNAPSHOT";
+	public static final String COL_DELETED_NODE_SNAPSHOT_TIMESTAMP = 	"TIMESTAMP";
+	public static final String COL_DELETED_NODE_SNAPSHOT_ID = 			"ID";
 }
