@@ -63,6 +63,9 @@ public class BulkFileDownloadRecordUtils {
 	}
 
 	public static boolean isValidBulkFileDownloadRecords(List<BulkFileDownloadRecord> records) {
+		if (records == null) {
+			return false;
+		}
 		for (BulkFileDownloadRecord record : records) {
 			if (!isValidBulkFileDownloadRecord(record)) {
 				return false;

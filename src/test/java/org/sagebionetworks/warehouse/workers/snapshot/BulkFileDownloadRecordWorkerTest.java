@@ -1,81 +1,56 @@
 package org.sagebionetworks.warehouse.workers.snapshot;
 
-import java.io.File;
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
+import org.sagebionetworks.repo.model.file.BulkFileDownloadResponse;
+import org.sagebionetworks.repo.model.file.FileDownloadStatus;
+import org.sagebionetworks.repo.model.file.FileDownloadSummary;
+import org.sagebionetworks.repo.model.file.FileHandleAssociateType;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
-import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
-import org.sagebionetworks.warehouse.workers.db.snapshot.BulkFileDownloadRecordDao;
-import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
-import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
-import org.sagebionetworks.common.util.progress.ProgressCallback;
-
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.sqs.model.Message;
+import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
+import org.sagebionetworks.warehouse.workers.model.BulkFileDownloadRecord;
 
 public class BulkFileDownloadRecordWorkerTest {
 
-	AmazonS3Client mockS3Client;
-	BulkFileDownloadRecordDao mockDao;
 	BulkFileDownloadRecordWorker worker;
-	ProgressCallback<Message> mockCallback;
-	Message message;
-	String messageBody;
-	StreamResourceProvider mockStreamResourceProvider;
-	File mockFile;
-	ObjectCSVReader<ObjectRecord> mockObjectCSVReader;
 
-	@SuppressWarnings("unchecked")
 	@Before
-	public void before() throws JSONObjectAdapterException {
-		mockS3Client = Mockito.mock(AmazonS3Client.class);
-		mockDao = Mockito.mock(BulkFileDownloadRecordDao.class);
-		mockStreamResourceProvider = Mockito.mock(StreamResourceProvider.class);
-		worker = new BulkFileDownloadRecordWorker(mockS3Client, mockDao, mockStreamResourceProvider);
-		mockCallback = Mockito.mock(ProgressCallback.class);
-		mockFile = Mockito.mock(File.class);
-		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
-
-		messageBody = "<Message>\n"
-				+"  <bucket>bucket</bucket>\n"
-				+"  <key>key</key>\n"
-				+"</Message>";
-		message = new Message();
-		message.setBody(messageBody);
-
-		Mockito.when(mockStreamResourceProvider.createTempFile(Mockito.eq(BulkFileDownloadRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(BulkFileDownloadRecordWorker.TEMP_FILE_NAME_SUFFIX))).thenReturn(mockFile);
-		Mockito.when(mockStreamResourceProvider.createObjectCSVReader(mockFile, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS)).thenReturn(mockObjectCSVReader);
+	public void before() {
+		worker = new BulkFileDownloadRecordWorker(null, null, null);
 	}
 
 	@Test
-	public void runTest() throws RecoverableMessageException, IOException {
-		worker.run(mockCallback, message);
-		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(BulkFileDownloadRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(BulkFileDownloadRecordWorker.TEMP_FILE_NAME_SUFFIX));
-		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
-		Mockito.verify(mockStreamResourceProvider).createObjectCSVReader(mockFile, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS);
-		Mockito.verify(mockFile).delete();
-		Mockito.verify(mockObjectCSVReader).close();
+	public void testConvertValidRecord() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		BulkFileDownloadResponse response = new BulkFileDownloadResponse();
+		response.setUserId("123");
+		FileDownloadSummary fileDownloadSummary = new FileDownloadSummary();
+		fileDownloadSummary.setAssociateObjectId("syn456");
+		fileDownloadSummary.setAssociateObjectType(FileHandleAssociateType.TableEntity);
+		fileDownloadSummary.setFileHandleId("999");
+		fileDownloadSummary.setStatus(FileDownloadStatus.SUCCESS);
+		List<FileDownloadSummary> fileDownloadSummaryList = Arrays.asList(fileDownloadSummary);
+		response.setFileSummary(fileDownloadSummaryList);
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(response));
+		record.setJsonClassName(BulkFileDownloadResponse.class.getSimpleName().toLowerCase());
+		List<BulkFileDownloadRecord> actual = worker.convert(record);
+		assertNotNull(actual);
+		assertEquals(actual.size(), 1);
 	}
 
 	@Test
-	public void deleteFileTest() throws RecoverableMessageException, IOException {
-		Mockito.when(mockS3Client.getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile))).thenThrow(new AmazonClientException(""));
-		try {
-			worker.run(mockCallback, message);
-		} catch (AmazonClientException e) {
-			// expected
-		}
-		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq(BulkFileDownloadRecordWorker.TEMP_FILE_NAME_PREFIX), Mockito.eq(BulkFileDownloadRecordWorker.TEMP_FILE_NAME_SUFFIX));
-		Mockito.verify(mockS3Client).getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile));
-		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, ObjectRecord.class, SnapshotHeader.OBJECT_RECORD_HEADERS);
-		Mockito.verify(mockFile).delete();
-		Mockito.verify(mockObjectCSVReader, Mockito.never()).close();
+	public void testConvertInvalidRecord() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		assertNull(worker.convert(record));
 	}
 }

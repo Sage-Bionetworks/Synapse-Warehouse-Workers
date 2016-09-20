@@ -35,6 +35,11 @@ public class PassingRecordSnapshotUtilsTest {
 	}
 
 	@Test
+	public void invalidCertifiedQuizRecordWithNull() {
+		assertFalse(PassingRecordSnapshotUtils.isValidCertifiedQuizRecord(null));
+	}
+
+	@Test
 	public void invalidCertifiedQuizRecordWithNullResponseId() {
 		CertifiedQuizRecord record = ObjectSnapshotTestUtil.createValidCertifiedQuizRecord();
 		record.setResponseId(null);
@@ -162,6 +167,11 @@ public class PassingRecordSnapshotUtilsTest {
 		CertifiedQuizQuestionRecord record = ObjectSnapshotTestUtil.createValidCertifiedQuizQuestionRecord();
 		record.setIsCorrect(null);
 		assertFalse(PassingRecordSnapshotUtils.isValidCertifiedQuizQuestionRecord(record));
+	}
+
+	@Test
+	public void invalidCertifiedQuizQuestionRecordsWithNull() {
+		assertFalse(PassingRecordSnapshotUtils.isValidCertifiedQuizQuestionRecords(null));
 	}
 
 	/*

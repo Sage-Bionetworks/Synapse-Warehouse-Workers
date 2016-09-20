@@ -17,6 +17,8 @@ public class AccessRecordUtils {
 	private static final String JAVA_CLIENT = "Synpase-Java-Client";
 	private static final String COMMAND_LINE_CLIENT = "synapsecommandlineclient";
 	private static final String ELB_CLIENT = "ELB-HealthChecker";
+	
+	public static final String NON_NORMALIZABLE_SIGNATURE = "NON_NORMALIZABLE";
 
 	private static final Pattern ENTITY_PATTERN = Pattern.compile("/entity/(syn\\d+|\\d+)");
 
@@ -32,7 +34,11 @@ public class AccessRecordUtils {
 		processed.setTimestamp(accessRecord.getTimestamp());
 		processed.setClient(getClient(accessRecord.getUserAgent()));
 		processed.setEntityId(getEntityId(accessRecord.getRequestURL()));
-		processed.setNormalizedMethodSignature(accessRecord.getMethod() + " " +PathNormalizer.normalizeMethodSignature(accessRecord.getRequestURL()) );
+		try {
+			processed.setNormalizedMethodSignature(accessRecord.getMethod() + " " +PathNormalizer.normalizeMethodSignature(accessRecord.getRequestURL()));
+		} catch (IllegalArgumentException e) {
+			processed.setNormalizedMethodSignature(NON_NORMALIZABLE_SIGNATURE);
+		}
 		return processed;
 	}
 

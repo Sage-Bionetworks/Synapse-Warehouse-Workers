@@ -34,6 +34,11 @@ public class VerificationSubmissionSnapshotUtilsTest {
 	}
 
 	@Test
+	public void invalidVerificationSubmissionRecordWithNull() {
+		assertFalse(VerificationSubmissionSnapshotUtils.isValidVerificationSubmissionRecord(null));
+	}
+
+	@Test
 	public void invalidVerificationSubmissionRecordWithNullId() {
 		VerificationSubmissionRecord record = ObjectSnapshotTestUtil.createValidVerificationSubmissionRecord();
 		record.setId(null);
@@ -158,7 +163,12 @@ public class VerificationSubmissionSnapshotUtilsTest {
 		VerificationSubmissionStateRecord record = ObjectSnapshotTestUtil.createValidVerificationSubmissionStateRecord();
 		record.setState(null);
 		assertFalse(VerificationSubmissionSnapshotUtils.isValidVerificationSubmissionStateRecord(record));
-	}	
+	}
+
+	@Test
+	public void invalidVerificationSubmissionStateRecordsWithNull() {
+		assertFalse(VerificationSubmissionSnapshotUtils.isValidVerificationSubmissionStateRecords(null));
+	}
 
 	/*
 	 * getVerificationSubmissionStateRecords() tests

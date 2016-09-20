@@ -34,6 +34,7 @@ public class VerificationSubmissionSnapshotUtils {
 	}
 
 	public static boolean isValidVerificationSubmissionRecord(VerificationSubmissionRecord record) {
+		if (record 					== null) return false;
 		if (record.getId() 			== null) return false;
 		if (record.getCreatedOn() 	== null) return false;
 		if (record.getCreatedBy() 	== null) return false;
@@ -68,6 +69,9 @@ public class VerificationSubmissionSnapshotUtils {
 
 	public static boolean isValidVerificationSubmissionStateRecords(
 			List<VerificationSubmissionStateRecord> records) {
+		if (records == null) {
+			return false;
+		}
 		for (VerificationSubmissionStateRecord record : records) {
 			if (!isValidVerificationSubmissionStateRecord(record)) {
 				return false;

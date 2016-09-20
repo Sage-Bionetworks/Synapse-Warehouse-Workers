@@ -102,6 +102,14 @@ public class AccessRecordUtilsTest {
 
 		assertEquals(expected, AccessRecordUtils.processAccessRecord(ar));
 	}
+	
+	@Test
+	public void testNonNormalizableMethodSignature(){
+		AccessRecord accessRecord = AccessRecordTestUtil.createValidAccessRecord();
+		accessRecord.setRequestURL("/some/fake/path/");
+		ProcessedAccessRecord processedAccessRecord = AccessRecordUtils.processAccessRecord(accessRecord);
+		assertEquals(AccessRecordUtils.NON_NORMALIZABLE_SIGNATURE, processedAccessRecord.getNormalizedMethodSignature());
+	}
 
 	/*
 	 * getUserAccessRecord() Test
