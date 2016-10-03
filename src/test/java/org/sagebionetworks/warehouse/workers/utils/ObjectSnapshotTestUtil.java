@@ -13,6 +13,7 @@ import org.sagebionetworks.repo.model.UserGroup;
 import org.sagebionetworks.repo.model.UserGroupHeader;
 import org.sagebionetworks.repo.model.UserProfile;
 import org.sagebionetworks.repo.model.audit.AclRecord;
+import org.sagebionetworks.repo.model.audit.FileHandleSnapshot;
 import org.sagebionetworks.repo.model.audit.NodeRecord;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.repo.model.file.FileHandleAssociateType;
@@ -340,5 +341,19 @@ public class ObjectSnapshotTestUtil {
 		record.setUserId(random.nextLong());
 		record.setObjectType(FileHandleAssociateType.TableEntity);
 		return record;
+	}
+
+	/**
+	 * 
+	 * @return a valid FileHandleSnapshot
+	 */
+	public static FileHandleSnapshot createValidFileHandleSnapshot() {
+		FileHandleSnapshot snapshot = new FileHandleSnapshot();
+		snapshot.setId(""+random.nextLong());
+		snapshot.setCreatedOn(new Date());
+		snapshot.setCreatedBy(""+random.nextLong());
+		snapshot.setFileName("fileName");
+		snapshot.setConcreteType("concreteType");
+		return snapshot;
 	}
 }
