@@ -178,7 +178,7 @@ public class Sql {
 	public static final String COL_FILE_HANDLE_RECORD_CONCRETE_TYPE = 		"CONCRETE_TYPE";
 	public static final String COL_FILE_HANDLE_RECORD_CONTENT_SIZE = 		"CONTENT_SIZE";
 	public static final String COL_FILE_HANDLE_RECORD_BUCKET = 				"BUCKET";
-	public static final String COL_FILE_HANDLE_RECORD_KEY = 				"_KEY";
+	public static final String COL_FILE_HANDLE_RECORD_KEY = 				"KEY_OR_PATH";
 	public static final String COL_FILE_HANDLE_RECORD_FILE_NAME = 			"FILE_NAME";
 	public static final String COL_FILE_HANDLE_RECORD_CONTENT_MD5 = 		"CONTENT_MD5";
 	public static final String COL_FILE_HANDLE_RECORD_STORAGE_LOCATION_ID = "STORAGE_LOCATION_ID";

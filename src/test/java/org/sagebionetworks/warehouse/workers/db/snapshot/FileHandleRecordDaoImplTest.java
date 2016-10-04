@@ -3,6 +3,7 @@ package org.sagebionetworks.warehouse.workers.db.snapshot;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Random;
 
 import org.junit.After;
@@ -43,6 +44,24 @@ public class FileHandleRecordDaoImplTest {
 		record3.setFileName("new file name");
 		dao.insert(Arrays.asList(record3));
 		assertEquals(record2, dao.get(Long.parseLong(record3.getId())));
+	}
+
+	@Test
+	public void testRecordWithAllFields() {
+		FileHandleSnapshot record = new FileHandleSnapshot();
+		record.setId("1");
+		record.setCreatedOn(new Date());
+		record.setCreatedBy("2");
+		record.setConcreteType("concreteType");
+		record.setFileName("fileName");
+		// not required fields
+		record.setBucket("bucket");
+		record.setKey("key");
+		record.setContentMd5("contentMd5");
+		record.setContentSize(3L);
+		record.setStorageLocationId(4L);
+		dao.insert(Arrays.asList(record));
+		assertEquals(record, dao.get(Long.parseLong(record.getId())));
 	}
 
 	@Test (expected=EmptyResultDataAccessException.class)
