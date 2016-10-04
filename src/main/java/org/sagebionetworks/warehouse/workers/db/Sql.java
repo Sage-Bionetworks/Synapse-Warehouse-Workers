@@ -169,4 +169,18 @@ public class Sql {
 	public static final String TABLE_DELETED_NODE_SNAPSHOT = 			"DELETED_NODE_SNAPSHOT";
 	public static final String COL_DELETED_NODE_SNAPSHOT_TIMESTAMP = 	"TIMESTAMP";
 	public static final String COL_DELETED_NODE_SNAPSHOT_ID = 			"ID";
+
+	// FILE_HANDLE_RECORD
+	public static final String TABLE_FILE_HANDLE_RECORD = 					"FILE_HANDLE_RECORD";
+	public static final String COL_FILE_HANDLE_RECORD_ID = 					"ID";
+	public static final String COL_FILE_HANDLE_RECORD_CREATED_ON = 			"CREATED_ON";
+	public static final String COL_FILE_HANDLE_RECORD_CREATED_BY = 			"CREATED_BY";
+	public static final String COL_FILE_HANDLE_RECORD_CONCRETE_TYPE = 		"CONCRETE_TYPE";
+	public static final String COL_FILE_HANDLE_RECORD_CONTENT_SIZE = 		"CONTENT_SIZE";
+	public static final String COL_FILE_HANDLE_RECORD_BUCKET = 				"BUCKET";
+	public static final String COL_FILE_HANDLE_RECORD_KEY = 				"KEY_OR_PATH";
+	public static final String COL_FILE_HANDLE_RECORD_FILE_NAME = 			"FILE_NAME";
+	public static final String COL_FILE_HANDLE_RECORD_CONTENT_MD5 = 		"CONTENT_MD5";
+	public static final String COL_FILE_HANDLE_RECORD_STORAGE_LOCATION_ID = "STORAGE_LOCATION_ID";
+	
 }
