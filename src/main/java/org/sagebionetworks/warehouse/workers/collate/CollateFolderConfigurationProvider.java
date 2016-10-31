@@ -26,7 +26,7 @@ public class CollateFolderConfigurationProvider implements WorkerStackConfigurat
 		messageConfig.setRunner(worker);
 		messageConfig.setSemaphoreLockAndMessageVisibilityTimeoutSec(60);
 		messageConfig.setSemaphoreLockKey(SemaphoreKey.FOLDER_COLLATE_WORKER.name());
-		messageConfig.setSemaphoreMaxLockCount(10);
+		messageConfig.setSemaphoreMaxLockCount(20);
 		MessageDrivenWorkerStack stack = new MessageDrivenWorkerStack(semaphore, awsSQSClient, awsSNSClient, messageConfig);
 		
 		config = new WorkerStackConfiguration();
