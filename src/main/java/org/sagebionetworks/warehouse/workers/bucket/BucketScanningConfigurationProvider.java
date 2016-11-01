@@ -31,8 +31,8 @@ public class BucketScanningConfigurationProvider implements WorkerStackConfigura
 		this.config = new WorkerStackConfiguration();
 		this.config.setRunner(mainRunner);
 		this.config.setStartDelayMs(2987);
-		// run once per minute.
-		this.config.setPeriodMS(60*1000);
+		// run once per hour.
+		this.config.setPeriodMS(60*60*1000);
 		this.config.setWorkerName(BucketScanningWorker.class.getName());
 	}
 
