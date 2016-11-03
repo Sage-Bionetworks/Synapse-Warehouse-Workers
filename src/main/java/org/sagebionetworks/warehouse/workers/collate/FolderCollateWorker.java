@@ -70,7 +70,7 @@ public class FolderCollateWorker implements LockedFolderRunner {
 		Map<String, List<String>> toCollateGroups = new HashMap<String, List<String>>();
 		// track if all files were collated in this folder.
 		boolean wereAllFilesCollated = true;
-		// group each key ten minute intervals.
+		// group each key COLLATE_INTERVAL_MINUTES minute intervals.
 		while(keyIterator.hasNext()){
 			progressCallback.progressMade(null);
 			String key = keyIterator.next();

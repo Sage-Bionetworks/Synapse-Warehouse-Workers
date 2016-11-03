@@ -54,6 +54,7 @@ public class S3ObjectCollatorImpl implements S3ObjectCollator {
 			collateCSVObjects(progressCallback, bucket, inputFiles, destination, destinationKey, sortColumnIndex);
 			// Collation was successful so delete the original files.
 			for(String toDelete: keysToCollate){
+				progressCallback.progressMade(null);
 				s3Client.deleteObject(bucket, toDelete);
 			}
 		}finally{
@@ -110,7 +111,7 @@ public class S3ObjectCollatorImpl implements S3ObjectCollator {
 			if(writer != null){
 				IOUtils.closeQuietly(writer);
 			}
-		}		
+		}
 	}
 
 }
