@@ -75,6 +75,8 @@ import com.google.inject.Provides;
  */
 public class WorkersModule extends AbstractModule {
 
+	private static final int COLLATE_WORKER_QUEUE_MSG_VISIBILITY_TIMEOUT_SEC = 120;
+
 	@Override
 	protected void configure() {
 		bind(BucketDaoProvider.class).to(BucketDaoProviderImpl.class);
@@ -300,7 +302,7 @@ public class WorkersModule extends AbstractModule {
 	public CollateMessageQueue createCollateMessageQueue(AmazonSQSClient awsSQSClient, AmazonSNSClient awsSNSClient, Configuration config){
 		MessageQueueConfiguration messageConfig = new MessageQueueConfiguration();
 		messageConfig.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.collate.worker.queue.name"));
-		messageConfig.setDefaultMessageVisibilityTimeoutSec(60);
+		messageConfig.setDefaultMessageVisibilityTimeoutSec(COLLATE_WORKER_QUEUE_MSG_VISIBILITY_TIMEOUT_SEC);
 		MessageQueueImpl queue = new MessageQueueImpl(awsSQSClient, awsSNSClient, messageConfig);
 		return new CollateMessageQueue(queue);
 	}
