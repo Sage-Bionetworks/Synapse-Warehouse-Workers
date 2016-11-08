@@ -10,8 +10,9 @@ import org.sagebionetworks.repo.model.file.FileDownloadSummary;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.FileDownload;
+import org.sagebionetworks.warehouse.workers.model.FileHandleDownload;
 
-public class BulkFileDownloadRecordUtils {
+public class FileDownloadRecordUtils {
 
 	/**
 	 * 
@@ -73,6 +74,59 @@ public class BulkFileDownloadRecordUtils {
 				return false;
 			}
 		}
+		return true;
+	}
+
+	public static List<FileHandleDownload> getFileHandleDownloadRecords(ObjectRecord record) {
+		if (record == null || 
+				record.getTimestamp() == null ||
+				record.getJsonString() == null ||
+				record.getJsonClassName() == null || 
+				!record.getJsonClassName().equals(BulkFileDownloadResponse.class.getSimpleName().toLowerCase())) {
+			return null;
+		}
+		try {
+			BulkFileDownloadResponse response = EntityFactory.createEntityFromJSONString(record.getJsonString(), BulkFileDownloadResponse.class);
+			List<FileHandleDownload> records = new ArrayList<FileHandleDownload>();
+			for (FileDownloadSummary fileSummary : response.getFileSummary()) {
+				if (fileSummary.getStatus() != FileDownloadStatus.SUCCESS) {
+					continue;
+				}
+				FileHandleDownload downloadRecord = new FileHandleDownload();
+				downloadRecord.setTimestamp(record.getTimestamp());
+				downloadRecord.setUserId(Long.parseLong(response.getUserId()));
+				downloadRecord.setDownloadedFileHandleId(Long.parseLong(response.getResultZipFileHandleId()));
+				downloadRecord.setRequestedFileHandleId(Long.parseLong(fileSummary.getFileHandleId()));
+				downloadRecord.setAssociationObjectId(ObjectSnapshotUtils.convertSynapseIdToLong(fileSummary.getAssociateObjectId()));
+				downloadRecord.setAssociationObjectType(fileSummary.getAssociateObjectType());
+				records.add(downloadRecord);
+			}
+			return records;
+		} catch (JSONObjectAdapterException | NumberFormatException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static boolean isValidFileHandleDownloadRecords(List<FileHandleDownload> records) {
+		if (records == null) {
+			return false;
+		}
+		for (FileHandleDownload record : records) {
+			if (!isValidFileHandleDownloadRecord(record)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean isValidFileHandleDownloadRecord(FileHandleDownload record) {
+		if (record 								== null) return false;
+		if (record.getTimestamp() 				== null) return false;
+		if (record.getUserId() 					== null) return false;
+		if (record.getDownloadedFileHandleId() 	== null) return false;
+		if (record.getRequestedFileHandleId() 	== null) return false;
+		if (record.getAssociationObjectId() 	== null) return false;
+		if (record.getAssociationObjectType()	== null) return false;
 		return true;
 	}
 

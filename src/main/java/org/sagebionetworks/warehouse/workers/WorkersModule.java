@@ -33,6 +33,8 @@ import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotConfigurationPr
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.BulkFileDownloadRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.BulkFileDownloadRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.BulkFileHandleDownloadRecordConfigurationProvider;
+import org.sagebionetworks.warehouse.workers.snapshot.BulkFileHandleDownloadRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizQuestionRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizQuestionRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizRecordConfigurationProvider;
@@ -231,6 +233,14 @@ public class WorkersModule extends AbstractModule {
 	}
 
 	@Provides
+	public BulkFileHandleDownloadRecordTopicBucketInfo getBulkFileHandleDownloadRecordConfig(Configuration config){
+		BulkFileHandleDownloadRecordTopicBucketInfo info = new BulkFileHandleDownloadRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.bulkfilehandledownloadresponse.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.bulkfilehandledownloadresponse.snapshot"));
+		return info;
+	}
+
+	@Provides
 	public DeletedNodeSnapshotTopicBucketInfo getDeletedNodeSnapshotConfig(Configuration config){
 		DeletedNodeSnapshotTopicBucketInfo info = new DeletedNodeSnapshotTopicBucketInfo();
 		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.deletednode.snapshot"));
@@ -275,6 +285,7 @@ public class WorkersModule extends AbstractModule {
 		list.add(VerificationSubmissionRecordConfigurationProvider.class);
 		list.add(VerificationSubmissionStateRecordConfigurationProvider.class);
 		list.add(BulkFileDownloadRecordConfigurationProvider.class);
+		list.add(BulkFileHandleDownloadRecordConfigurationProvider.class);
 		list.add(UserActivityPerClientPerDayConfigurationProvider.class);
 		list.add(UserActivityPerMonthWorkerConfigurationProvider.class);
 		list.add(DeletedNodeSnapshotConfigurationProvider.class);
