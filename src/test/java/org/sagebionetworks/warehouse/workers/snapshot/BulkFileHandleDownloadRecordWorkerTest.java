@@ -39,6 +39,7 @@ public class BulkFileHandleDownloadRecordWorkerTest {
 		fileDownloadSummary.setStatus(FileDownloadStatus.SUCCESS);
 		List<FileDownloadSummary> fileDownloadSummaryList = Arrays.asList(fileDownloadSummary);
 		response.setFileSummary(fileDownloadSummaryList);
+		response.setResultZipFileHandleId("666");
 		Long timestamp = System.currentTimeMillis();
 		record.setTimestamp(timestamp);
 		record.setJsonString(EntityFactory.createJSONStringForEntity(response));
