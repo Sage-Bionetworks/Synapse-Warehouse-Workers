@@ -16,7 +16,7 @@ import org.sagebionetworks.repo.model.file.FileDownloadSummary;
 import org.sagebionetworks.repo.model.file.FileHandleAssociateType;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
-import org.sagebionetworks.warehouse.workers.model.BulkFileDownloadRecord;
+import org.sagebionetworks.warehouse.workers.model.FileDownload;
 
 public class BulkFileDownloadRecordWorkerTest {
 
@@ -43,7 +43,7 @@ public class BulkFileDownloadRecordWorkerTest {
 		record.setTimestamp(timestamp);
 		record.setJsonString(EntityFactory.createJSONStringForEntity(response));
 		record.setJsonClassName(BulkFileDownloadResponse.class.getSimpleName().toLowerCase());
-		List<BulkFileDownloadRecord> actual = worker.convert(record);
+		List<FileDownload> actual = worker.convert(record);
 		assertNotNull(actual);
 		assertEquals(actual.size(), 1);
 	}

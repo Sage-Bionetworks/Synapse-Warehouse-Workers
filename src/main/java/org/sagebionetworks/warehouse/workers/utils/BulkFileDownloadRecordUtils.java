@@ -1,9 +1,7 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.repo.model.file.BulkFileDownloadResponse;
@@ -11,7 +9,7 @@ import org.sagebionetworks.repo.model.file.FileDownloadStatus;
 import org.sagebionetworks.repo.model.file.FileDownloadSummary;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
-import org.sagebionetworks.warehouse.workers.model.BulkFileDownloadRecord;
+import org.sagebionetworks.warehouse.workers.model.FileDownload;
 
 public class BulkFileDownloadRecordUtils {
 
@@ -21,21 +19,23 @@ public class BulkFileDownloadRecordUtils {
 	 * @return true is the record contains not null values for required fields
 	 *         false otherwise.
 	 */
-	public static boolean isValidBulkFileDownloadRecord(BulkFileDownloadRecord record) {
-		if (record 						== null) return false;
-		if (record.getUserId() 			== null) return false;
-		if (record.getObjectId() 		== null) return false;
-		if (record.getObjectType()		== null) return false;
+	public static boolean isValidFileDownloadRecord(FileDownload record) {
+		if (record 								== null) return false;
+		if (record.getTimestamp() 				== null) return false;
+		if (record.getUserId() 					== null) return false;
+		if (record.getFileHandleId() 			== null) return false;
+		if (record.getAssociationObjectId() 	== null) return false;
+		if (record.getAssociationObjectType()	== null) return false;
 		return true;
 	}
 
 	/**
-	 * Extract download record information and build BulkFileDownloadRecord from the captured record
+	 * Extract download record information and build FileDownload object from the captured record
 	 * 
 	 * @param record
 	 * @return
 	 */
-	public static List<BulkFileDownloadRecord> getBulkFileDownloadRecords(ObjectRecord record) {
+	public static List<FileDownload> getFileDownloadRecords(ObjectRecord record) {
 		if (record == null || 
 				record.getTimestamp() == null ||
 				record.getJsonString() == null ||
@@ -45,29 +45,31 @@ public class BulkFileDownloadRecordUtils {
 		}
 		try {
 			BulkFileDownloadResponse response = EntityFactory.createEntityFromJSONString(record.getJsonString(), BulkFileDownloadResponse.class);
-			Set<BulkFileDownloadRecord> records = new HashSet<BulkFileDownloadRecord>();
+			List<FileDownload> records = new ArrayList<FileDownload>();
 			for (FileDownloadSummary fileSummary : response.getFileSummary()) {
 				if (fileSummary.getStatus() != FileDownloadStatus.SUCCESS) {
 					continue;
 				}
-				BulkFileDownloadRecord downloadRecord = new BulkFileDownloadRecord();
+				FileDownload downloadRecord = new FileDownload();
+				downloadRecord.setTimestamp(record.getTimestamp());
 				downloadRecord.setUserId(Long.parseLong(response.getUserId()));
-				downloadRecord.setObjectId(ObjectSnapshotUtils.convertSynapseIdToLong(fileSummary.getAssociateObjectId()));
-				downloadRecord.setObjectType(fileSummary.getAssociateObjectType());
+				downloadRecord.setFileHandleId(Long.parseLong(fileSummary.getFileHandleId()));
+				downloadRecord.setAssociationObjectId(ObjectSnapshotUtils.convertSynapseIdToLong(fileSummary.getAssociateObjectId()));
+				downloadRecord.setAssociationObjectType(fileSummary.getAssociateObjectType());
 				records.add(downloadRecord);
 			}
-			return new ArrayList<BulkFileDownloadRecord>(records);
+			return records;
 		} catch (JSONObjectAdapterException | NumberFormatException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static boolean isValidBulkFileDownloadRecords(List<BulkFileDownloadRecord> records) {
+	public static boolean isValidFileDownloadRecords(List<FileDownload> records) {
 		if (records == null) {
 			return false;
 		}
-		for (BulkFileDownloadRecord record : records) {
-			if (!isValidBulkFileDownloadRecord(record)) {
+		for (FileDownload record : records) {
+			if (!isValidFileDownloadRecord(record)) {
 				return false;
 			}
 		}

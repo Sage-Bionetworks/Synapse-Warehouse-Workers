@@ -21,9 +21,9 @@ import org.sagebionetworks.repo.model.verification.VerificationStateEnum;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
-import org.sagebionetworks.warehouse.workers.model.BulkFileDownloadRecord;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizQuestionRecord;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizRecord;
+import org.sagebionetworks.warehouse.workers.model.FileDownload;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -333,13 +333,15 @@ public class ObjectSnapshotTestUtil {
 
 	/**
 	 * 
-	 * @return a valid BulkFileDownloadRecord
+	 * @return a valid FileDownload object
 	 */
-	public static BulkFileDownloadRecord createValidBulkFileDownloadRecord() {
-		BulkFileDownloadRecord record = new BulkFileDownloadRecord();
-		record.setObjectId(random.nextLong());
+	public static FileDownload createValidFileDownloadRecord() {
+		FileDownload record = new FileDownload();
+		record.setTimestamp(random.nextLong());
 		record.setUserId(random.nextLong());
-		record.setObjectType(FileHandleAssociateType.TableEntity);
+		record.setFileHandleId(random.nextLong());
+		record.setAssociationObjectId(random.nextLong());
+		record.setAssociationObjectType(FileHandleAssociateType.TableEntity);
 		return record;
 	}
 
