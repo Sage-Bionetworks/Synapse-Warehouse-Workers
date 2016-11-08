@@ -24,6 +24,7 @@ import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizQuestionRecord;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizRecord;
 import org.sagebionetworks.warehouse.workers.model.FileDownload;
+import org.sagebionetworks.warehouse.workers.model.FileHandleDownload;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamSnapshot;
@@ -340,6 +341,21 @@ public class ObjectSnapshotTestUtil {
 		record.setTimestamp(random.nextLong());
 		record.setUserId(random.nextLong());
 		record.setFileHandleId(random.nextLong());
+		record.setAssociationObjectId(random.nextLong());
+		record.setAssociationObjectType(FileHandleAssociateType.TableEntity);
+		return record;
+	}
+
+	/**
+	 * 
+	 * @return a valid FileHandleDownload object
+	 */
+	public static FileHandleDownload createValidFileHandleDownloadRecord() {
+		FileHandleDownload record = new FileHandleDownload();
+		record.setTimestamp(random.nextLong());
+		record.setUserId(random.nextLong());
+		record.setDownloadedFileHandleId(random.nextLong());
+		record.setRequestedFileHandleId(random.nextLong());
 		record.setAssociationObjectId(random.nextLong());
 		record.setAssociationObjectType(FileHandleAssociateType.TableEntity);
 		return record;

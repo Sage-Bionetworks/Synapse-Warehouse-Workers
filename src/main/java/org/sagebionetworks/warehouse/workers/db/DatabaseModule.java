@@ -14,6 +14,8 @@ import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.FileDownloadRecordDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.FileDownloadRecordDaoImpl;
+import org.sagebionetworks.warehouse.workers.db.snapshot.FileHandleDownloadRecordDao;
+import org.sagebionetworks.warehouse.workers.db.snapshot.FileHandleDownloadRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizQuestionRecordDao;
 import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizQuestionRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.db.snapshot.CertifiedQuizRecordDao;
@@ -82,6 +84,7 @@ public class DatabaseModule extends AbstractModule {
 		bind(VerificationSubmissionRecordDao.class).to(VerificationSubmissionRecordDaoImpl.class);
 		bind(VerificationSubmissionStateRecordDao.class).to(VerificationSubmissionStateRecordDaoImpl.class);
 		bind(FileDownloadRecordDao.class).to(FileDownloadRecordDaoImpl.class);
+		bind(FileHandleDownloadRecordDao.class).to(FileHandleDownloadRecordDaoImpl.class);
 		bind(UserActivityPerClientPerDayDao.class).to(UserActivityPerClientPerDayDaoImpl.class);
 		bind(UserActivityPerMonthDao.class).to(UserActivityPerMonthDaoImpl.class);
 		bind(DeletedNodeSnapshotDao.class).to(DeletedNodeSnapshotDaoImpl.class);
@@ -173,6 +176,7 @@ public class DatabaseModule extends AbstractModule {
 		tableConfigList.add(VerificationSubmissionRecordDaoImpl.CONFIG);
 		tableConfigList.add(VerificationSubmissionStateRecordDaoImpl.CONFIG);
 		tableConfigList.add(FileDownloadRecordDaoImpl.CONFIG);
+		tableConfigList.add(FileHandleDownloadRecordDaoImpl.CONFIG);
 		tableConfigList.add(UserActivityPerClientPerDayDaoImpl.CONFIG);
 		tableConfigList.add(UserActivityPerMonthDaoImpl.CONFIG);
 		tableConfigList.add(DeletedNodeSnapshotDaoImpl.CONFIG);
