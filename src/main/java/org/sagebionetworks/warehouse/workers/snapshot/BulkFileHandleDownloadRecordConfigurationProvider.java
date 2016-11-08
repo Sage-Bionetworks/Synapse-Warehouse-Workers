@@ -39,7 +39,7 @@ public class BulkFileHandleDownloadRecordConfigurationProvider implements Worker
 		this.config.setRunner(runner);
 		this.config.setStartDelayMs(711);
 		this.config.setPeriodMS(10*1000);
-		this.config.setWorkerName(BulkFileDownloadRecordWorker.class.getName());
+		this.config.setWorkerName(BulkFileHandleDownloadRecordWorker.class.getName());
 	}
 
 	@Override
