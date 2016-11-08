@@ -148,7 +148,7 @@ public class Sql {
 	public static final String COL_VERIFICATION_SUBMISSION_STATE_RECORD_CREATED_BY = "CREATED_BY";
 
 	// FILE_DOWNLOAD
-	public static final String TABLE_FILE_DOWNLOAD = "FILE_DOWNLOAD";
+	public static final String TABLE_FILE_DOWNLOAD_RECORD = "FILE_DOWNLOAD_RECORD";
 	public static final String COL_FILE_DOWNLOAD_TIMESTAMP = "TIMESTAMP";
 	public static final String COL_FILE_DOWNLOAD_USER_ID = "USER_ID";
 	public static final String COL_FILE_DOWNLOAD_FILE_HANDLE_ID = "FILE_HANDLE_ID";

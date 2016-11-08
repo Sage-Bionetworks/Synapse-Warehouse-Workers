@@ -20,15 +20,15 @@ public class FileDownloadRecordDaoImpl implements FileDownloadRecordDao {
 
 	public static final String FILE_DOWNLOAD_DDL_SQL = "FileDownloadRecord.ddl.sql";
 	public static final TableConfiguration CONFIG = new TableConfiguration(
-			TABLE_FILE_DOWNLOAD,
+			TABLE_FILE_DOWNLOAD_RECORD,
 			FILE_DOWNLOAD_DDL_SQL,
 			false,
 			null,
 			null);
 
-	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_FILE_DOWNLOAD;
+	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_FILE_DOWNLOAD_RECORD;
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO "
-			+ TABLE_FILE_DOWNLOAD
+			+ TABLE_FILE_DOWNLOAD_RECORD
 			+ " ("
 			+ COL_FILE_DOWNLOAD_TIMESTAMP
 			+ ","
@@ -41,7 +41,7 @@ public class FileDownloadRecordDaoImpl implements FileDownloadRecordDao {
 			+ COL_FILE_DOWNLOAD_ASSOCIATION_OBJECT_TYPE
 			+ ") VALUES (?,?,?,?,?)";
 	private static final String SQL_GET = "SELECT * FROM "
-			+ TABLE_FILE_DOWNLOAD
+			+ TABLE_FILE_DOWNLOAD_RECORD
 			+ " WHERE "
 			+ COL_FILE_DOWNLOAD_TIMESTAMP
 			+ " = ? AND "
