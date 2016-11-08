@@ -16,15 +16,15 @@ import org.sagebionetworks.repo.model.file.FileDownloadSummary;
 import org.sagebionetworks.repo.model.file.FileHandleAssociateType;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
-import org.sagebionetworks.warehouse.workers.model.FileDownload;
+import org.sagebionetworks.warehouse.workers.model.FileHandleDownload;
 
-public class BulkFileDownloadRecordWorkerTest {
+public class BulkFileHandleDownloadRecordWorkerTest {
 
-	BulkFileDownloadRecordWorker worker;
+	BulkFileHandleDownloadRecordWorker worker;
 
 	@Before
 	public void before() {
-		worker = new BulkFileDownloadRecordWorker(null, null, null);
+		worker = new BulkFileHandleDownloadRecordWorker(null, null, null);
 	}
 
 	@Test
@@ -39,11 +39,12 @@ public class BulkFileDownloadRecordWorkerTest {
 		fileDownloadSummary.setStatus(FileDownloadStatus.SUCCESS);
 		List<FileDownloadSummary> fileDownloadSummaryList = Arrays.asList(fileDownloadSummary);
 		response.setFileSummary(fileDownloadSummaryList);
+		response.setResultZipFileHandleId("666");
 		Long timestamp = System.currentTimeMillis();
 		record.setTimestamp(timestamp);
 		record.setJsonString(EntityFactory.createJSONStringForEntity(response));
 		record.setJsonClassName(BulkFileDownloadResponse.class.getSimpleName().toLowerCase());
-		List<FileDownload> actual = worker.convert(record);
+		List<FileHandleDownload> actual = worker.convert(record);
 		assertNotNull(actual);
 		assertEquals(actual.size(), 1);
 	}
