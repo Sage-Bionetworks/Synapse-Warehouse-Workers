@@ -221,4 +221,21 @@ public class AccessRecordUtilsTest {
 		ar.setResponseStatus(null);
 		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
+
+	/*
+	 * isValidUserAccessRecord()
+	 */
+
+	@Test
+	public void invalidUserARTest() {
+		AccessRecord ar = AccessRecordTestUtil.createValidAccessRecord();
+		ar.setUserId(null);
+		assertFalse(AccessRecordUtils.isValidUserAccessRecord(ar));
+	}
+
+	@Test
+	public void validUserARTest() {
+		AccessRecord ar = AccessRecordTestUtil.createValidAccessRecord();
+		assertTrue(AccessRecordUtils.isValidUserAccessRecord(ar));
+	}
 }
