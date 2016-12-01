@@ -69,6 +69,14 @@ public class UserActivityPerMonthDaoImplTest {
 		assertTrue(dao.hasRecordForMonth(month));
 	}
 
+	@Test
+	public void testHasRecordForPreviousMonth() {
+		UserActivityPerMonth uar = createUserActivityPerMonth(1L, "2016-01-01", 2L);
+		dao.insert(Arrays.asList(uar));
+		Date previousMonth = new DateTime().withDate(2015, 12, 1).withTime(0, 0, 0, 0).toDate();
+		assertFalse(dao.hasRecordForMonth(previousMonth));
+	}
+
 	private UserActivityPerMonth createUserActivityPerMonth(long userId, String month, long uniqueDate) {
 		UserActivityPerMonth uapm = new UserActivityPerMonth();
 		uapm.setUserId(userId);
