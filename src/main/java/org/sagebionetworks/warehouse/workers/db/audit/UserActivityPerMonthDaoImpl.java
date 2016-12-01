@@ -50,7 +50,7 @@ public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
 	private static final String SQL_CHECK_RECORD_FOR_MONTH =
 			"SELECT " + COL_USER_ACTIVITY_PER_MONTH_MONTH
 			+ " FROM " + TABLE_USER_ACTIVITY_PER_MONTH
-			+ " WHERE " + COL_USER_ACTIVITY_PER_MONTH_MONTH + " >= ?"
+			+ " WHERE " + COL_USER_ACTIVITY_PER_MONTH_MONTH + " = ?"
 			+ " LIMIT 1";
 
 	private JdbcTemplate template;
