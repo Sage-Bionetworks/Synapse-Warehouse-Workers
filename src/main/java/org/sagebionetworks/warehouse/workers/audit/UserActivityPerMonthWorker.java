@@ -43,15 +43,17 @@ public class UserActivityPerMonthWorker implements ProgressingRunner<Void>{
 			prevMonth = prevMonth.minusMonths(1);
 		}
 		for (int i = 0; i < MONTHS_TO_PROCESS; i++) {
-			if (!userActivityPerMonthDao.hasRecordForMonth(prevMonth.toDate())) {
-				updateUserActivityForMonth(prevMonth, BATCH_SIZE);
+			DateTime monthToProcess = prevMonth.minusMonths(i);
+			if (!userActivityPerMonthDao.hasRecordForMonth(monthToProcess.toDate())) {
+				updateUserActivityForMonth(monthToProcess, BATCH_SIZE);
+			} else {
+				log.info("Skipping month: "+monthToProcess.toDate().toString());
 			}
-			prevMonth = prevMonth.minusMonths(1);
 		}
 	}
 
 	public void updateUserActivityForMonth(DateTime month, int batchSize) {
-		log.trace("Processing UserActivityPerMonth for "+month.toString());
+		log.info("Processing UserActivityPerMonth for "+month.toString());
 		Iterator<UserActivityPerMonth> it = userActivityPerClientPerDayDao.getUserActivityPerMonth(month.toDate());
 		List<UserActivityPerMonth> batch = new ArrayList<UserActivityPerMonth>();
 		while (it.hasNext()) {
