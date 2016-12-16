@@ -13,16 +13,16 @@ import org.sagebionetworks.warehouse.workers.utils.FileDownloadRecordUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.google.inject.Inject;
 
-public class BulkFileHandleDownloadRecordWorker extends AbstractSnapshotWorker<ObjectRecord, FileHandleDownload> {
+public class FileHandleDownloadRecordWorker extends AbstractSnapshotWorker<ObjectRecord, FileHandleDownload> {
 
-	public static final String TEMP_FILE_NAME_PREFIX = "collatedBulkFileHanldeDownloadRecord";
+	public static final String TEMP_FILE_NAME_PREFIX = "collatedFileHanldeDownloadRecord";
 	public static final String TEMP_FILE_NAME_SUFFIX = ".csv.gz";
 
 	@Inject
-	public BulkFileHandleDownloadRecordWorker(AmazonS3Client s3Client, FileHandleDownloadRecordDao dao,
+	public FileHandleDownloadRecordWorker(AmazonS3Client s3Client, FileHandleDownloadRecordDao dao,
 			StreamResourceProvider streamResourceProvider) {
 		super(s3Client, dao, streamResourceProvider);
-		log = LogManager.getLogger(BulkFileHandleDownloadRecordWorker.class);
+		log = LogManager.getLogger(FileHandleDownloadRecordWorker.class);
 		tempFileNamePrefix = TEMP_FILE_NAME_PREFIX;
 		tempFileNameSuffix = TEMP_FILE_NAME_SUFFIX;
 		snapshotHeader = SnapshotHeader.OBJECT_RECORD_HEADERS;
@@ -31,9 +31,9 @@ public class BulkFileHandleDownloadRecordWorker extends AbstractSnapshotWorker<O
 
 	@Override
 	public List<FileHandleDownload> convert(ObjectRecord record) {
-		List<FileHandleDownload> records = FileDownloadRecordUtils.getFileHandleDownloadRecordsForBulkFileDownloadRecord(record);
+		List<FileHandleDownload> records = FileDownloadRecordUtils.getFileHandleDownloadRecordsForFileDownloadRecord(record);
 		if (!FileDownloadRecordUtils.isValidFileHandleDownloadRecords(records)) {
-			log.error("Invalid BulkFileDownloadRecord from Record: "+ (record == null ? "null" : record.toString()));
+			log.error("Invalid FileDownloadRecord from Record: "+ (record == null ? "null" : record.toString()));
 			return null;
 		}
 		return records;
