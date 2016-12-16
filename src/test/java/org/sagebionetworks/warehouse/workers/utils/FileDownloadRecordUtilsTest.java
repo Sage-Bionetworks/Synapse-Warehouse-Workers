@@ -9,9 +9,11 @@ import org.junit.Test;
 import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.repo.model.file.BulkFileDownloadResponse;
+import org.sagebionetworks.repo.model.file.FileDownloadRecord;
 import org.sagebionetworks.repo.model.file.FileDownloadStatus;
 import org.sagebionetworks.repo.model.file.FileDownloadSummary;
 import org.sagebionetworks.repo.model.file.FileHandleAssociateType;
+import org.sagebionetworks.repo.model.file.FileHandleAssociation;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 import org.sagebionetworks.warehouse.workers.model.FileDownload;
@@ -74,56 +76,56 @@ public class FileDownloadRecordUtilsTest {
 	}
 
 	/*
-	 * getFileDownloadRecords() tests
+	 * getFileDownloadRecordsForBulkDownloadRecord() tests
 	 */
 	@Test
-	public void getFileDownloadRecordsWithNullTimestampTest() throws JSONObjectAdapterException {
+	public void getFileDownloadRecordsForBulkDownloadRecordWithNullTimestampTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		BulkFileDownloadResponse response = new BulkFileDownloadResponse();
 		record.setJsonString(EntityFactory.createJSONStringForEntity(response));
 		record.setJsonClassName(BulkFileDownloadResponse.class.getSimpleName().toLowerCase());
-		assertNull(FileDownloadRecordUtils.getFileDownloadRecords(record));
+		assertNull(FileDownloadRecordUtils.getFileDownloadRecordsForBulkFileDownloadRecord(record));
 	}
 
 	@Test
-	public void getFileDownloadWithNullJsonStringTest() throws JSONObjectAdapterException {
+	public void getFileDownloadRecordsForBulkDownloadRecordWithNullJsonStringTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonClassName(BulkFileDownloadResponse.class.getSimpleName().toLowerCase());
-		assertNull(FileDownloadRecordUtils.getFileDownloadRecords(record));
+		assertNull(FileDownloadRecordUtils.getFileDownloadRecordsForBulkFileDownloadRecord(record));
 	}
 
 	@Test
-	public void getFileDownloadWithNullJsonClassNameTest() throws JSONObjectAdapterException {
+	public void getFileDownloadRecordsForBulkDownloadRecordWithNullJsonClassNameTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		BulkFileDownloadResponse response = new BulkFileDownloadResponse();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(response));
-		assertNull(FileDownloadRecordUtils.getFileDownloadRecords(record));
+		assertNull(FileDownloadRecordUtils.getFileDownloadRecordsForBulkFileDownloadRecord(record));
 	}
 
 	@Test
-	public void wrongTypeNameGetFileDownloadTest() throws JSONObjectAdapterException {
+	public void wrongTypeNameGetFileDownloadRecordsForBulkDownloadRecordTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		BulkFileDownloadResponse response = new BulkFileDownloadResponse();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(response));
 		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
-		assertNull(FileDownloadRecordUtils.getFileDownloadRecords(record));
+		assertNull(FileDownloadRecordUtils.getFileDownloadRecordsForBulkFileDownloadRecord(record));
 	}
 
 	@Test (expected = NullPointerException.class)
-	public void wrongTypeGetFileDownloadTest() throws JSONObjectAdapterException {
+	public void wrongTypeGetFileDownloadRecordsForBulkDownloadRecordTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		Node node = new Node();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
 		record.setJsonClassName(BulkFileDownloadResponse.class.getSimpleName().toLowerCase());
-		FileDownloadRecordUtils.getFileDownloadRecords(record);
+		FileDownloadRecordUtils.getFileDownloadRecordsForBulkFileDownloadRecord(record);
 	}
 
 	@Test
-	public void getFileDownloadTest() throws JSONObjectAdapterException {
+	public void getFileDownloadRecordsForBulkDownloadRecordTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		BulkFileDownloadResponse response = new BulkFileDownloadResponse();
 		response.setUserId("123");
@@ -173,7 +175,7 @@ public class FileDownloadRecordUtilsTest {
 		record3.setFileHandleId(111L);
 		record3.setAssociationObjectId(456L);
 		record3.setAssociationObjectType(FileHandleAssociateType.TableEntity);
-		List<FileDownload> records = FileDownloadRecordUtils.getFileDownloadRecords(record);
+		List<FileDownload> records = FileDownloadRecordUtils.getFileDownloadRecordsForBulkFileDownloadRecord(record);
 		assertNotNull(records);
 		assertEquals(3, records.size());
 		assertTrue(records.contains(record1));
@@ -243,56 +245,56 @@ public class FileDownloadRecordUtilsTest {
 	}
 
 	/*
-	 * getFileHandleDownloadRecords() tests
+	 * getFileHandleDownloadRecordsForBulkFileDownloadRecord() tests
 	 */
 	@Test
-	public void getFileHandleDownloadRecordsWithNullTimestampTest() throws JSONObjectAdapterException {
+	public void getFileHandleDownloadRecordsForBulkFileDownloadRecordWithNullTimestampTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		BulkFileDownloadResponse response = new BulkFileDownloadResponse();
 		record.setJsonString(EntityFactory.createJSONStringForEntity(response));
 		record.setJsonClassName(BulkFileDownloadResponse.class.getSimpleName().toLowerCase());
-		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecords(record));
+		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecordsForBulkFileDownloadRecord(record));
 	}
 
 	@Test
-	public void getFileHandleDownloadWithNullJsonStringTest() throws JSONObjectAdapterException {
+	public void getFileHandleDownloadRecordsForBulkFileDownloadRecordWithNullJsonStringTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonClassName(BulkFileDownloadResponse.class.getSimpleName().toLowerCase());
-		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecords(record));
+		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecordsForBulkFileDownloadRecord(record));
 	}
 
 	@Test
-	public void getFileHandleDownloadWithNullJsonClassNameTest() throws JSONObjectAdapterException {
+	public void getFileHandleDownloadRecordsForBulkFileDownloadRecordWithNullJsonClassNameTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		BulkFileDownloadResponse response = new BulkFileDownloadResponse();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(response));
-		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecords(record));
+		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecordsForBulkFileDownloadRecord(record));
 	}
 
 	@Test
-	public void wrongTypeNameGetFileHandleDownloadTest() throws JSONObjectAdapterException {
+	public void wrongTypeNameGetFileHandleDownloadRecordsForBulkFileDownloadRecordTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		BulkFileDownloadResponse response = new BulkFileDownloadResponse();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(response));
 		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
-		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecords(record));
+		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecordsForBulkFileDownloadRecord(record));
 	}
 
 	@Test (expected = NullPointerException.class)
-	public void wrongTypeGetFileHandleDownloadTest() throws JSONObjectAdapterException {
+	public void wrongTypeGetFileHandleDownloadRecordsForBulkFileDownloadRecordTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		Node node = new Node();
 		record.setTimestamp(System.currentTimeMillis());
 		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
 		record.setJsonClassName(BulkFileDownloadResponse.class.getSimpleName().toLowerCase());
-		FileDownloadRecordUtils.getFileHandleDownloadRecords(record);
+		FileDownloadRecordUtils.getFileHandleDownloadRecordsForBulkFileDownloadRecord(record);
 	}
 
 	@Test
-	public void getFileHandleDownloadTest() throws JSONObjectAdapterException {
+	public void getFileHandleDownloadRecordsForBulkFileDownloadRecordTest() throws JSONObjectAdapterException {
 		ObjectRecord record = new ObjectRecord();
 		BulkFileDownloadResponse response = new BulkFileDownloadResponse();
 		response.setUserId("123");
@@ -346,11 +348,163 @@ public class FileDownloadRecordUtilsTest {
 		record3.setRequestedFileHandleId(111L);
 		record3.setAssociationObjectId(456L);
 		record3.setAssociationObjectType(FileHandleAssociateType.TableEntity);
-		List<FileHandleDownload> records = FileDownloadRecordUtils.getFileHandleDownloadRecords(record);
+		List<FileHandleDownload> records = FileDownloadRecordUtils.getFileHandleDownloadRecordsForBulkFileDownloadRecord(record);
 		assertNotNull(records);
 		assertEquals(3, records.size());
 		assertTrue(records.contains(record1));
 		assertTrue(records.contains(record2));
 		assertTrue(records.contains(record3));
+	}
+
+	/*
+	 * getFileDownloadRecordsForDownloadRecord() tests
+	 */
+	@Test
+	public void getFileDownloadRecordsForDownloadRecordWithNullTimestampTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		FileDownloadRecord fdrecord = new FileDownloadRecord();
+		record.setJsonString(EntityFactory.createJSONStringForEntity(fdrecord));
+		record.setJsonClassName(FileDownloadRecord.class.getSimpleName().toLowerCase());
+		assertNull(FileDownloadRecordUtils.getFileDownloadRecordsForFileDownloadRecord(record));
+	}
+
+	@Test
+	public void getFileDownloadRecordsForDownloadRecordWithNullJsonStringTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(FileDownloadRecord.class.getSimpleName().toLowerCase());
+		assertNull(FileDownloadRecordUtils.getFileDownloadRecordsForFileDownloadRecord(record));
+	}
+
+	@Test
+	public void getFileDownloadRecordsForDownloadRecordWithNullJsonClassNameTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		FileDownloadRecord fdrecord = new FileDownloadRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(fdrecord));
+		assertNull(FileDownloadRecordUtils.getFileDownloadRecordsForFileDownloadRecord(record));
+	}
+
+	@Test
+	public void wrongTypeNameGetFileDownloadRecordsForDownloadRecordTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		FileDownloadRecord fdrecord = new FileDownloadRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(fdrecord));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		assertNull(FileDownloadRecordUtils.getFileDownloadRecordsForFileDownloadRecord(record));
+	}
+
+	@Test (expected = RuntimeException.class)
+	public void wrongTypeGetFileDownloadRecordsForDownloadRecordTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(FileDownloadRecord.class.getSimpleName().toLowerCase());
+		FileDownloadRecordUtils.getFileDownloadRecordsForFileDownloadRecord(record);
+	}
+
+	@Test
+	public void getFileDownloadRecordsForDownloadRecordTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		FileDownloadRecord fdrecord = new FileDownloadRecord();
+		fdrecord.setUserId("123");
+		FileHandleAssociation fha = new FileHandleAssociation();
+		fha.setAssociateObjectId("syn456");
+		fha.setAssociateObjectType(FileHandleAssociateType.TableEntity);
+		fha.setFileHandleId("999");
+		fdrecord.setDownloadedFile(fha);
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(fdrecord));
+		record.setJsonClassName(FileDownloadRecord.class.getSimpleName().toLowerCase());
+		FileDownload fd = new FileDownload();
+		fd.setTimestamp(timestamp);
+		fd.setUserId(123L);
+		fd.setFileHandleId(999L);
+		fd.setAssociationObjectId(456L);
+		fd.setAssociationObjectType(FileHandleAssociateType.TableEntity);
+		List<FileDownload> records = FileDownloadRecordUtils.getFileDownloadRecordsForFileDownloadRecord(record);
+		assertNotNull(records);
+		assertEquals(1, records.size());
+		assertTrue(records.contains(fd));
+	}
+
+
+	/*
+	 * getFileHandleDownloadRecordsForFileDownloadRecord() tests
+	 */
+	@Test
+	public void getFileHandleDownloadRecordsForFileDownloadRecordWithNullTimestampTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		FileDownloadRecord fdrecord = new FileDownloadRecord();
+		record.setJsonString(EntityFactory.createJSONStringForEntity(fdrecord));
+		record.setJsonClassName(FileDownloadRecord.class.getSimpleName().toLowerCase());
+		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecordsForFileDownloadRecord(record));
+	}
+
+	@Test
+	public void getFileHandleDownloadRecordsForFileDownloadRecordWithNullJsonStringTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonClassName(FileDownloadRecord.class.getSimpleName().toLowerCase());
+		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecordsForFileDownloadRecord(record));
+	}
+
+	@Test
+	public void getFileHandleDownloadRecordsForFileDownloadRecordWithNullJsonClassNameTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		FileDownloadRecord fdrecord = new FileDownloadRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(fdrecord));
+		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecordsForFileDownloadRecord(record));
+	}
+
+	@Test
+	public void wrongTypeNameGetFileHandleDownloadRecordsForFileDownloadRecordTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		FileDownloadRecord fdrecord = new FileDownloadRecord();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(fdrecord));
+		record.setJsonClassName(Node.class.getSimpleName().toLowerCase());
+		assertNull(FileDownloadRecordUtils.getFileHandleDownloadRecordsForFileDownloadRecord(record));
+	}
+
+	@Test (expected = RuntimeException.class)
+	public void wrongTypeGetFileHandleDownloadRecordsForFileDownloadRecordTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		Node node = new Node();
+		record.setTimestamp(System.currentTimeMillis());
+		record.setJsonString(EntityFactory.createJSONStringForEntity(node));
+		record.setJsonClassName(FileDownloadRecord.class.getSimpleName().toLowerCase());
+		FileDownloadRecordUtils.getFileHandleDownloadRecordsForFileDownloadRecord(record);
+	}
+
+	@Test
+	public void getFileHandleDownloadRecordsForFileDownloadRecordTest() throws JSONObjectAdapterException {
+		ObjectRecord record = new ObjectRecord();
+		FileDownloadRecord fdrecord = new FileDownloadRecord();
+		fdrecord.setUserId("123");
+		FileHandleAssociation fha = new FileHandleAssociation();
+		fha.setAssociateObjectId("syn456");
+		fha.setAssociateObjectType(FileHandleAssociateType.TableEntity);
+		fha.setFileHandleId("999");
+		fdrecord.setDownloadedFile(fha);
+		Long timestamp = System.currentTimeMillis();
+		record.setTimestamp(timestamp);
+		record.setJsonString(EntityFactory.createJSONStringForEntity(fdrecord));
+		record.setJsonClassName(FileDownloadRecord.class.getSimpleName().toLowerCase());
+		FileHandleDownload fhd = new FileHandleDownload();
+		fhd.setTimestamp(timestamp);
+		fhd.setUserId(123L);
+		fhd.setRequestedFileHandleId(999L);
+		fhd.setDownloadedFileHandleId(999L);
+		fhd.setAssociationObjectId(456L);
+		fhd.setAssociationObjectType(FileHandleAssociateType.TableEntity);
+		List<FileHandleDownload> records = FileDownloadRecordUtils.getFileHandleDownloadRecordsForFileDownloadRecord(record);
+		assertNotNull(records);
+		assertEquals(1, records.size());
+		assertTrue(records.contains(fhd));
 	}
 }

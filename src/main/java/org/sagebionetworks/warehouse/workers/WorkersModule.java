@@ -41,6 +41,10 @@ import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizRecordConfigu
 import org.sagebionetworks.warehouse.workers.snapshot.CertifiedQuizRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.DeletedNodeSnapshotConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.DeletedNodeSnapshotTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.FileDownloadRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.FileDownloadRecordWorkerConfigurationProvider;
+import org.sagebionetworks.warehouse.workers.snapshot.FileHandleDownloadRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.FileHandleDownloadRecordWorkerConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.FileHandleRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.FileHandleRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.NodeSnapshotConfigurationProvider;
@@ -241,6 +245,22 @@ public class WorkersModule extends AbstractModule {
 	}
 
 	@Provides
+	public FileDownloadRecordTopicBucketInfo getFileDownloadRecordConfig(Configuration config){
+		FileDownloadRecordTopicBucketInfo info = new FileDownloadRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.filedownloadrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.filedownloadrecord.snapshot"));
+		return info;
+	}
+
+	@Provides
+	public FileHandleDownloadRecordTopicBucketInfo getFileHandleDownloadRecordConfig(Configuration config){
+		FileHandleDownloadRecordTopicBucketInfo info = new FileHandleDownloadRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.filedownloadrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.filedownloadrecord.snapshot"));
+		return info;
+	}
+
+	@Provides
 	public DeletedNodeSnapshotTopicBucketInfo getDeletedNodeSnapshotConfig(Configuration config){
 		DeletedNodeSnapshotTopicBucketInfo info = new DeletedNodeSnapshotTopicBucketInfo();
 		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.deletednode.snapshot"));
@@ -290,6 +310,8 @@ public class WorkersModule extends AbstractModule {
 		list.add(UserActivityPerMonthWorkerConfigurationProvider.class);
 		list.add(DeletedNodeSnapshotConfigurationProvider.class);
 		list.add(FileHandleRecordConfigurationProvider.class);
+		list.add(FileDownloadRecordWorkerConfigurationProvider.class);
+		list.add(FileHandleDownloadRecordWorkerConfigurationProvider.class);
 		return list;
 	}
 	
