@@ -24,6 +24,7 @@ import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizQuestionRecord;
 import org.sagebionetworks.warehouse.workers.model.CertifiedQuizRecord;
 import org.sagebionetworks.warehouse.workers.model.FileDownload;
+import org.sagebionetworks.warehouse.workers.model.FileHandleCopyRecordSnapshot;
 import org.sagebionetworks.warehouse.workers.model.FileHandleDownload;
 import org.sagebionetworks.warehouse.workers.model.NodeSnapshot;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
@@ -372,6 +373,17 @@ public class ObjectSnapshotTestUtil {
 		snapshot.setCreatedBy(""+random.nextLong());
 		snapshot.setFileName("fileName");
 		snapshot.setConcreteType("concreteType");
+		return snapshot;
+	}
+
+	public static FileHandleCopyRecordSnapshot createValidFileHandleCopyRecordSnapshot() {
+		FileHandleCopyRecordSnapshot snapshot = new FileHandleCopyRecordSnapshot();
+		snapshot.setTimestamp(System.currentTimeMillis());
+		snapshot.setUserId(random.nextLong());
+		snapshot.setOriginalFileHandleId(random.nextLong());
+		snapshot.setAssociationObjectId(random.nextLong());
+		snapshot.setAssociationObjectType(FileHandleAssociateType.FileEntity);
+		snapshot.setNewFileHandleId(random.nextLong());
 		return snapshot;
 	}
 }
