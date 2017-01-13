@@ -43,6 +43,8 @@ import org.sagebionetworks.warehouse.workers.snapshot.DeletedNodeSnapshotConfigu
 import org.sagebionetworks.warehouse.workers.snapshot.DeletedNodeSnapshotTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.FileDownloadRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.FileDownloadRecordWorkerConfigurationProvider;
+import org.sagebionetworks.warehouse.workers.snapshot.FileHandleCopyRecordTopicBucketInfo;
+import org.sagebionetworks.warehouse.workers.snapshot.FileHandleCopyRecordWorkerConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.FileHandleDownloadRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.FileHandleDownloadRecordWorkerConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.FileHandleRecordConfigurationProvider;
@@ -261,6 +263,14 @@ public class WorkersModule extends AbstractModule {
 	}
 
 	@Provides
+	public FileHandleCopyRecordTopicBucketInfo getFileHandleCopyRecordConfig(Configuration config){
+		FileHandleCopyRecordTopicBucketInfo info = new FileHandleCopyRecordTopicBucketInfo();
+		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.filehandlecopyrecord.snapshot"));
+		info.setQueueName(config.getProperty("org.sagebionetworks.warehouse.worker.queue.filehandlecopyrecord.snapshot"));
+		return info;
+	}
+
+	@Provides
 	public DeletedNodeSnapshotTopicBucketInfo getDeletedNodeSnapshotConfig(Configuration config){
 		DeletedNodeSnapshotTopicBucketInfo info = new DeletedNodeSnapshotTopicBucketInfo();
 		info.setTopicName(config.getProperty("org.sagebionetworks.warehouse.worker.topic.deletednode.snapshot"));
@@ -312,6 +322,7 @@ public class WorkersModule extends AbstractModule {
 		list.add(FileHandleRecordConfigurationProvider.class);
 		list.add(FileDownloadRecordWorkerConfigurationProvider.class);
 		list.add(FileHandleDownloadRecordWorkerConfigurationProvider.class);
+		list.add(FileHandleCopyRecordWorkerConfigurationProvider.class);
 		return list;
 	}
 	
