@@ -7,5 +7,6 @@ public enum Client {
 	JAVA,
 	COMMAND_LINE,
 	ELB_HEALTHCHECKER,
-	UNKNOWN
+	UNKNOWN,
+	SYNAPSER,
 }
