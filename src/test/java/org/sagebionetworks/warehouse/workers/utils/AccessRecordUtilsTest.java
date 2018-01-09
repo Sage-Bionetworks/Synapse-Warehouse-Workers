@@ -15,6 +15,11 @@ public class AccessRecordUtilsTest {
 	 * Client Tests
 	 */
 	@Test
+	public void synapserClientTest() {
+		assertEquals(Client.SYNAPSER, AccessRecordUtils.getClient("synapser/1.0 synapseclient/1.7.2 python-requests/2.18.4"));
+	}
+
+	@Test
 	public void rClientTest() {
 		assertEquals(Client.R, AccessRecordUtils.getClient("synapseRClient/1.3-0"));
 	}
@@ -36,7 +41,7 @@ public class AccessRecordUtilsTest {
 
 	@Test
 	public void commandLineClientTest() {
-		assertEquals(Client.COMMAND_LINE,AccessRecordUtils. getClient("synapsecommandlineclient"));
+		assertEquals(Client.COMMAND_LINE,AccessRecordUtils. getClient("synapsecommandlineclient synapseclient/1.4 python-requests/1.2.3 CPython/2.7.10 Linux/4.1.13-19.30.amzn1.x86_64"));
 	}
 
 	@Test

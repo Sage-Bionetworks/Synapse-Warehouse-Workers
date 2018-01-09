@@ -11,8 +11,9 @@ import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
 
 public class AccessRecordUtils {
 
+	private static final String SYNAPSER_CLIENT = "synapser";
 	private static final String R_CLIENT = "synapseRClient";
-	private static final String PYTHON_CLIENT = "python-requests";
+	private static final String PYTHON_CLIENT = "synapseclient";
 	private static final String WEB_CLIENT = "Synapse-Web-Client";
 	private static final String JAVA_CLIENT = "Synpase-Java-Client";
 	private static final String COMMAND_LINE_CLIENT = "synapsecommandlineclient";
@@ -69,17 +70,20 @@ public class AccessRecordUtils {
 	 */
 	public static Client getClient(String userAgent) {
 		/*
-		 * The order of web and java client matters since all web client is java client,
-		 * but not all java client is web client.
+		 * The order of web and java client matters since some web client call
+		 * go through Java client, therefore, the USER_AGENT contains both keys
+		 * for WEB and JAVA client.
 		 */
 		if (userAgent.indexOf(WEB_CLIENT) >= 0) return Client.WEB;
 		if (userAgent.indexOf(JAVA_CLIENT) >= 0) return Client.JAVA;
+		if (userAgent.indexOf(SYNAPSER_CLIENT) >= 0) return Client.SYNAPSER;
 		if (userAgent.indexOf(R_CLIENT) >= 0) return Client.R;
 		/*
-		 * The order of python and command line client matters.
+		 * The order of python and command line client matters since command
+		 * line client's USER_AGENT contains python client's key.
 		 */
-		if (userAgent.indexOf(PYTHON_CLIENT) >= 0) return Client.PYTHON;
 		if (userAgent.indexOf(COMMAND_LINE_CLIENT) >= 0) return Client.COMMAND_LINE;
+		if (userAgent.indexOf(PYTHON_CLIENT) >= 0) return Client.PYTHON;
 		if (userAgent.indexOf(ELB_CLIENT) >= 0) return Client.ELB_HEALTHCHECKER;
 		return Client.UNKNOWN;
 	}
