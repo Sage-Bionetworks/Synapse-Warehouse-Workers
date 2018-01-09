@@ -33,7 +33,7 @@ public class AccessRecordTestUtil {
 		ar.setResponseStatus(201L);
 		// non required fields
 		ar.setHost("repo-staging.prod.sagebase.org");
-		ar.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36");
+		ar.setUserAgent("synapser/1.0 synapseclient/1.7.2 python-requests/2.18.4");
 		ar.setUserId(random.nextLong());
 		return ar;
 	}
