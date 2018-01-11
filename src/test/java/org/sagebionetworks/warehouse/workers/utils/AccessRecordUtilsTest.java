@@ -51,7 +51,50 @@ public class AccessRecordUtilsTest {
 
 	@Test
 	public void unknownClientTest() {
-		assertEquals(Client.UNKNOWN, AccessRecordUtils.getClient(""));
+		assertEquals(Client.UNKNOWN, AccessRecordUtils.getClient("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:56.0) Gecko/20100101 Firefox/56.0"));
+	}
+
+	/*
+	 * Client Version Tests
+	 */
+	@Test
+	public void synapserClientVersionTest() {
+		assertEquals("1.0", AccessRecordUtils.getClientVersion(Client.SYNAPSER, "synapser/1.0 synapseclient/1.7.2 python-requests/2.18.4"));
+	}
+
+	@Test
+	public void rClientVersionTest() {
+		assertEquals("1.3-0", AccessRecordUtils.getClientVersion(Client.R, "synapseRClient/1.3-0"));
+	}
+
+	@Test
+	public void pythonClientVersionTest() {
+		assertEquals("1.0.1", AccessRecordUtils.getClientVersion(Client.PYTHON, "synapseclient/1.0.1 python-requests/2.1.0 CPython/2.7.3 Linux/3.2.0-54-virtual"));
+	}
+
+	@Test
+	public void webClientVersionTest() {
+		assertEquals("67.0", AccessRecordUtils.getClientVersion(Client.WEB, "Synpase-Java-Client/64.0  Synapse-Web-Client/67.0"));
+	}
+
+	@Test
+	public void javaClientVersionTest() {
+		assertEquals("64.0", AccessRecordUtils.getClientVersion(Client.JAVA, "Synpase-Java-Client/64.0"));
+	}
+
+	@Test
+	public void commandLineClientVersionTest() {
+		assertNull(AccessRecordUtils. getClientVersion(Client.COMMAND_LINE, "synapsecommandlineclient synapseclient/1.4 python-requests/1.2.3 CPython/2.7.10 Linux/4.1.13-19.30.amzn1.x86_64"));
+	}
+
+	@Test
+	public void elbHealthCheckerClientVersionTest() {
+		assertEquals("1.0", AccessRecordUtils.getClientVersion(Client.ELB_HEALTHCHECKER, "ELB-HealthChecker/1.0"));
+	}
+
+	@Test
+	public void unknownClientVersionTest() {
+		assertNull(AccessRecordUtils.getClientVersion(Client.UNKNOWN, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:56.0) Gecko/20100101 Firefox/56.0"));
 	}
 
 	/*
@@ -103,6 +146,7 @@ public class AccessRecordUtilsTest {
 		expected.setSessionId("28a75682-f056-40f7-9a1e-416cb703bed5");
 		expected.setEntityId(2600225L);
 		expected.setClient(Client.WEB);
+		expected.setClientVersion("67.0");
 		expected.setNormalizedMethodSignature("GET /entity/#/descendants");
 
 		assertEquals(expected, AccessRecordUtils.processAccessRecord(ar));

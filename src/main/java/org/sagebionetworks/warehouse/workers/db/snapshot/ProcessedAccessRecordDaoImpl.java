@@ -1,6 +1,7 @@
 package org.sagebionetworks.warehouse.workers.db.snapshot;
 
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_CLIENT;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_CLIENT_VERSION;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_ENTITY_ID;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_PROCESSED_ACCESS_RECORD_SESSION_ID;
@@ -52,14 +53,29 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 			+ ","
 			+ COL_PROCESSED_ACCESS_RECORD_CLIENT
 			+ ","
+			+ COL_PROCESSED_ACCESS_RECORD_CLIENT_VERSION
+			+ ","
 			+ COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE
-			+ ") VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE "
+			+ ") VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE "
 			+ COL_PROCESSED_ACCESS_RECORD_ENTITY_ID
 			+ " = ?, "
 			+ COL_PROCESSED_ACCESS_RECORD_CLIENT
 			+ " = ?, "
+			+ COL_PROCESSED_ACCESS_RECORD_CLIENT_VERSION
+			+ " = ?, "
 			+ COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE
 			+ " = ?";
+	private static final int INSERT_SESSION_ID_INDEX 		= 1;
+	private static final int INSERT_TIMESTAMP_INDEX 		= 2;
+	private static final int INSERT_ENTITY_ID_INDEX 		= 3;
+	private static final int INSERT_CLIENT_INDEX 			= 4;
+	private static final int INSERT_CLIENT_VERSION_INDEX 	= 5;
+	private static final int INSERT_NMS_INDEX 				= 6;
+	private static final int UPDATE_ENTITY_ID_INDEX 		= 7;
+	private static final int UPDATE_CLIENT_INDEX 			= 8;
+	private static final int UPDATE_CLIENT_VERSION_INDEX 	= 9;
+	private static final int UPDATE_NMS_INDEX 				= 10;
+	
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_PROCESSED_ACCESS_RECORD
 			+ " WHERE "
@@ -98,19 +114,30 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 					public void setValues(PreparedStatement ps, int i)
 							throws SQLException {
 						ProcessedAccessRecord par = batch.get(i);
-						ps.setString(1, par.getSessionId());
-						ps.setLong(2, par.getTimestamp());
+						ps.setString(INSERT_SESSION_ID_INDEX, par.getSessionId());
+						ps.setLong(INSERT_TIMESTAMP_INDEX, par.getTimestamp());
+
 						if (par.getEntityId() != null) {
-							ps.setLong(3, par.getEntityId());
-							ps.setLong(6, par.getEntityId());
+							ps.setLong(INSERT_ENTITY_ID_INDEX, par.getEntityId());
+							ps.setLong(UPDATE_ENTITY_ID_INDEX, par.getEntityId());
 						} else {
-							ps.setNull(3, Types.BIGINT);
-							ps.setNull(6, Types.BIGINT);
+							ps.setNull(INSERT_ENTITY_ID_INDEX, Types.BIGINT);
+							ps.setNull(UPDATE_ENTITY_ID_INDEX, Types.BIGINT);
 						}
-						ps.setString(4, par.getClient().name());
-						ps.setString(5, par.getNormalizedMethodSignature());
-						ps.setString(7, par.getClient().name());
-						ps.setString(8, par.getNormalizedMethodSignature());
+
+						ps.setString(INSERT_CLIENT_INDEX, par.getClient().name());
+						ps.setString(UPDATE_CLIENT_INDEX, par.getClient().name());
+
+						if (par.getClientVersion() != null) {
+							ps.setString(INSERT_CLIENT_VERSION_INDEX, par.getClientVersion());
+							ps.setString(UPDATE_CLIENT_VERSION_INDEX, par.getClientVersion());
+						} else {
+							ps.setNull(INSERT_CLIENT_VERSION_INDEX, Types.CHAR);
+							ps.setNull(UPDATE_CLIENT_VERSION_INDEX, Types.CHAR);
+						}
+
+						ps.setString(INSERT_NMS_INDEX, par.getNormalizedMethodSignature());
+						ps.setString(UPDATE_NMS_INDEX, par.getNormalizedMethodSignature());
 					}
 				});
 				return null;
@@ -142,6 +169,10 @@ public class ProcessedAccessRecordDaoImpl implements ProcessedAccessRecordDao {
 				par.setEntityId(entityId);
 			}
 			par.setClient(Client.valueOf(rs.getString(COL_PROCESSED_ACCESS_RECORD_CLIENT)));
+			String clientVersion = rs.getString(COL_PROCESSED_ACCESS_RECORD_CLIENT_VERSION);
+			if (!rs.wasNull()) {
+				par.setClientVersion(clientVersion);
+			}
 			par.setNormalizedMethodSignature(rs.getString(COL_PROCESSED_ACCESS_RECORD_NORMALIZED_METHOD_SIGNATURE));
 			return par;
 		}

@@ -6,6 +6,7 @@ public class ProcessedAccessRecord {
 	private Long timestamp;
 	private Long entityId;
 	private Client client;
+	private String clientVersion;
 	private String normalizedMethodSignature;
 
 	public Long getTimestamp() {
@@ -39,21 +40,22 @@ public class ProcessedAccessRecord {
 		this.normalizedMethodSignature = normalizedMethodSignature;
 	}
 
+	public String getClientVersion() {
+		return clientVersion;
+	}
+	public void setClientVersion(String clientVersion) {
+		this.clientVersion = clientVersion;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((client == null) ? 0 : client.hashCode());
-		result = prime * result
-				+ ((entityId == null) ? 0 : entityId.hashCode());
-		result = prime
-				* result
-				+ ((normalizedMethodSignature == null) ? 0
-						: normalizedMethodSignature.hashCode());
-		result = prime * result
-				+ ((sessionId == null) ? 0 : sessionId.hashCode());
-		result = prime * result
-				+ ((timestamp == null) ? 0 : timestamp.hashCode());
+		result = prime * result + ((clientVersion == null) ? 0 : clientVersion.hashCode());
+		result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
+		result = prime * result + ((normalizedMethodSignature == null) ? 0 : normalizedMethodSignature.hashCode());
+		result = prime * result + ((sessionId == null) ? 0 : sessionId.hashCode());
+		result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
 		return result;
 	}
 	@Override
@@ -67,6 +69,11 @@ public class ProcessedAccessRecord {
 		ProcessedAccessRecord other = (ProcessedAccessRecord) obj;
 		if (client != other.client)
 			return false;
+		if (clientVersion == null) {
+			if (other.clientVersion != null)
+				return false;
+		} else if (!clientVersion.equals(other.clientVersion))
+			return false;
 		if (entityId == null) {
 			if (other.entityId != null)
 				return false;
@@ -75,8 +82,7 @@ public class ProcessedAccessRecord {
 		if (normalizedMethodSignature == null) {
 			if (other.normalizedMethodSignature != null)
 				return false;
-		} else if (!normalizedMethodSignature
-				.equals(other.normalizedMethodSignature))
+		} else if (!normalizedMethodSignature.equals(other.normalizedMethodSignature))
 			return false;
 		if (sessionId == null) {
 			if (other.sessionId != null)
@@ -92,9 +98,8 @@ public class ProcessedAccessRecord {
 	}
 	@Override
 	public String toString() {
-		return "ProcessedAccessRecord [sessionId=" + sessionId + ", timestamp="
-				+ timestamp + ", entityId=" + entityId + ", client=" + client
-				+ ", normalizedMethodSignature=" + normalizedMethodSignature
-				+ "]";
+		return "ProcessedAccessRecord [sessionId=" + sessionId + ", timestamp=" + timestamp + ", entityId=" + entityId
+				+ ", client=" + client + ", clientVersion=" + clientVersion + ", normalizedMethodSignature="
+				+ normalizedMethodSignature + "]";
 	}
 }

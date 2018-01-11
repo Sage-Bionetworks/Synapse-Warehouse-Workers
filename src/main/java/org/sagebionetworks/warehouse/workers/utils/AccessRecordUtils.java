@@ -18,6 +18,14 @@ public class AccessRecordUtils {
 	private static final String JAVA_CLIENT = "Synpase-Java-Client";
 	private static final String COMMAND_LINE_CLIENT = "synapsecommandlineclient";
 	private static final String ELB_CLIENT = "ELB-HealthChecker";
+	private static final String CLIENT_REGEX = "/(\\S+)";
+	private static final Pattern SYNAPSER_CLIENT_PATTERN = Pattern.compile(SYNAPSER_CLIENT+CLIENT_REGEX);
+	private static final Pattern R_CLIENT_PATTERN = Pattern.compile(R_CLIENT+CLIENT_REGEX);
+	private static final Pattern PYTHON_CLIENT_PATTERN = Pattern.compile(PYTHON_CLIENT+CLIENT_REGEX);
+	private static final Pattern WEB_CLIENT_PATTERN = Pattern.compile(WEB_CLIENT+CLIENT_REGEX);
+	private static final Pattern JAVA_CLIENT_PATTERN = Pattern.compile(JAVA_CLIENT+CLIENT_REGEX);
+	private static final Pattern COMMAND_LINE_CLIENT_PATTERN = Pattern.compile(COMMAND_LINE_CLIENT+CLIENT_REGEX);
+	private static final Pattern ELB_CLIENT_PATTERN = Pattern.compile(ELB_CLIENT+CLIENT_REGEX);
 	
 	public static final String NON_NORMALIZABLE_SIGNATURE = "NON_NORMALIZABLE";
 
@@ -34,6 +42,7 @@ public class AccessRecordUtils {
 		processed.setSessionId(accessRecord.getSessionId());
 		processed.setTimestamp(accessRecord.getTimestamp());
 		processed.setClient(getClient(accessRecord.getUserAgent()));
+		processed.setClientVersion(getClientVersion(processed.getClient(), accessRecord.getUserAgent()));
 		processed.setEntityId(getEntityId(accessRecord.getRequestURL()));
 		try {
 			processed.setNormalizedMethodSignature(accessRecord.getMethod() + " " +PathNormalizer.normalizeMethodSignature(accessRecord.getRequestURL()));
@@ -60,6 +69,45 @@ public class AccessRecordUtils {
         	entityId = entityId.substring(3);
         }
         return Long.parseLong(entityId);
+	}
+
+	/**
+	 * Determine the client version from the access record's userAgent
+	 * 
+	 * @param userAgent
+	 * @return
+	 */
+	public static String getClientVersion(Client client, String userAgent) {
+		Matcher matcher = null;
+		switch(client) {
+		case WEB:
+			matcher = WEB_CLIENT_PATTERN.matcher(userAgent);
+			break;
+		case JAVA:
+			matcher = JAVA_CLIENT_PATTERN.matcher(userAgent);
+			break;
+		case SYNAPSER:
+			matcher = SYNAPSER_CLIENT_PATTERN.matcher(userAgent);
+			break;
+		case R:
+			matcher = R_CLIENT_PATTERN.matcher(userAgent);
+			break;
+		case PYTHON:
+			matcher = PYTHON_CLIENT_PATTERN.matcher(userAgent);
+			break;
+		case ELB_HEALTHCHECKER:
+			matcher = ELB_CLIENT_PATTERN.matcher(userAgent);
+			break;
+		case COMMAND_LINE:
+			matcher = COMMAND_LINE_CLIENT_PATTERN.matcher(userAgent);
+			break;
+		default:
+			return null;
+		}
+		if (!matcher.find()) {
+			return null;
+		}
+		return matcher.group(1);
 	}
 
 	/**
