@@ -36,7 +36,7 @@ public class S3LoggerImpl implements S3Logger{
 	@Override
 	public void log(LogRecord toLog) {
 		String destinationKey = LogRecordUtils.getKey(toLog);
-		String[] toWrite = LogRecordUtils.getFormatedLog(toLog);
+		String[] toWrite = LogRecordUtils.getFormattedLog(toLog);
 		File logFile = resourceProvider.createTempFile(TEMP_FILE_NAME, TEMP_FILE_EXTENSION);
 		PrintWriter writer = null;
 		try {

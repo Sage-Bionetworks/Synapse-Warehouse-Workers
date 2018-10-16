@@ -68,7 +68,7 @@ public class S3LoggerImplTest {
 		s3Logger.log(toLog);
 		verify(mockResourceProvider).createTempFile(TEMP_FILE_NAME, TEMP_FILE_EXTENSION);
 		verify(mockResourceProvider).createGzipPrintWriter(mockFile);
-		verify(mockResourceProvider).writeText(LogRecordUtils.getFormatedLog(toLog), mockWriter);
+		verify(mockResourceProvider).writeText(LogRecordUtils.getFormattedLog(toLog), mockWriter);
 		verify(mockS3Client).putObject(captor.capture());
 		PutObjectRequest request = captor.getValue();
 		assertEquals(bucketName, request.getBucketName());
