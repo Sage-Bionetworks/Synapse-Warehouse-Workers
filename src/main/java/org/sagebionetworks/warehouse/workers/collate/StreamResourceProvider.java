@@ -2,6 +2,7 @@ package org.sagebionetworks.warehouse.workers.collate;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 import org.sagebionetworks.csv.utils.ObjectCSVReader;
@@ -34,7 +35,7 @@ public interface StreamResourceProvider {
 	public CSVReader createGzipReader(File file);
 	
 	/**
-	 * Create a GZIP wrapped CSVWritter for the given file.
+	 * Create a GZIP wrapped CSVWriter for the given file.
 	 * @param file
 	 * @return
 	 */
@@ -71,5 +72,20 @@ public interface StreamResourceProvider {
 			ProgressCallback<Void> progressCallback,
 			List<CSVReader> sortedInputStreams, CSVWriter out,
 			int timestampIndex) throws IOException;
+
+	/**
+	 * Create a GZIP wrapped PrintWriter for the given file.
+	 * @param file
+	 * @return
+	 */
+	public PrintWriter createGzipPrintWriter(File file);
+
+	/**
+	 * Write the input data into the passed writer.
+	 * 
+	 * @param toWrite
+	 * @param writer
+	 */
+	public void writeText(String[] toWrite, PrintWriter writer);
 
 }

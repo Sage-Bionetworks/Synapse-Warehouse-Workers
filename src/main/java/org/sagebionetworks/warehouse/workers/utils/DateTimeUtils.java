@@ -25,6 +25,15 @@ public class DateTimeUtils {
 	 */
 	public static String toDateString(Date date) {
 		DateTime time = new DateTime(date);
+		return toDateString(time);
+	}
+
+	/**
+	 * 
+	 * @param time
+	 * @return
+	 */
+	public static String toDateString(DateTime time) {
 		return String.format(DATE_FORMAT, time.getYear(), time.getMonthOfYear(), time.getDayOfMonth());
 	}
 
@@ -42,4 +51,5 @@ public class DateTimeUtils {
 				.withMillisOfSecond(0);
 		return prevMonth;
 	}
+
 }

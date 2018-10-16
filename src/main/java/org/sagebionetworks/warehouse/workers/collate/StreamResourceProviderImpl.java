@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -100,6 +101,23 @@ public class StreamResourceProviderImpl implements StreamResourceProvider {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public PrintWriter createGzipPrintWriter(File file) {
+		try {
+			return new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(file)), "UTF-8"));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} 
+	}
+
+	@Override
+	public void writeText(String[] toWrite, PrintWriter writer) {
+		for (String line : toWrite) {
+			writer.println(line);
+		}
+		writer.close();
 	}
 
 }
