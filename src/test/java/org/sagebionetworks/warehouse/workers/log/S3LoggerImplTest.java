@@ -1,6 +1,7 @@
 package org.sagebionetworks.warehouse.workers.log;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -71,6 +72,7 @@ public class S3LoggerImplTest {
 		verify(mockResourceProvider).writeText(LogRecordUtils.getFormattedLog(toLog), mockWriter);
 		verify(mockS3Client).putObject(captor.capture());
 		PutObjectRequest request = captor.getValue();
+		assertNotNull(request);
 		assertEquals(bucketName, request.getBucketName());
 		// only check the prefix 00-00-00-000 (hh-mm-ss-mss)
 		assertTrue(request.getKey().startsWith(LogRecordUtils.getKey(toLog).substring(0, 11)));

@@ -4,6 +4,7 @@ import org.sagebionetworks.warehouse.workers.config.Configuration;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
@@ -40,6 +41,11 @@ public class AwsModule extends AbstractModule {
 	@Provides @Singleton
 	public AmazonSNSClient getSNSClient(AWSCredentials credentials){
 		return new AmazonSNSClient(credentials);
+	}
+	
+	@Provides @Singleton
+	public AmazonCloudWatchClient getCloudWatchClient(AWSCredentials credentials){
+		return new AmazonCloudWatchClient(credentials);
 	}
 
 }
