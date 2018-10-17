@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.*;
 
@@ -20,10 +21,13 @@ import org.sagebionetworks.common.util.progress.ProgressCallback;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 public class FileManagerImplTest {
-	
+	@Mock
 	FolderMetadataDao mockFolderMetadataDao;
+	@Mock
 	FileMetadataDao mockFileMetadataDao;
+	@Mock
 	BucketTopicPublisher mockBucketToTopicManager;
+	@Mock
 	ProgressCallback<Void> mockCallback;
 	
 	S3ObjectSummary rollingOne;
@@ -37,10 +41,7 @@ public class FileManagerImplTest {
 	
 	@Before
 	public void before(){
-		mockFolderMetadataDao = Mockito.mock(FolderMetadataDao.class);
-		mockFileMetadataDao = Mockito.mock(FileMetadataDao.class);
-		mockBucketToTopicManager = Mockito.mock(BucketTopicPublisher.class);
-		mockCallback = Mockito.mock(ProgressCallback.class);
+		MockitoAnnotations.initMocks(this);
 		manger = new FileManagerImpl(mockFolderMetadataDao, mockFileMetadataDao, mockBucketToTopicManager);
 		
 		rollingOne = new S3ObjectSummary();
