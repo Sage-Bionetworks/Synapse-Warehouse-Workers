@@ -2,22 +2,22 @@ package org.sagebionetworks.warehouse.workers.model;
 
 public class LogRecord {
 
-	private String workerName;
+	private String className;
 	private String exceptionName;
 	private String stacktrace;
 	private long timestamp;
 	
-	public LogRecord(long timestamp, String workerName, String exceptionName, String stacktrace) {
+	public LogRecord(long timestamp, String className, String exceptionName, String stacktrace) {
 		this.timestamp = timestamp;
-		this.workerName = workerName;
+		this.className = className;
 		this.exceptionName = exceptionName;
 		this.stacktrace = stacktrace;
 	}
-	public String getWorkerName() {
-		return workerName;
+	public String getClassName() {
+		return className;
 	}
-	public void setWorkerName(String workerName) {
-		this.workerName = workerName;
+	public void setClassName(String workerName) {
+		this.className = workerName;
 	}
 	public String getExceptionName() {
 		return exceptionName;
@@ -44,7 +44,7 @@ public class LogRecord {
 		result = prime * result + ((exceptionName == null) ? 0 : exceptionName.hashCode());
 		result = prime * result + ((stacktrace == null) ? 0 : stacktrace.hashCode());
 		result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
-		result = prime * result + ((workerName == null) ? 0 : workerName.hashCode());
+		result = prime * result + ((className == null) ? 0 : className.hashCode());
 		return result;
 	}
 	@Override
@@ -68,16 +68,16 @@ public class LogRecord {
 			return false;
 		if (timestamp != other.timestamp)
 			return false;
-		if (workerName == null) {
-			if (other.workerName != null)
+		if (className == null) {
+			if (other.className != null)
 				return false;
-		} else if (!workerName.equals(other.workerName))
+		} else if (!className.equals(other.className))
 			return false;
 		return true;
 	}
 	@Override
 	public String toString() {
-		return "LogRecord [workerName=" + workerName + ", exceptionName=" + exceptionName + ", stacktrace=" + stacktrace
+		return "LogRecord [className=" + className + ", exceptionName=" + exceptionName + ", stacktrace=" + stacktrace
 				+ ", timestamp=" + timestamp + "]";
 	}
 }

@@ -5,13 +5,13 @@ import org.sagebionetworks.warehouse.workers.model.LogRecord;
 
 import com.google.inject.Inject;
 
-public class WorkerLoggerImpl implements WorkerLogger{
+public class AmazonLoggerImpl implements AmazonLogger{
 	
 	private S3Logger s3Logger;
 	private CloudWatchLogger cloudWatchLogger;
 	
 	@Inject
-	public WorkerLoggerImpl(S3Logger s3Logger, CloudWatchLogger cloudWatchLogger) {
+	public AmazonLoggerImpl(S3Logger s3Logger, CloudWatchLogger cloudWatchLogger) {
 		this.s3Logger = s3Logger;
 		this.cloudWatchLogger = cloudWatchLogger;
 	}

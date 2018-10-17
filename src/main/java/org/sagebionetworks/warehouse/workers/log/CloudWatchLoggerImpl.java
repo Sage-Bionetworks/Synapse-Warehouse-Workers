@@ -14,7 +14,7 @@ import com.amazonaws.services.cloudwatch.model.StandardUnit;
 import com.google.inject.Inject;
 
 public class CloudWatchLoggerImpl implements CloudWatchLogger{
-	public static final String DIMENSION_NAME = "Worker";
+	public static final String DIMENSION_NAME = "Class";
 	public static final String NAMESPACE_CONFIG_KEY = "org.sagebionetworks.warehouse.worker.cloudwatch.namespace";
 	
 	AmazonCloudWatchClient cloudWatchClient;
@@ -30,7 +30,7 @@ public class CloudWatchLoggerImpl implements CloudWatchLogger{
 	public void log(ProgressCallback<Void> progressCallback, LogRecord toLog) {
 		Dimension dimension = new Dimension()
 				.withName(DIMENSION_NAME)
-				.withValue(toLog.getWorkerName());
+				.withValue(toLog.getClassName());
 
 		MetricDatum datum = new MetricDatum()
 				.withMetricName(toLog.getExceptionName())

@@ -31,8 +31,8 @@ import org.sagebionetworks.warehouse.workers.log.CloudWatchLogger;
 import org.sagebionetworks.warehouse.workers.log.CloudWatchLoggerImpl;
 import org.sagebionetworks.warehouse.workers.log.S3Logger;
 import org.sagebionetworks.warehouse.workers.log.S3LoggerImpl;
-import org.sagebionetworks.warehouse.workers.log.WorkerLogger;
-import org.sagebionetworks.warehouse.workers.log.WorkerLoggerImpl;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
+import org.sagebionetworks.warehouse.workers.log.AmazonLoggerImpl;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotConfigurationProvider;
@@ -102,7 +102,7 @@ public class WorkersModule extends AbstractModule {
 		bind(S3ObjectCollator.class).to(S3ObjectCollatorImpl.class);
 		bind(S3Logger.class).to(S3LoggerImpl.class);
 		bind(CloudWatchLogger.class).to(CloudWatchLoggerImpl.class);
-		bind(WorkerLogger.class).to(WorkerLoggerImpl.class);
+		bind(AmazonLogger.class).to(AmazonLoggerImpl.class);
 	}
 
 	/**

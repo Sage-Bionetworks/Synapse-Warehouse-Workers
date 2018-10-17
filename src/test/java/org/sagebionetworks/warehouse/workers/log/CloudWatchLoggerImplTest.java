@@ -73,7 +73,7 @@ public class CloudWatchLoggerImplTest {
 		Dimension dimension = dimensions.get(0);
 		assertNotNull(dimension);
 		assertEquals(DIMENSION_NAME, dimension.getName());
-		assertEquals(toLog.getWorkerName(), dimension.getValue());
+		assertEquals(toLog.getClassName(), dimension.getValue());
 	}
 
 }

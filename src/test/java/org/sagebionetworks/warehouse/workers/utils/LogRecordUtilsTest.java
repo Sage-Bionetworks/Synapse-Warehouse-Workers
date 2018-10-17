@@ -22,7 +22,7 @@ public class LogRecordUtilsTest {
 	@Test
 	public void testInvalidLogRecordWithNullWorkerName() {
 		LogRecord record = LogRecordTestUtils.createValidLogRecord();
-		record.setWorkerName(null);
+		record.setClassName(null);
 		assertFalse(LogRecordUtils.isValidLogRecord(record));
 	}
 	
@@ -51,7 +51,7 @@ public class LogRecordUtilsTest {
 		record.setTimestamp(1539717007681L); // Tuesday, October 16, 2018 7:10:07.681 PM (UTC)
 		String[] formatted = LogRecordUtils.getFormattedLog(record);
 		assertEquals(2, formatted.length);
-		assertEquals("1539717007681::"+record.getWorkerName()+"::"+record.getExceptionName(),formatted[0]);
+		assertEquals("1539717007681::"+record.getClassName()+"::"+record.getExceptionName(),formatted[0]);
 		assertEquals(record.getStacktrace(), formatted[1]);
 	}
 	
@@ -66,7 +66,7 @@ public class LogRecordUtilsTest {
 		record.setTimestamp(1539717007681L); // Tuesday, October 16, 2018 7:10:07.681 PM (UTC)
 		String key = LogRecordUtils.getKey(record);
 		System.out.println(key);
-		assertTrue(key.startsWith("2018-10-16/"+record.getWorkerName()+"/19-10-07-681-"));
+		assertTrue(key.startsWith("2018-10-16/"+record.getClassName()+"/19-10-07-681-"));
 		assertTrue(key.endsWith(".log.gz"));
 	}
 }

@@ -2,7 +2,7 @@ package org.sagebionetworks.warehouse.workers.log;
 
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 
-public interface WorkerLogger {
+public interface AmazonLogger {
 
 	/**
 	 * Capture a non-retry-able error

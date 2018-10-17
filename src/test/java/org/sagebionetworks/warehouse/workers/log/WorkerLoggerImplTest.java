@@ -21,12 +21,12 @@ public class WorkerLoggerImplTest {
 	ProgressCallback<Void> mockProgressCallback;
 	
 	ArgumentCaptor<LogRecord> argCaptor;
-	WorkerLoggerImpl logger;
+	AmazonLoggerImpl logger;
 	
 	@Before
 	public void before() {
 		MockitoAnnotations.initMocks(this);
-		this.logger = new WorkerLoggerImpl(mockS3Logger, mockCloudWatchLogger);
+		this.logger = new AmazonLoggerImpl(mockS3Logger, mockCloudWatchLogger);
 		argCaptor = ArgumentCaptor.forClass(LogRecord.class);
 	}
 
@@ -39,7 +39,7 @@ public class WorkerLoggerImplTest {
 		verify(mockCloudWatchLogger).log(eq(mockProgressCallback), argCaptor.capture());
 		LogRecord cloudWatchInput = argCaptor.getValue();
 		assertEquals(s3Input, cloudWatchInput);
-		assertEquals("workerName", s3Input.getWorkerName());
+		assertEquals("workerName", s3Input.getClassName());
 		assertEquals("exceptionName", s3Input.getExceptionName());
 		assertEquals("trace", s3Input.getStacktrace());
 		assertNotNull(s3Input.getTimestamp());
