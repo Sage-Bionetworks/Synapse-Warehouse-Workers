@@ -37,6 +37,9 @@ public class S3LoggerImpl implements S3Logger{
 
 	@Override
 	public void log(ProgressCallback<Void> progressCallback, LogRecord toLog) {
+		if (!LogRecordUtils.isValidLogRecord(toLog)) {
+			return;
+		}
 		String destinationKey = LogRecordUtils.getKey(toLog);
 		String[] toWrite = LogRecordUtils.getFormattedLog(toLog);
 		File logFile = resourceProvider.createTempFile(TEMP_FILE_NAME, TEMP_FILE_EXTENSION);
@@ -47,7 +50,9 @@ public class S3LoggerImpl implements S3Logger{
 			PutObjectRequest request = new PutObjectRequest(bucketName, destinationKey, logFile)
 					// Both the object owner and the bucket owner get FULL_CONTROL over the object.
 					.withCannedAcl(CannedAccessControlList.BucketOwnerFullControl);
-			progressCallback.progressMade(null);
+			if (progressCallback != null) {
+				progressCallback.progressMade(null);
+			}
 			s3Client.putObject(request);
 		} finally {
 			if(writer != null){

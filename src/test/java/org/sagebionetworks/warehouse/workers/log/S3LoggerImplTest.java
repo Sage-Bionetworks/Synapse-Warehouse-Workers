@@ -3,6 +3,8 @@ package org.sagebionetworks.warehouse.workers.log;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.sagebionetworks.warehouse.workers.log.S3LoggerImpl.BUCKET_CONFIG_KEY;
@@ -83,5 +85,16 @@ public class S3LoggerImplTest {
 		assertEquals(mockFile, request.getFile());
 		assertEquals(CannedAccessControlList.BucketOwnerFullControl, request.getCannedAcl());
 		verify(mockWriter).close();
+	}
+	
+	@Test
+	public void testInvalidLogRecord() {
+		s3Logger.log(mockProgressCallback, null);
+		verify(mockResourceProvider, never()).createTempFile(any(String.class), any(String.class));
+		verify(mockResourceProvider, never()).createGzipPrintWriter(any(File.class));
+		verify(mockResourceProvider, never()).writeText(any(String[].class), any(PrintWriter.class));
+		verify(mockProgressCallback, never()).progressMade(null);
+		verify(mockS3Client, never()).putObject(any(PutObjectRequest.class));
+		verify(mockWriter, never()).close();
 	}
 }

@@ -1,6 +1,8 @@
 package org.sagebionetworks.warehouse.workers.log;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.sagebionetworks.warehouse.workers.log.CloudWatchLoggerImpl.DIMENSION_NAME;
@@ -76,4 +78,10 @@ public class CloudWatchLoggerImplTest {
 		assertEquals(toLog.getClassName(), dimension.getValue());
 	}
 
+	@Test
+	public void testLogInvalidLogRecord() {
+		logger.log(mockProgressCallback, null);
+		verify(mockProgressCallback, never()).progressMade(null);
+		verify(mockCloudWatchClient, never()).putMetricData(any(PutMetricDataRequest.class));
+	}
 }

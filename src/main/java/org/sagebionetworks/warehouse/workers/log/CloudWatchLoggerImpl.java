@@ -5,6 +5,7 @@ import java.util.Date;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.model.LogRecord;
+import org.sagebionetworks.warehouse.workers.utils.LogRecordUtils;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import com.amazonaws.services.cloudwatch.model.Dimension;
@@ -28,6 +29,9 @@ public class CloudWatchLoggerImpl implements CloudWatchLogger{
 
 	@Override
 	public void log(ProgressCallback<Void> progressCallback, LogRecord toLog) {
+		if (!LogRecordUtils.isValidLogRecord(toLog)) {
+			return;
+		}
 		Dimension dimension = new Dimension()
 				.withName(DIMENSION_NAME)
 				.withValue(toLog.getClassName());
@@ -43,7 +47,9 @@ public class CloudWatchLoggerImpl implements CloudWatchLogger{
 				.withNamespace(namespace)
 				.withMetricData(datum);
 
-		progressCallback.progressMade(null);
+		if (progressCallback != null) {
+			progressCallback.progressMade(null);
+		}
 		cloudWatchClient.putMetricData(request);
 	}
 

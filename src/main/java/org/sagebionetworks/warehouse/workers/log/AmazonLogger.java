@@ -8,9 +8,10 @@ public interface AmazonLogger {
 	 * Capture a non-retry-able error
 	 * 
 	 * @param progressCallback
-	 * @param workerName
+	 * @param className
 	 * @param exceptionName
 	 * @param stacktrace
 	 */
-	public void logNonRetryableError(ProgressCallback<Void> progressCallback, String workerName, String exceptionName, String stacktrace);
+	public void logNonRetryableError(ProgressCallback<Void> progressCallback,
+			String className, String exceptionName, String stacktrace);
 }
