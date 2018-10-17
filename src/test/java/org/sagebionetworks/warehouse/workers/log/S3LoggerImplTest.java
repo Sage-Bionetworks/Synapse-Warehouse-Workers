@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
@@ -37,6 +38,8 @@ public class S3LoggerImplTest {
 	Configuration mockConfig;
 	@Mock
 	BucketDaoProvider mockBucketDaoProvider;
+	@Mock
+	ProgressCallback<Void> mockProgressCallback;
 	@Mock
 	File mockFile;
 	@Mock
@@ -66,10 +69,11 @@ public class S3LoggerImplTest {
 	public void testLog() {
 		long timestamp = System.currentTimeMillis();
 		LogRecord toLog = new LogRecord(timestamp, "workerName", "exceptionName", "trace");
-		s3Logger.log(toLog);
+		s3Logger.log(mockProgressCallback, toLog);
 		verify(mockResourceProvider).createTempFile(TEMP_FILE_NAME, TEMP_FILE_EXTENSION);
 		verify(mockResourceProvider).createGzipPrintWriter(mockFile);
 		verify(mockResourceProvider).writeText(LogRecordUtils.getFormattedLog(toLog), mockWriter);
+		verify(mockProgressCallback).progressMade(null);
 		verify(mockS3Client).putObject(captor.capture());
 		PutObjectRequest request = captor.getValue();
 		assertNotNull(request);

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.PrintWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
@@ -25,7 +26,8 @@ public class S3LoggerImpl implements S3Logger{
 	private String bucketName;
 	
 	@Inject
-	public S3LoggerImpl(AmazonS3Client s3Client, StreamResourceProvider resourceProvider, Configuration config, BucketDaoProvider bucketDaoProvider) {
+	public S3LoggerImpl(AmazonS3Client s3Client, StreamResourceProvider resourceProvider,
+			Configuration config, BucketDaoProvider bucketDaoProvider) {
 		this.s3Client = s3Client;
 		this.resourceProvider = resourceProvider;
 		this.bucketName = config.getProperty(BUCKET_CONFIG_KEY);
@@ -34,7 +36,7 @@ public class S3LoggerImpl implements S3Logger{
 	}
 
 	@Override
-	public void log(LogRecord toLog) {
+	public void log(ProgressCallback<Void> progressCallback, LogRecord toLog) {
 		String destinationKey = LogRecordUtils.getKey(toLog);
 		String[] toWrite = LogRecordUtils.getFormattedLog(toLog);
 		File logFile = resourceProvider.createTempFile(TEMP_FILE_NAME, TEMP_FILE_EXTENSION);
@@ -45,6 +47,7 @@ public class S3LoggerImpl implements S3Logger{
 			PutObjectRequest request = new PutObjectRequest(bucketName, destinationKey, logFile)
 					// Both the object owner and the bucket owner get FULL_CONTROL over the object.
 					.withCannedAcl(CannedAccessControlList.BucketOwnerFullControl);
+			progressCallback.progressMade(null);
 			s3Client.putObject(request);
 		} finally {
 			if(writer != null){

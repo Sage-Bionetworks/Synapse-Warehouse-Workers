@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers.log;
 
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 import org.sagebionetworks.warehouse.workers.model.LogRecord;
 
 import com.google.inject.Inject;
@@ -16,11 +17,12 @@ public class WorkerLoggerImpl implements WorkerLogger{
 	}
 
 	@Override
-	public void logNonRetryableError(String workerName, String exceptionName, String stacktrace) {
+	public void logNonRetryableError(ProgressCallback<Void> progressCallback, String workerName, String exceptionName, String stacktrace) {
 		long timestamp = System.currentTimeMillis();
 		LogRecord toLog = new LogRecord(timestamp, workerName, exceptionName, stacktrace);
-		s3Logger.log(toLog);
-		cloudWatchLogger.log(toLog);
+		progressCallback.progressMade(null);
+		s3Logger.log(progressCallback, toLog);
+		cloudWatchLogger.log(progressCallback, toLog);
 	}
 
 }

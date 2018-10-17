@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.model.LogRecord;
 
@@ -27,6 +28,8 @@ public class CloudWatchLoggerImplTest {
 	AmazonCloudWatchClient mockCloudWatchClient;
 	@Mock
 	Configuration mockConfig;
+	@Mock
+	ProgressCallback<Void> mockProgressCallback;
 	
 	CloudWatchLoggerImpl logger;
 	String namespace = "test.org.sagebionetworks.warehouse.workers";
@@ -49,7 +52,8 @@ public class CloudWatchLoggerImplTest {
 	public void testLog() {
 		long timestamp = System.currentTimeMillis();
 		LogRecord toLog = new LogRecord(timestamp, "workerName", "exceptionName", "trace");
-		logger.log(toLog);
+		logger.log(mockProgressCallback, toLog);
+		verify(mockProgressCallback).progressMade(null);
 		verify(mockCloudWatchClient).putMetricData(captor.capture());
 		PutMetricDataRequest captured = captor.getValue();
 		assertNotNull(captured);

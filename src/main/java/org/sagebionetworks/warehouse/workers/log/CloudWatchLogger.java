@@ -1,5 +1,6 @@
 package org.sagebionetworks.warehouse.workers.log;
 
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 import org.sagebionetworks.warehouse.workers.model.LogRecord;
 
 public interface CloudWatchLogger {
@@ -7,7 +8,8 @@ public interface CloudWatchLogger {
 	/**
 	 * Capture a log record in CloudWatch
 	 * 
+	 * @param progressCallback
 	 * @param toLog
 	 */
-	public void log(LogRecord toLog);
+	public void log(ProgressCallback<Void> progressCallback, LogRecord toLog);
 }
