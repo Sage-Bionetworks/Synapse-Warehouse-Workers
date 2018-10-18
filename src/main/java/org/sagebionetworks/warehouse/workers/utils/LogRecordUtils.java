@@ -9,10 +9,10 @@ import org.sagebionetworks.warehouse.workers.model.LogRecord;
 public class LogRecordUtils {
 
 	public static Boolean isValidLogRecord(LogRecord record) {
-		if (record 						== null) return false;
-		if (record.getClassName() 		== null) return false;
-		if (record.getExceptionName() 	== null) return false;
-		if (record.getStacktrace() 		== null) return false;
+		if (record 					== null) return false;
+		if (record.getClassName() 	== null) return false;
+		if (record.getExceptionName() 		== null) return false;
+		if (record.getStacktrace() 	== null) return false;
 		return true;
 	}
 

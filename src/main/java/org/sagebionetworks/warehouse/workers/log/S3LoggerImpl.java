@@ -36,7 +36,7 @@ public class S3LoggerImpl implements S3Logger{
 	}
 
 	@Override
-	public void log(ProgressCallback<Void> progressCallback, LogRecord toLog) {
+	public <T> void log(ProgressCallback<T> progressCallback, T toCallback, LogRecord toLog) {
 		if (!LogRecordUtils.isValidLogRecord(toLog)) {
 			return;
 		}
@@ -51,7 +51,7 @@ public class S3LoggerImpl implements S3Logger{
 					// Both the object owner and the bucket owner get FULL_CONTROL over the object.
 					.withCannedAcl(CannedAccessControlList.BucketOwnerFullControl);
 			if (progressCallback != null) {
-				progressCallback.progressMade(null);
+				progressCallback.progressMade(toCallback);
 			}
 			s3Client.putObject(request);
 		} finally {

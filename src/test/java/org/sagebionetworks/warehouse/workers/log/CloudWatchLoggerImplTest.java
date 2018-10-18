@@ -54,7 +54,7 @@ public class CloudWatchLoggerImplTest {
 	public void testLog() {
 		long timestamp = System.currentTimeMillis();
 		LogRecord toLog = new LogRecord(timestamp, "workerName", "exceptionName", "trace");
-		logger.log(mockProgressCallback, toLog);
+		logger.log(mockProgressCallback, null, toLog);
 		verify(mockProgressCallback).progressMade(null);
 		verify(mockCloudWatchClient).putMetricData(captor.capture());
 		PutMetricDataRequest captured = captor.getValue();
@@ -80,7 +80,7 @@ public class CloudWatchLoggerImplTest {
 
 	@Test
 	public void testLogInvalidLogRecord() {
-		logger.log(mockProgressCallback, null);
+		logger.log(mockProgressCallback, null, null);
 		verify(mockProgressCallback, never()).progressMade(null);
 		verify(mockCloudWatchClient, never()).putMetricData(any(PutMetricDataRequest.class));
 	}

@@ -17,15 +17,15 @@ public class AmazonLoggerImpl implements AmazonLogger{
 	}
 
 	@Override
-	public void logNonRetryableError(ProgressCallback<Void> progressCallback,
-			String className, String exceptionName, String stacktrace) {
+	public <T> void logNonRetryableError(ProgressCallback<T> progressCallback,
+			T toCallback, String className, String reason, String details) {
 		long timestamp = System.currentTimeMillis();
-		LogRecord toLog = new LogRecord(timestamp, className, exceptionName, stacktrace);
+		LogRecord toLog = new LogRecord(timestamp, className, reason, details);
 		if (progressCallback != null) {
 			progressCallback.progressMade(null);
 		}
-		s3Logger.log(progressCallback, toLog);
-		cloudWatchLogger.log(progressCallback, toLog);
+		s3Logger.log(progressCallback, toCallback, toLog);
+		cloudWatchLogger.log(progressCallback, toCallback, toLog);
 	}
 
 }

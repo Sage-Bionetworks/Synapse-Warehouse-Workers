@@ -1,6 +1,7 @@
 package org.sagebionetworks.warehouse.workers.log;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 
@@ -32,11 +33,11 @@ public class WorkerLoggerImplTest {
 
 	@Test
 	public void testLog() {
-		logger.logNonRetryableError(mockProgressCallback, "workerName", "exceptionName", "trace");
+		logger.logNonRetryableError(mockProgressCallback, null, "workerName", "exceptionName", "trace");
 		verify(mockProgressCallback).progressMade(null);
-		verify(mockS3Logger).log(eq(mockProgressCallback), argCaptor.capture());
+		verify(mockS3Logger).log(eq(mockProgressCallback), any(Void.class), argCaptor.capture());
 		LogRecord s3Input = argCaptor.getValue();
-		verify(mockCloudWatchLogger).log(eq(mockProgressCallback), argCaptor.capture());
+		verify(mockCloudWatchLogger).log(eq(mockProgressCallback), any(Void.class), argCaptor.capture());
 		LogRecord cloudWatchInput = argCaptor.getValue();
 		assertEquals(s3Input, cloudWatchInput);
 		assertEquals("workerName", s3Input.getClassName());

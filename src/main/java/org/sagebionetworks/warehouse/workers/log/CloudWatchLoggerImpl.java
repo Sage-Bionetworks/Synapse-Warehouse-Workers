@@ -28,7 +28,7 @@ public class CloudWatchLoggerImpl implements CloudWatchLogger{
 	}
 
 	@Override
-	public void log(ProgressCallback<Void> progressCallback, LogRecord toLog) {
+	public <T> void log(ProgressCallback<T> progressCallback, T toCallback, LogRecord toLog) {
 		if (!LogRecordUtils.isValidLogRecord(toLog)) {
 			return;
 		}
@@ -48,7 +48,7 @@ public class CloudWatchLoggerImpl implements CloudWatchLogger{
 				.withMetricData(datum);
 
 		if (progressCallback != null) {
-			progressCallback.progressMade(null);
+			progressCallback.progressMade(toCallback);
 		}
 		cloudWatchClient.putMetricData(request);
 	}

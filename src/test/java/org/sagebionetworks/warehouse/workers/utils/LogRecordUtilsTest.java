@@ -27,14 +27,14 @@ public class LogRecordUtilsTest {
 	}
 	
 	@Test
-	public void testInvalidLogRecordWithNullExceptionName() {
+	public void testInvalidLogRecordWithNullReason() {
 		LogRecord record = LogRecordTestUtils.createValidLogRecord();
 		record.setExceptionName(null);
 		assertFalse(LogRecordUtils.isValidLogRecord(record));
 	}
 
 	@Test
-	public void testInvalidLogRecordWithNullStacktrace() {
+	public void testInvalidLogRecordWithNullDetails() {
 		LogRecord record = LogRecordTestUtils.createValidLogRecord();
 		record.setStacktrace(null);
 		assertFalse(LogRecordUtils.isValidLogRecord(record));

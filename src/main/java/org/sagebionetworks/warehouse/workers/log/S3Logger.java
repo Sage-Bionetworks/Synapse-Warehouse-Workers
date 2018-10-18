@@ -11,5 +11,5 @@ public interface S3Logger {
 	 * @param progressCallback
 	 * @param toLog
 	 */
-	public void log(ProgressCallback<Void> progressCallback, LogRecord toLog);
+	public <T> void log(ProgressCallback<T> progressCallback, T toCallback, LogRecord toLog);
 }

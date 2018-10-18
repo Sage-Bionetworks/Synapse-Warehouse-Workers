@@ -16,8 +16,8 @@ public class LogRecord {
 	public String getClassName() {
 		return className;
 	}
-	public void setClassName(String workerName) {
-		this.className = workerName;
+	public void setClassName(String className) {
+		this.className = className;
 	}
 	public String getExceptionName() {
 		return exceptionName;

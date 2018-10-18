@@ -71,7 +71,7 @@ public class S3LoggerImplTest {
 	public void testLog() {
 		long timestamp = System.currentTimeMillis();
 		LogRecord toLog = new LogRecord(timestamp, "workerName", "exceptionName", "trace");
-		s3Logger.log(mockProgressCallback, toLog);
+		s3Logger.log(mockProgressCallback, null, toLog);
 		verify(mockResourceProvider).createTempFile(TEMP_FILE_NAME, TEMP_FILE_EXTENSION);
 		verify(mockResourceProvider).createGzipPrintWriter(mockFile);
 		verify(mockResourceProvider).writeText(LogRecordUtils.getFormattedLog(toLog), mockWriter);
@@ -89,7 +89,7 @@ public class S3LoggerImplTest {
 	
 	@Test
 	public void testInvalidLogRecord() {
-		s3Logger.log(mockProgressCallback, null);
+		s3Logger.log(mockProgressCallback, null, null);
 		verify(mockResourceProvider, never()).createTempFile(any(String.class), any(String.class));
 		verify(mockResourceProvider, never()).createGzipPrintWriter(any(File.class));
 		verify(mockResourceProvider, never()).writeText(any(String[].class), any(PrintWriter.class));
