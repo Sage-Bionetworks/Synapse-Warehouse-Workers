@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.aws.utils.s3.KeyData;
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.FileState;
 import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.warehouse.workers.model.FileState.State;
@@ -26,14 +27,17 @@ public class FileManagerImpl implements FileManager{
 	private FolderMetadataDao folderMetadataDao;
 	private FileMetadataDao fileMetadataDao;
 	private BucketTopicPublisher bucketToTopicManager;
+	private AmazonLogger amazonLogger;
 	
 	@Inject
 	public FileManagerImpl(FolderMetadataDao folderMetadataDao,
-			FileMetadataDao fileMetadataDao, BucketTopicPublisher bucketToTopicManager) {
+			FileMetadataDao fileMetadataDao, BucketTopicPublisher bucketToTopicManager,
+			AmazonLogger amazonLogger) {
 		super();
 		this.folderMetadataDao = folderMetadataDao;
 		this.fileMetadataDao = fileMetadataDao;
 		this.bucketToTopicManager = bucketToTopicManager;
+		this.amazonLogger = amazonLogger;
 	}
 
 	@Override
@@ -70,6 +74,11 @@ public class FileManagerImpl implements FileManager{
 				}
 			} catch (IllegalArgumentException e) {
 				log.error(e.toString());
+				amazonLogger.logNonRetryableError(
+						progressCallback, null,
+						this.getClass().getSimpleName(),
+						e.getClass().getSimpleName(),
+						e.getStackTrace().toString());
 			}
 		}
 	}

@@ -13,6 +13,7 @@ import static org.mockito.Mockito.*;
 
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.FileState;
 import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.warehouse.workers.model.FileState.State;
@@ -29,6 +30,8 @@ public class FileManagerImplTest {
 	BucketTopicPublisher mockBucketToTopicManager;
 	@Mock
 	ProgressCallback<Void> mockCallback;
+	@Mock
+	AmazonLogger mockAmazonLogger;
 	
 	S3ObjectSummary rollingOne;
 	S3ObjectSummary rollingTwo;
@@ -42,7 +45,8 @@ public class FileManagerImplTest {
 	@Before
 	public void before(){
 		MockitoAnnotations.initMocks(this);
-		manger = new FileManagerImpl(mockFolderMetadataDao, mockFileMetadataDao, mockBucketToTopicManager);
+		manger = new FileManagerImpl(mockFolderMetadataDao, mockFileMetadataDao,
+				mockBucketToTopicManager, mockAmazonLogger);
 		
 		rollingOne = new S3ObjectSummary();
 		rollingOne.setBucketName("bucketone");
@@ -132,6 +136,17 @@ public class FileManagerImplTest {
 		verify(mockFileMetadataDao, never()).getFileState(badKeyFile.getBucketName(), badKeyFile.getKey());
 		verify(mockFileMetadataDao).getFileState(fileOne.getBucketName(), fileOne.getKey());
 		verify(mockFolderMetadataDao, never()).createOrUpdateFolderState((FolderState) any());
+	}
+	
+	@Test
+	public void testLogger() {
+		List<S3ObjectSummary> list = Arrays.asList(rollingOne, rollingOne);
+		Exception e = new IllegalArgumentException();
+		doThrow(e).when(mockFolderMetadataDao).createOrUpdateFolderState(any(FolderState.class));
+		manger.addS3Objects(list.iterator(), mockCallback);
+		verify(mockAmazonLogger, times(2)).logNonRetryableError(eq(mockCallback),
+				any(Void.class), eq("FileManagerImpl"), eq("IllegalArgumentException"),
+				any(String.class));
 	}
 	
 	@Test (expected=IllegalArgumentException.class)

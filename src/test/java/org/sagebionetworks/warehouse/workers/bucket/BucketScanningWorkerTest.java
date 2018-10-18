@@ -1,6 +1,8 @@
 package org.sagebionetworks.warehouse.workers.bucket;
 
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -9,23 +11,33 @@ import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 public class BucketScanningWorkerTest {
-
+	@Mock
 	BucketDaoProvider mockBucketDaoProvider;
+	@Mock
 	FileManager mockFileManager;
+	@Mock
 	ProgressCallback<Void> mockProgressCallback;
+	@Mock
 	BucketDao bucketDaoOne;
+	@Mock
 	BucketDao bucketDaoTwo;
+	@Mock
 	Iterator<S3ObjectSummary> oneStream;
+	@Mock
 	Iterator<S3ObjectSummary> twoStream;
+	@Mock
+	AmazonLogger mockWorkerLogger;
 	
 	BucketInfo bucketOne;
 	BucketInfo bucketTwo;
@@ -33,16 +45,9 @@ public class BucketScanningWorkerTest {
 	
 	BucketScanningWorker worker;
 	
-	@SuppressWarnings("unchecked")
 	@Before
 	public void before(){
-		mockBucketDaoProvider = Mockito.mock(BucketDaoProvider.class);
-		mockFileManager = Mockito.mock(FileManager.class);
-		mockProgressCallback = Mockito.mock(ProgressCallback.class);
-		bucketDaoOne = Mockito.mock(BucketDao.class);
-		bucketDaoTwo = Mockito.mock(BucketDao.class);
-		oneStream = Mockito.mock(Iterator.class);
-		twoStream = Mockito.mock(Iterator.class);
+		MockitoAnnotations.initMocks(this);
 	
 		bucketOne = new BucketInfo();
 		bucketOne.setBucketName("one");
@@ -50,7 +55,7 @@ public class BucketScanningWorkerTest {
 		bucketTwo.setBucketName("two");
 		bucketList = new BucketInfoList(Arrays.asList(bucketOne, bucketTwo));
 		
-		worker = new BucketScanningWorker(mockBucketDaoProvider, bucketList, mockFileManager);
+		worker = new BucketScanningWorker(mockBucketDaoProvider, bucketList, mockFileManager, mockWorkerLogger);
 		
 		when(mockBucketDaoProvider.createBucketDao(bucketOne.getBucketName())).thenReturn(bucketDaoOne);
 		when(mockBucketDaoProvider.createBucketDao(bucketTwo.getBucketName())).thenReturn(bucketDaoTwo);
@@ -72,6 +77,9 @@ public class BucketScanningWorkerTest {
 	public void addS3ObjectsThrowsExceptions() throws Exception {
 		doThrow(new IllegalArgumentException()).when(mockFileManager).addS3Objects(oneStream, mockProgressCallback);
 		worker.run(mockProgressCallback);
+		verify(mockWorkerLogger).logNonRetryableError(eq(mockProgressCallback),
+				any(Void.class), eq("BucketScanningWorker"), eq("IllegalArgumentException"),
+				any(String.class));
 		verify(mockFileManager).addS3Objects(oneStream, mockProgressCallback);
 		verify(mockFileManager).addS3Objects(twoStream, mockProgressCallback);
 	}

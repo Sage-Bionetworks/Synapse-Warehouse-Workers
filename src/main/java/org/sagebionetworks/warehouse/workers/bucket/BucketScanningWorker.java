@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 import org.sagebionetworks.common.util.progress.ProgressingRunner;
 
@@ -26,14 +27,17 @@ public class BucketScanningWorker implements ProgressingRunner<Void> {
 	BucketDaoProvider bucketDaoProvider;
 	List<BucketInfo> bucketList;
 	FileManager fileManager;
+	AmazonLogger amazonLogger;
 
 	@Inject
 	public BucketScanningWorker(BucketDaoProvider bucketDaoProvider,
-			BucketInfoList toCollate, FileManager fileManager) {
+			BucketInfoList toCollate, FileManager fileManager,
+			AmazonLogger amazonLogger) {
 		super();
 		this.bucketDaoProvider = bucketDaoProvider;
 		this.bucketList = toCollate.getBucketList();
 		this.fileManager = fileManager;
+		this.amazonLogger = amazonLogger;
 	}
 
 	@Override
@@ -54,6 +58,9 @@ public class BucketScanningWorker implements ProgressingRunner<Void> {
 				this.fileManager.addS3Objects(objectStream, progressCallback);
 			} catch (IllegalArgumentException e) {
 				log.error(e.toString());
+				amazonLogger.logNonRetryableError(progressCallback, null,
+						this.getClass().getSimpleName(), e.getClass().getSimpleName(),
+						e.getStackTrace().toString());
 			}
 		}
 		log.info("Finish scanning in "+(System.currentTimeMillis()-start)+" mili seconds.");

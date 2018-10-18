@@ -20,6 +20,7 @@ import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.FolderState;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 
@@ -42,13 +43,17 @@ public class FolderCollateWorker implements LockedFolderRunner {
 	S3ObjectCollator collator;
 	Map<String, Integer> bucketToSortColumnMap;
 	FolderMetadataDao folderMetadataDao;
+	AmazonLogger amazonLogger;
 	
 	@Inject
-	public FolderCollateWorker(BucketDaoProvider bucketDaoProvider, S3ObjectCollator collator, BucketInfoList bucketList, FolderMetadataDao folderMetadataDao) {
+	public FolderCollateWorker(BucketDaoProvider bucketDaoProvider,
+			S3ObjectCollator collator, BucketInfoList bucketList,
+			FolderMetadataDao folderMetadataDao, AmazonLogger amazonLogger) {
 		super();
 		this.bucketDaoProvider = bucketDaoProvider;
 		this.collator = collator;
 		this.folderMetadataDao = folderMetadataDao;
+		this.amazonLogger = amazonLogger;
 		// Map bucket name to sort index.
 		bucketToSortColumnMap = new HashMap<String, Integer>();
 		for(BucketInfo info: bucketList.getBucketList()){
@@ -108,6 +113,10 @@ public class FolderCollateWorker implements LockedFolderRunner {
 				wereAllFilesCollated = false;
 				// log the exception and the keys
 				log.error("Failed to collate: ", e);
+				amazonLogger.logNonRetryableError(progressCallback, null,
+						this.getClass().getSimpleName(),
+						e.getClass().getSimpleName(),
+						e.getStackTrace().toString());
 				for(String key: keysToCollate){
 					log.error("Failed to collate: "+key);
 				}

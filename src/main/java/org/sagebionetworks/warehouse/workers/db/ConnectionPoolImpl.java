@@ -9,6 +9,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -21,11 +22,13 @@ public class ConnectionPoolImpl implements ConnectionPool {
 	
 	Configuration config;
 	BasicDataSource datasource;
+	AmazonLogger amazonLogger;
 
 	@Inject
-	public ConnectionPoolImpl(Configuration config) {
+	public ConnectionPoolImpl(Configuration config, AmazonLogger amazonLogger) {
 		super();
 		this.config = config;
+		this.amazonLogger = amazonLogger;
 		log.info("Starting database connection pool...");
 		datasource = new BasicDataSource();
 		datasource.setDriverClassName(config.getProperty("org.sagebionetworks.warehouse.workers.jdbc.driver.name"));
@@ -60,6 +63,8 @@ public class ConnectionPoolImpl implements ConnectionPool {
 			datasource.close();
 		} catch (SQLException e) {
 			log.error("Failed to shut down the connection pool", e);
+			amazonLogger.logNonRetryableError(null, null, this.getClass().getSimpleName(),
+					e.getClass().getSimpleName(), e.getStackTrace().toString());
 		}
 	}
 	

@@ -361,12 +361,12 @@ public class WorkersModule extends AbstractModule {
 	}
 
 	@Provides
-	public RunDuringMaintenanceStateGate getMaintainanceStateGate(WarehouseWorkersStateDao dao) {
-		return new RunDuringMaintenanceStateGate(dao);
+	public RunDuringMaintenanceStateGate getMaintainanceStateGate(WarehouseWorkersStateDao dao, AmazonLogger logger) {
+		return new RunDuringMaintenanceStateGate(dao, logger);
 	}
 
 	@Provides
-	public RunDuringNormalStateGate getNormalStateGate(WarehouseWorkersStateDao dao) {
-		return new RunDuringNormalStateGate(dao);
+	public RunDuringNormalStateGate getNormalStateGate(WarehouseWorkersStateDao dao, AmazonLogger logger) {
+		return new RunDuringNormalStateGate(dao, logger);
 	}
 }
