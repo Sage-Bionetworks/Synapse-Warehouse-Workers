@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.snapshot.FileHandleCopyRecordDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.FileHandleCopyRecordSnapshot;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.utils.FileHandleCopyRecordUtils;
@@ -21,8 +22,8 @@ public class FileHandleCopyRecordWorker extends AbstractSnapshotWorker<ObjectRec
 
 	@Inject
 	public FileHandleCopyRecordWorker(AmazonS3Client s3Client, FileHandleCopyRecordDao dao,
-			StreamResourceProvider streamResourceProvider) {
-		super(s3Client, dao, streamResourceProvider);
+			StreamResourceProvider streamResourceProvider, AmazonLogger amazonLogger) {
+		super(s3Client, dao, streamResourceProvider, amazonLogger);
 		log = LogManager.getLogger(FileHandleCopyRecordWorker.class);
 		tempFileNamePrefix = TEMP_FILE_NAME_PREFIX;
 		tempFileNameSuffix = TEMP_FILE_NAME_SUFFIX;
@@ -34,8 +35,7 @@ public class FileHandleCopyRecordWorker extends AbstractSnapshotWorker<ObjectRec
 	public List<FileHandleCopyRecordSnapshot> convert(ObjectRecord record) {
 		FileHandleCopyRecordSnapshot snapshot = FileHandleCopyRecordUtils.getFileHandleCopyRecordSnapshot(record);
 		if (!FileHandleCopyRecordUtils.isValidFileHandleCopyRecordSnapshot(snapshot)) {
-			log.error("Invalid FileDownloadRecord from Record: "+ (record == null ? "null" : record.toString()));
-			return null;
+			throw new IllegalArgumentException("Invalid FileDownloadRecord from Record: "+ (record == null ? "null" : record.toString()));
 		}
 		return Arrays.asList(snapshot);
 	}

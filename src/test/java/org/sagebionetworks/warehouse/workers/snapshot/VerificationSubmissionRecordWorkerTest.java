@@ -2,7 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -24,7 +23,7 @@ public class VerificationSubmissionRecordWorkerTest {
 
 	@Before
 	public void before() {
-		worker = new VerificationSubmissionStateRecordWorker(null, null, null);
+		worker = new VerificationSubmissionStateRecordWorker(null, null, null, null);
 	}
 
 	@Test
@@ -49,8 +48,8 @@ public class VerificationSubmissionRecordWorkerTest {
 		assertEquals(actual.size(), 1);
 	}
 
-	@Test
+	@Test (expected = IllegalArgumentException.class)
 	public void testConvertInvalidRecord() throws JSONObjectAdapterException {
-		assertNull(worker.convert(null));
+		worker.convert(null);
 	}
 }

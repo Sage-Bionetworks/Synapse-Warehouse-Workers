@@ -12,6 +12,7 @@ import org.sagebionetworks.warehouse.workers.bucket.FileSubmissionMessage;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.HasPartitions;
 import org.sagebionetworks.warehouse.workers.db.snapshot.SnapshotDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.utils.XMLUtils;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenRunner;
 import org.sagebionetworks.workers.util.aws.message.RecoverableMessageException;
@@ -25,6 +26,7 @@ public abstract class AbstractSnapshotWorker<K,V> implements MessageDrivenRunner
 	private SnapshotDao<V> dao;
 	private StreamResourceProvider streamResourceProvider;
 	private AmazonS3Client s3Client;
+	protected AmazonLogger amazonLogger;
 	protected Logger log;
 	protected String tempFileNamePrefix;
 	protected String tempFileNameSuffix;
@@ -32,10 +34,11 @@ public abstract class AbstractSnapshotWorker<K,V> implements MessageDrivenRunner
 	protected Class<K> clazz;
 
 	public AbstractSnapshotWorker(AmazonS3Client s3Client, SnapshotDao<V> dao,
-			StreamResourceProvider streamResourceProvider) {
+			StreamResourceProvider streamResourceProvider, AmazonLogger amazonLogger) {
 		this.s3Client = s3Client;
 		this.dao = dao;
 		this.streamResourceProvider = streamResourceProvider;
+		this.amazonLogger = amazonLogger;
 	}
 
 	@Override
@@ -70,7 +73,7 @@ public abstract class AbstractSnapshotWorker<K,V> implements MessageDrivenRunner
 
 			log.info("Processing " + fileSubmissionMessage.getBucket() + "/" + fileSubmissionMessage.getKey());
 			long start = System.currentTimeMillis();
-			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this);
+			int noRecords = SnapshotWriter.write(reader, dao, BATCH_SIZE, callback, message, this, amazonLogger);
 			log.info("Inserted (ignore) " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} catch (Exception e) {

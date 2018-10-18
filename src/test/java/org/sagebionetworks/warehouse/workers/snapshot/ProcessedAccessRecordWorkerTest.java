@@ -1,12 +1,14 @@
 package org.sagebionetworks.warehouse.workers.snapshot;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
+import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
 
@@ -16,7 +18,7 @@ public class ProcessedAccessRecordWorkerTest {
 
 	@Before
 	public void before() {
-		worker = new ProcessAccessRecordWorker(null, null, null);
+		worker = new ProcessAccessRecordWorker(null, null, null, null);
 	}
 
 	@Test
@@ -26,10 +28,10 @@ public class ProcessedAccessRecordWorkerTest {
 		assertEquals(actual.size(), 1);
 	}
 
-	@Test
-	public void testConvertInvalidRecord() {
+	@Test (expected = IllegalArgumentException.class)
+	public void testConvertInvalidRecord() throws JSONObjectAdapterException {
 		AccessRecord record = AccessRecordTestUtil.createValidAccessRecord();
 		record.setDate(null);
-		assertNull(worker.convert(record));
+		worker.convert(record);
 	}
 }

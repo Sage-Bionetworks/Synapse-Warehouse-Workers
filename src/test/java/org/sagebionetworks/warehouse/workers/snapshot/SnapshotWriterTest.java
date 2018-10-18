@@ -1,5 +1,9 @@
 package org.sagebionetworks.warehouse.workers.snapshot;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,11 +11,14 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 
@@ -20,24 +27,29 @@ import com.amazonaws.services.sqs.model.Message;
 
 public class SnapshotWriterTest {
 
+	@Mock
 	AmazonS3Client mockS3Client;
+	@Mock
 	AccessRecordDao mockDao;
-	AccessRecordWorker worker;
+	@Mock
 	ProgressCallback<Message> mockCallback;
+	@Mock
+	StreamResourceProvider mockStreamResourceProvider;
+	@Mock
+	ObjectCSVReader<AccessRecord> mockObjectCSVReader;
+	@Mock
+	AmazonLogger mockAmazonLogger;
+	
 	Message message;
 	String messageBody;
-	StreamResourceProvider mockStreamResourceProvider;
-	ObjectCSVReader<AccessRecord> mockObjectCSVReader;
 	List<AccessRecord> batch;
 
-	@SuppressWarnings("unchecked")
+	AccessRecordWorker worker;
+
 	@Before
 	public void before() {
-		mockS3Client = Mockito.mock(AmazonS3Client.class);
-		mockDao = Mockito.mock(AccessRecordDao.class);
-		mockStreamResourceProvider = Mockito.mock(StreamResourceProvider.class);
-		worker = new AccessRecordWorker(mockS3Client, mockDao, mockStreamResourceProvider);
-		mockCallback = Mockito.mock(ProgressCallback.class);
+		MockitoAnnotations.initMocks(this);
+		worker = new AccessRecordWorker(mockS3Client, mockDao, mockStreamResourceProvider, mockAmazonLogger);
 
 		messageBody = "<Message>\n"
 				+"  <bucket>dev.access.record.sagebase.org</bucket>\n"
@@ -46,7 +58,6 @@ public class SnapshotWriterTest {
 		message = new Message();
 		message.setBody(messageBody);
 
-		mockObjectCSVReader = Mockito.mock(ObjectCSVReader.class);
 		Mockito.when(mockDao.doesPartitionExistForTimestamp(Mockito.anyLong())).thenReturn(true);
 		batch = AccessRecordTestUtil.createValidAccessRecordBatch(5);
 	}
@@ -55,7 +66,7 @@ public class SnapshotWriterTest {
 	@Test
 	public void writeEmptyListTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(null);
-		SnapshotWriter.write(mockObjectCSVReader, mockDao, 2, mockCallback, message, worker);
+		SnapshotWriter.write(mockObjectCSVReader, mockDao, 2, mockCallback, message, worker, mockAmazonLogger);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<AccessRecord>) Mockito.any());
 	}
 
@@ -65,14 +76,15 @@ public class SnapshotWriterTest {
 		AccessRecord invalidRecord = AccessRecordTestUtil.createValidAccessRecord();
 		invalidRecord.setTimestamp(null);
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, invalidRecord, null);
-		SnapshotWriter.write(mockObjectCSVReader, mockDao, 2, mockCallback, message, worker);
+		SnapshotWriter.write(mockObjectCSVReader, mockDao, 2, mockCallback, message, worker, mockAmazonLogger);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<AccessRecord>) Mockito.any());
+		Mockito.verify(mockAmazonLogger, times(2)).logNonRetryableError(eq(mockCallback), eq(message), eq(worker.getClass().getSimpleName()), eq("IllegalArgumentException"), any(String.class));
 	}
 
 	@Test
 	public void writeLessThanBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), null);
-		SnapshotWriter.write(mockObjectCSVReader, mockDao, 5, mockCallback, message, worker);
+		SnapshotWriter.write(mockObjectCSVReader, mockDao, 5, mockCallback, message, worker, mockAmazonLogger);
 		List<AccessRecord> expected = new ArrayList<AccessRecord>(Arrays.asList(batch.get(0), batch.get(1), batch.get(2), batch.get(3)));
 		Mockito.verify(mockDao, Mockito.times(1)).insert(expected);
 	}
@@ -81,7 +93,7 @@ public class SnapshotWriterTest {
 	@Test
 	public void writeBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		SnapshotWriter.write(mockObjectCSVReader, mockDao, 5, mockCallback, message, worker);
+		SnapshotWriter.write(mockObjectCSVReader, mockDao, 5, mockCallback, message, worker, mockAmazonLogger);
 		Mockito.verify(mockDao, Mockito.times(1)).insert((List<AccessRecord>) Mockito.any());
 	}
 
@@ -89,7 +101,7 @@ public class SnapshotWriterTest {
 	@Test
 	public void writeOverBatchSizeTest() throws IOException {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(batch.get(0), batch.get(1), batch.get(2), batch.get(3), batch.get(4), null);
-		SnapshotWriter.write(mockObjectCSVReader, mockDao, 3, mockCallback, message, worker);
+		SnapshotWriter.write(mockObjectCSVReader, mockDao, 3, mockCallback, message, worker, mockAmazonLogger);
 		Mockito.verify(mockDao, Mockito.times(2)).insert((List<AccessRecord>) Mockito.any());
 	}
 }

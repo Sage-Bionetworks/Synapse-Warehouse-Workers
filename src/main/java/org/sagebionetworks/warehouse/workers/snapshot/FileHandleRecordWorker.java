@@ -8,6 +8,7 @@ import org.sagebionetworks.repo.model.audit.FileHandleSnapshot;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.snapshot.FileHandleRecordDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.utils.FileHandleSnapshotUtils;
 
@@ -21,8 +22,8 @@ public class FileHandleRecordWorker extends AbstractSnapshotWorker<ObjectRecord,
 
 	@Inject
 	public FileHandleRecordWorker(AmazonS3Client s3Client, FileHandleRecordDao dao,
-			StreamResourceProvider streamResourceProvider) {
-		super(s3Client, dao, streamResourceProvider);
+			StreamResourceProvider streamResourceProvider, AmazonLogger amazonLogger) {
+		super(s3Client, dao, streamResourceProvider, amazonLogger);
 		log = LogManager.getLogger(FileHandleRecordWorker.class);
 		tempFileNamePrefix = TEMP_FILE_NAME_PREFIX;
 		tempFileNameSuffix = TEMP_FILE_NAME_SUFFIX;
@@ -34,8 +35,7 @@ public class FileHandleRecordWorker extends AbstractSnapshotWorker<ObjectRecord,
 	public List<FileHandleSnapshot> convert(ObjectRecord record) {
 		FileHandleSnapshot snapshot = FileHandleSnapshotUtils.getFileHandleSnapshot(record);
 		if (!FileHandleSnapshotUtils.isValidFileHandleSnapshot(snapshot)) {
-			log.error("Invalid FileHandleSnapshot from Record: "+ (record == null ? "null" : record.toString()));
-			return null;
+			throw new IllegalArgumentException("Invalid FileHandleSnapshot from Record: "+ (record == null ? "null" : record.toString()));
 		}
 		return Arrays.asList(snapshot);
 	}

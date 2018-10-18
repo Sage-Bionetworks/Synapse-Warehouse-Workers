@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserActivityPerClientPerDayDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
@@ -25,8 +26,8 @@ public class UserActivityPerClientPerDayWorker extends AbstractSnapshotWorker<Ac
 
 	@Inject
 	public UserActivityPerClientPerDayWorker(AmazonS3Client s3Client, UserActivityPerClientPerDayDao dao,
-			StreamResourceProvider streamResourceProvider) {
-		super(s3Client, dao, streamResourceProvider);
+			StreamResourceProvider streamResourceProvider, AmazonLogger amazonLogger) {
+		super(s3Client, dao, streamResourceProvider, amazonLogger);
 		log = LogManager.getLogger(UserActivityPerClientPerDayWorker.class);
 		tempFileNamePrefix = TEMP_FILE_NAME_PREFIX;
 		tempFileNameSuffix = TEMP_FILE_NAME_SUFFIX;
@@ -37,8 +38,7 @@ public class UserActivityPerClientPerDayWorker extends AbstractSnapshotWorker<Ac
 	@Override
 	public List<UserActivityPerClientPerDay> convert(AccessRecord record) {
 		if (!AccessRecordUtils.isValidUserAccessRecord(record)) {
-			log.error("Invalid Access Record: "+ (record == null ? "null" : record.toString()));
-			return null;
+			throw new IllegalArgumentException("Invalid Access Record: "+ (record == null ? "null" : record.toString()));
 		}
 		return Arrays.asList(AccessRecordUtils.getUserActivityPerClientPerDay(record));
 	}
