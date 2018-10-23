@@ -3,17 +3,16 @@ package org.sagebionetworks.warehouse.workers.log;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.sagebionetworks.warehouse.workers.log.S3LoggerImpl.BUCKET_CONFIG_KEY;
+import static org.sagebionetworks.warehouse.workers.log.S3LoggerImpl.TEMP_FILE_EXTENSION;
 import static org.sagebionetworks.warehouse.workers.log.S3LoggerImpl.TEMP_FILE_NAME;
 
 import java.io.File;
 import java.io.PrintWriter;
-
-import static org.sagebionetworks.warehouse.workers.log.S3LoggerImpl.TEMP_FILE_EXTENSION;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +20,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
-import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.model.LogRecord;
@@ -39,8 +37,6 @@ public class S3LoggerImplTest {
 	@Mock
 	Configuration mockConfig;
 	@Mock
-	BucketDaoProvider mockBucketDaoProvider;
-	@Mock
 	ProgressCallback<Void> mockProgressCallback;
 	@Mock
 	File mockFile;
@@ -57,14 +53,14 @@ public class S3LoggerImplTest {
 		when(mockConfig.getProperty(BUCKET_CONFIG_KEY)).thenReturn(bucketName);
 		when(mockResourceProvider.createTempFile(TEMP_FILE_NAME, TEMP_FILE_EXTENSION)).thenReturn(mockFile);
 		when(mockResourceProvider.createGzipPrintWriter(mockFile)).thenReturn(mockWriter);
-		s3Logger = new S3LoggerImpl(mockS3Client, mockResourceProvider, mockConfig, mockBucketDaoProvider);
+		s3Logger = new S3LoggerImpl(mockS3Client, mockResourceProvider, mockConfig);
 		captor = ArgumentCaptor.forClass(PutObjectRequest.class);
 	}
 
 	@Test
 	public void testConstructor() {
 		verify(mockConfig).getProperty(BUCKET_CONFIG_KEY);
-		verify(mockBucketDaoProvider).createBucketDao(bucketName);
+		verify(mockS3Client).createBucket(bucketName);
 	}
 
 	@Test

@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 
 import org.apache.commons.io.IOUtils;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
-import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.model.LogRecord;
@@ -27,7 +26,7 @@ public class S3LoggerImpl implements S3Logger{
 	
 	@Inject
 	public S3LoggerImpl(AmazonS3Client s3Client, StreamResourceProvider resourceProvider,
-			Configuration config, BucketDaoProvider bucketDaoProvider) {
+			Configuration config) {
 		this.s3Client = s3Client;
 		this.resourceProvider = resourceProvider;
 		this.bucketName = config.getProperty(BUCKET_CONFIG_KEY);
