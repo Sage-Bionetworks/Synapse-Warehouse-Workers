@@ -32,7 +32,7 @@ public class S3LoggerImpl implements S3Logger{
 		this.resourceProvider = resourceProvider;
 		this.bucketName = config.getProperty(BUCKET_CONFIG_KEY);
 		// create the bucket if it does not exist
-		bucketDaoProvider.createBucketDao(bucketName);
+		s3Client.createBucket(bucketName);
 	}
 
 	@Override
