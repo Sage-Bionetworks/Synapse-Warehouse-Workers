@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.sagebionetworks.warehouse.workers.log.S3LoggerImpl.BUCKET_CONFIG_KEY;
@@ -82,7 +83,7 @@ public class S3LoggerImplTest {
 		assertEquals(mockFile, request.getFile());
 		assertEquals(CannedAccessControlList.BucketOwnerFullControl, request.getCannedAcl());
 		verify(mockWriter).flush();
-		verify(mockWriter).close();
+		verify(mockWriter, times(2)).close();
 	}
 	
 	@Test

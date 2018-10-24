@@ -53,7 +53,6 @@ public class AmazonLoggerIntegrationTest {
 				.withEndTime(new Date(System.currentTimeMillis()))
 				.withPeriod(60); // 60 seconds as minimum requirements
 		GetMetricStatisticsResult initialStats = cloudWatchClient.getMetricStatistics(getMetricStatisticsRequest);
-		System.out.println(initialStats);
 		amazonLogger.logNonRetryableError(null, null, this.getClass().getSimpleName(), exception);
 		
 		// wait for the file to exist
@@ -63,7 +62,6 @@ public class AmazonLoggerIntegrationTest {
 		// check cloudwatch
 		getMetricStatisticsRequest.withEndTime(new Date(System.currentTimeMillis()));
 		GetMetricStatisticsResult currentStats = cloudWatchClient.getMetricStatistics(getMetricStatisticsRequest);
-		System.out.println(currentStats);
 		assertTrue(currentStats.getDatapoints().size() > initialStats.getDatapoints().size());
 	}
 
