@@ -18,9 +18,9 @@ public class AmazonLoggerImpl implements AmazonLogger{
 
 	@Override
 	public <T> void logNonRetryableError(ProgressCallback<T> progressCallback,
-			T toCallback, String className, String reason, String details) {
+			T toCallback, String className, Throwable throwable) {
 		long timestamp = System.currentTimeMillis();
-		LogRecord toLog = new LogRecord(timestamp, className, reason, details);
+		LogRecord toLog = new LogRecord(timestamp, className, throwable);
 		if (progressCallback != null) {
 			progressCallback.progressMade(null);
 		}

@@ -63,8 +63,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 			datasource.close();
 		} catch (SQLException e) {
 			log.error("Failed to shut down the connection pool", e);
-			amazonLogger.logNonRetryableError(null, null, this.getClass().getSimpleName(),
-					e.getClass().getSimpleName(), e.getStackTrace().toString());
+			amazonLogger.logNonRetryableError(null, null, this.getClass().getSimpleName(), e);
 		}
 	}
 	

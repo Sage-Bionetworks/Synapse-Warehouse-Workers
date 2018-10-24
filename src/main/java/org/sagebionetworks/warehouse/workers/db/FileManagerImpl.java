@@ -76,9 +76,7 @@ public class FileManagerImpl implements FileManager{
 				log.error(e.toString());
 				amazonLogger.logNonRetryableError(
 						progressCallback, null,
-						this.getClass().getSimpleName(),
-						e.getClass().getSimpleName(),
-						e.getStackTrace().toString());
+						this.getClass().getSimpleName(), e);
 			}
 		}
 	}

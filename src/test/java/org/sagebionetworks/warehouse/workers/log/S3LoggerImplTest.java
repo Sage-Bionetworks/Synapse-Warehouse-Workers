@@ -66,11 +66,12 @@ public class S3LoggerImplTest {
 	@Test
 	public void testLog() {
 		long timestamp = System.currentTimeMillis();
-		LogRecord toLog = new LogRecord(timestamp, "workerName", "exceptionName", "trace");
+		Exception e = new Exception("test");
+		LogRecord toLog = new LogRecord(timestamp, "workerName", e);
 		s3Logger.log(mockProgressCallback, null, toLog);
 		verify(mockResourceProvider).createTempFile(TEMP_FILE_NAME, TEMP_FILE_EXTENSION);
 		verify(mockResourceProvider).createGzipPrintWriter(mockFile);
-		verify(mockResourceProvider).writeText(LogRecordUtils.getFormattedLog(toLog), mockWriter);
+		verify(mockWriter).println(LogRecordUtils.getFormattedLog(toLog));
 		verify(mockProgressCallback).progressMade(null);
 		verify(mockS3Client).putObject(captor.capture());
 		PutObjectRequest request = captor.getValue();
@@ -80,6 +81,7 @@ public class S3LoggerImplTest {
 		assertTrue(request.getKey().startsWith(LogRecordUtils.getKey(toLog).substring(0, 11)));
 		assertEquals(mockFile, request.getFile());
 		assertEquals(CannedAccessControlList.BucketOwnerFullControl, request.getCannedAcl());
+		verify(mockWriter).flush();
 		verify(mockWriter).close();
 	}
 	
@@ -88,7 +90,6 @@ public class S3LoggerImplTest {
 		s3Logger.log(mockProgressCallback, null, null);
 		verify(mockResourceProvider, never()).createTempFile(any(String.class), any(String.class));
 		verify(mockResourceProvider, never()).createGzipPrintWriter(any(File.class));
-		verify(mockResourceProvider, never()).writeText(any(String[].class), any(PrintWriter.class));
 		verify(mockProgressCallback, never()).progressMade(null);
 		verify(mockS3Client, never()).putObject(any(PutObjectRequest.class));
 		verify(mockWriter, never()).close();

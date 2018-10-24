@@ -37,7 +37,7 @@ public class CloudWatchLoggerImpl implements CloudWatchLogger{
 				.withValue(toLog.getClassName());
 
 		MetricDatum datum = new MetricDatum()
-				.withMetricName(toLog.getExceptionName())
+				.withMetricName(toLog.getThrowable().getClass().getSimpleName())
 				.withTimestamp(new Date(toLog.getTimestamp()))
 				.withUnit(StandardUnit.Count)
 				.withValue(1.0)

@@ -80,12 +80,4 @@ public interface StreamResourceProvider {
 	 */
 	public PrintWriter createGzipPrintWriter(File file);
 
-	/**
-	 * Write the input data into the passed writer.
-	 * 
-	 * @param toWrite
-	 * @param writer
-	 */
-	public void writeText(String[] toWrite, PrintWriter writer);
-
 }

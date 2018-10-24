@@ -43,6 +43,6 @@ public class RunDuringMaintenanceStateGateTest {
 	@Test
 	public void testRunFail() {
 		gate.runFailed(new IllegalArgumentException());
-		verify(mockLogger).logNonRetryableError(any(ProgressCallback.class), eq(null), eq("RunDuringMaintenanceStateGate"), eq("IllegalArgumentException"), any(String.class));
+		verify(mockLogger).logNonRetryableError(any(ProgressCallback.class), eq(null), eq("RunDuringMaintenanceStateGate"), any(Throwable.class));
 	}
 }

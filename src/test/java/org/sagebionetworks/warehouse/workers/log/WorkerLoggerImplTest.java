@@ -33,7 +33,8 @@ public class WorkerLoggerImplTest {
 
 	@Test
 	public void testLog() {
-		logger.logNonRetryableError(mockProgressCallback, null, "workerName", "exceptionName", "trace");
+		Exception e = new Exception("test");
+		logger.logNonRetryableError(mockProgressCallback, null, "workerName", e);
 		verify(mockProgressCallback).progressMade(null);
 		verify(mockS3Logger).log(eq(mockProgressCallback), any(Void.class), argCaptor.capture());
 		LogRecord s3Input = argCaptor.getValue();
@@ -41,8 +42,7 @@ public class WorkerLoggerImplTest {
 		LogRecord cloudWatchInput = argCaptor.getValue();
 		assertEquals(s3Input, cloudWatchInput);
 		assertEquals("workerName", s3Input.getClassName());
-		assertEquals("exceptionName", s3Input.getExceptionName());
-		assertEquals("trace", s3Input.getStacktrace());
+		assertEquals(e, s3Input.getThrowable());
 		assertNotNull(s3Input.getTimestamp());
 	}
 

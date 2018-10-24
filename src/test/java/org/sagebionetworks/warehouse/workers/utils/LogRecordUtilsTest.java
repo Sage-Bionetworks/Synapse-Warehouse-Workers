@@ -27,16 +27,9 @@ public class LogRecordUtilsTest {
 	}
 	
 	@Test
-	public void testInvalidLogRecordWithNullReason() {
+	public void testInvalidLogRecordWithNullThrowable() {
 		LogRecord record = LogRecordTestUtils.createValidLogRecord();
-		record.setExceptionName(null);
-		assertFalse(LogRecordUtils.isValidLogRecord(record));
-	}
-
-	@Test
-	public void testInvalidLogRecordWithNullDetails() {
-		LogRecord record = LogRecordTestUtils.createValidLogRecord();
-		record.setStacktrace(null);
+		record.setThrowable(null);
 		assertFalse(LogRecordUtils.isValidLogRecord(record));
 	}
 
@@ -49,10 +42,8 @@ public class LogRecordUtilsTest {
 	public void testGetFormattedLog() {
 		LogRecord record = LogRecordTestUtils.createValidLogRecord();
 		record.setTimestamp(1539717007681L); // Tuesday, October 16, 2018 7:10:07.681 PM (UTC)
-		String[] formatted = LogRecordUtils.getFormattedLog(record);
-		assertEquals(2, formatted.length);
-		assertEquals("1539717007681::"+record.getClassName()+"::"+record.getExceptionName(),formatted[0]);
-		assertEquals(record.getStacktrace(), formatted[1]);
+		String formatted = LogRecordUtils.getFormattedLog(record);
+		assertEquals("1539717007681::"+record.getClassName()+"::"+record.getThrowable().getClass().getSimpleName(), formatted);
 	}
 	
 	@Test (expected = IllegalArgumentException.class)

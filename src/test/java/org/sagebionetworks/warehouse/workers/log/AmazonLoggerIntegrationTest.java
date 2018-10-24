@@ -40,21 +40,21 @@ public class AmazonLoggerIntegrationTest {
 	@Test
 	public void testLog() throws Exception {
 		Long start = System.currentTimeMillis();
-		String metricName = "testLog";
+		Exception exception = new Exception("test");
 		Dimension dimension = new Dimension()
 				.withName(CloudWatchLoggerImpl.DIMENSION_NAME)
 				.withValue(this.getClass().getSimpleName());
 		GetMetricStatisticsRequest getMetricStatisticsRequest = new GetMetricStatisticsRequest()
 				.withNamespace(config.getProperty(CloudWatchLoggerImpl.NAMESPACE_CONFIG_KEY))
 				.withDimensions(dimension)
-				.withMetricName(metricName)
+				.withMetricName(exception.getClass().getSimpleName())
 				.withStatistics(Statistic.SampleCount)
 				.withStartTime(new Date(start))
 				.withEndTime(new Date(System.currentTimeMillis()))
 				.withPeriod(60); // 60 seconds as minimum requirements
 		GetMetricStatisticsResult initialStats = cloudWatchClient.getMetricStatistics(getMetricStatisticsRequest);
 		System.out.println(initialStats);
-		amazonLogger.logNonRetryableError(null, null, this.getClass().getSimpleName(), metricName, "some string");
+		amazonLogger.logNonRetryableError(null, null, this.getClass().getSimpleName(), exception);
 		
 		// wait for the file to exist
 		waitForS3Key();

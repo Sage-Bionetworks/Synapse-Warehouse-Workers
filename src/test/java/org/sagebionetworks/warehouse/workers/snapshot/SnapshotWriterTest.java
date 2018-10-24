@@ -78,7 +78,7 @@ public class SnapshotWriterTest {
 		Mockito.when(mockObjectCSVReader.next()).thenReturn(invalidRecord, invalidRecord, null);
 		SnapshotWriter.write(mockObjectCSVReader, mockDao, 2, mockCallback, message, worker, mockAmazonLogger);
 		Mockito.verify(mockDao, Mockito.never()).insert((List<AccessRecord>) Mockito.any());
-		Mockito.verify(mockAmazonLogger, times(2)).logNonRetryableError(eq(mockCallback), eq(message), eq(worker.getClass().getSimpleName()), eq("IllegalArgumentException"), any(String.class));
+		Mockito.verify(mockAmazonLogger, times(2)).logNonRetryableError(eq(mockCallback), eq(message), eq(worker.getClass().getSimpleName()), any(Throwable.class));
 	}
 
 	@Test

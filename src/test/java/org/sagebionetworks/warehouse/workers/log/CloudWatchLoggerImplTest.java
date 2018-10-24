@@ -53,7 +53,8 @@ public class CloudWatchLoggerImplTest {
 	@Test
 	public void testLog() {
 		long timestamp = System.currentTimeMillis();
-		LogRecord toLog = new LogRecord(timestamp, "workerName", "exceptionName", "trace");
+		Exception e = new Exception("test");
+		LogRecord toLog = new LogRecord(timestamp, "workerName", e);
 		logger.log(mockProgressCallback, null, toLog);
 		verify(mockProgressCallback).progressMade(null);
 		verify(mockCloudWatchClient).putMetricData(captor.capture());
@@ -65,7 +66,7 @@ public class CloudWatchLoggerImplTest {
 		assertEquals(1, data.size());
 		MetricDatum datum = data.get(0);
 		assertNotNull(datum);
-		assertEquals(toLog.getExceptionName(), datum.getMetricName());
+		assertEquals(e.getClass().getSimpleName(), datum.getMetricName());
 		assertEquals(new Date(toLog.getTimestamp()), datum.getTimestamp());
 		assertEquals("Count", datum.getUnit());
 		assertEquals(Double.valueOf(1.0), datum.getValue());

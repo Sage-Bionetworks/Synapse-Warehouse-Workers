@@ -114,9 +114,7 @@ public class FolderCollateWorker implements LockedFolderRunner {
 				// log the exception and the keys
 				log.error("Failed to collate: ", e);
 				amazonLogger.logNonRetryableError(progressCallback, null,
-						this.getClass().getSimpleName(),
-						e.getClass().getSimpleName(),
-						e.getStackTrace().toString());
+						this.getClass().getSimpleName(), e);
 				for(String key: keysToCollate){
 					log.error("Failed to collate: "+key);
 				}

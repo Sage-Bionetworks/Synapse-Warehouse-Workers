@@ -145,8 +145,7 @@ public class FileManagerImplTest {
 		doThrow(e).when(mockFolderMetadataDao).createOrUpdateFolderState(any(FolderState.class));
 		manger.addS3Objects(list.iterator(), mockCallback);
 		verify(mockAmazonLogger, times(2)).logNonRetryableError(eq(mockCallback),
-				any(Void.class), eq("FileManagerImpl"), eq("IllegalArgumentException"),
-				any(String.class));
+				any(Void.class), eq("FileManagerImpl"), any(Throwable.class));
 	}
 	
 	@Test (expected=IllegalArgumentException.class)

@@ -9,9 +9,8 @@ public interface AmazonLogger {
 	 * 
 	 * @param progressCallback
 	 * @param className - the name of the Java class where the error is captured
-	 * @param exceptionName - the name of the exception
-	 * @param stacktrace - the exception's stacktrace
+	 * @param throwable - the exception the was thrown
 	 */
 	public <T> void logNonRetryableError(ProgressCallback<T> progressCallback,
-			T toCallback, String className, String exceptionName, String stacktrace);
+			T toCallback, String className, Throwable throwable);
 }

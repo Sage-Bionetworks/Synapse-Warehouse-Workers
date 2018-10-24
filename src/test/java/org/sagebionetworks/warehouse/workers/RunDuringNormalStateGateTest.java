@@ -43,6 +43,6 @@ public class RunDuringNormalStateGateTest {
 	@Test
 	public void testRunFail() {
 		gate.runFailed(new IllegalArgumentException());
-		verify(mockLogger).logNonRetryableError(any(ProgressCallback.class), eq(null), eq("RunDuringNormalStateGate"), eq("IllegalArgumentException"), any(String.class));
+		verify(mockLogger).logNonRetryableError(any(ProgressCallback.class), eq(null), eq("RunDuringNormalStateGate"), any(Throwable.class));
 	}
 }

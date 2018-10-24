@@ -49,8 +49,8 @@ public class SnapshotWriter {
 					batch .clear();
 				}
 			} catch (IllegalArgumentException e) {
-				logger.logNonRetryableError(callback, message, worker.getClass().getSimpleName(),
-						e.getClass().getSimpleName(), e.getStackTrace().toString());
+				logger.logNonRetryableError(callback, message, 
+						worker.getClass().getSimpleName(), e);
 			}
 		}
 

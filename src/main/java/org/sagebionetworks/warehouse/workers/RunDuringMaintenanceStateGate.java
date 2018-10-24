@@ -29,8 +29,7 @@ public class RunDuringMaintenanceStateGate implements Gate{
 	@Override
 	public void runFailed(Exception error) {
 		log.error(error.toString());
-		amazonLogger.logNonRetryableError(null, null, this.getClass().getSimpleName(),
-				error.getClass().getSimpleName(), error.getStackTrace().toString());
+		amazonLogger.logNonRetryableError(null, null, this.getClass().getSimpleName(), error);
 	}
 
 }

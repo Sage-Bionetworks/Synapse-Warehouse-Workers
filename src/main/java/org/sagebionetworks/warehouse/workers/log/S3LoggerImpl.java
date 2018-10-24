@@ -40,12 +40,15 @@ public class S3LoggerImpl implements S3Logger{
 			return;
 		}
 		String destinationKey = LogRecordUtils.getKey(toLog);
-		String[] toWrite = LogRecordUtils.getFormattedLog(toLog);
+		String toWrite = LogRecordUtils.getFormattedLog(toLog);
 		File logFile = resourceProvider.createTempFile(TEMP_FILE_NAME, TEMP_FILE_EXTENSION);
 		PrintWriter writer = null;
 		try {
 			writer = resourceProvider.createGzipPrintWriter(logFile);
-			resourceProvider.writeText(toWrite, writer);
+			writer.println(toWrite);
+			toLog.getThrowable().printStackTrace(writer);
+			writer.flush();
+			writer.close();
 			PutObjectRequest request = new PutObjectRequest(bucketName, destinationKey, logFile)
 					// Both the object owner and the bucket owner get FULL_CONTROL over the object.
 					.withCannedAcl(CannedAccessControlList.BucketOwnerFullControl);

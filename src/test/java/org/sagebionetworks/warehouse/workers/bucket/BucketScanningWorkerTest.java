@@ -78,8 +78,7 @@ public class BucketScanningWorkerTest {
 		doThrow(new IllegalArgumentException()).when(mockFileManager).addS3Objects(oneStream, mockProgressCallback);
 		worker.run(mockProgressCallback);
 		verify(mockWorkerLogger).logNonRetryableError(eq(mockProgressCallback),
-				any(Void.class), eq("BucketScanningWorker"), eq("IllegalArgumentException"),
-				any(String.class));
+				any(Void.class), eq("BucketScanningWorker"),any(IllegalArgumentException.class));
 		verify(mockFileManager).addS3Objects(oneStream, mockProgressCallback);
 		verify(mockFileManager).addS3Objects(twoStream, mockProgressCallback);
 	}

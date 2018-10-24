@@ -59,8 +59,7 @@ public class BucketScanningWorker implements ProgressingRunner<Void> {
 			} catch (IllegalArgumentException e) {
 				log.error(e.toString());
 				amazonLogger.logNonRetryableError(progressCallback, null,
-						this.getClass().getSimpleName(), e.getClass().getSimpleName(),
-						e.getStackTrace().toString());
+						this.getClass().getSimpleName(), e);
 			}
 		}
 		log.info("Finish scanning in "+(System.currentTimeMillis()-start)+" mili seconds.");

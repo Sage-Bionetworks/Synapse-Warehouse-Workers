@@ -250,7 +250,7 @@ public class FolderCollateWorkerTest {
 		verify(mockFolderMetadataDao, never()).createOrUpdateFolderState(
 				stateCapture.capture());
 		verify(mockAmazonLogger, times(2)).logNonRetryableError(eq(mockProgressCallback),
-				any(Void.class), eq("FolderCollateWorker"), eq("RuntimeException"), any(String.class));
+				any(Void.class), eq("FolderCollateWorker"), any(Throwable.class));
 	}
 
 	@Test

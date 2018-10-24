@@ -112,12 +112,4 @@ public class StreamResourceProviderImpl implements StreamResourceProvider {
 		} 
 	}
 
-	@Override
-	public void writeText(String[] toWrite, PrintWriter writer) {
-		for (String line : toWrite) {
-			writer.println(line);
-		}
-		writer.close();
-	}
-
 }
