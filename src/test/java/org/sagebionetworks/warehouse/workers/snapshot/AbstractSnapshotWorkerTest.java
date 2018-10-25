@@ -116,10 +116,11 @@ public class AbstractSnapshotWorkerTest {
 
 	@Test
 	public void deleteFileTest() throws Exception {
-		Mockito.when(mockS3Client.getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile))).thenThrow(new AmazonClientException(""));
+		AmazonClientException e = new AmazonClientException("");
+		Mockito.when(mockS3Client.getObject((GetObjectRequest) Mockito.any(), Mockito.eq(mockFile))).thenThrow(e);
 		try {
 			worker.run(mockCallback, message);
-		} catch (AmazonClientException e) {
+		} catch (AmazonClientException exception) {
 			// expected
 		}
 		Mockito.verify(mockStreamResourceProvider).createTempFile(Mockito.eq("prefix"), Mockito.eq("suffix"));
@@ -127,5 +128,6 @@ public class AbstractSnapshotWorkerTest {
 		Mockito.verify(mockStreamResourceProvider, Mockito.never()).createObjectCSVReader(mockFile, Integer.class, headers);
 		Mockito.verify(mockFile).delete();
 		Mockito.verify(mockObjectCSVReader, Mockito.never()).close();
+		Mockito.verify(mockAmazonLogger).logNonRetryableError(mockCallback, message, worker.getClass().getSimpleName(), e);
 	}
 }

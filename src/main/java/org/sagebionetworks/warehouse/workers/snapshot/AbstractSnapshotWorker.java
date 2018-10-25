@@ -77,7 +77,7 @@ public abstract class AbstractSnapshotWorker<K,V> implements MessageDrivenRunner
 			log.info("Inserted (ignore) " + noRecords + " records in " + (System.currentTimeMillis() - start) + " mili seconds");
 
 		} catch (Exception e) {
-			log.info(e.toString());
+			amazonLogger.logNonRetryableError(callback, message, this.getClass().getSimpleName(), e);;
 		} finally {
 			if (reader != null) 	reader.close();
 			if (file != null) 		file.delete();
