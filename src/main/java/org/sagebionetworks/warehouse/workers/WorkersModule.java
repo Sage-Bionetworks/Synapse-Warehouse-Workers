@@ -27,6 +27,12 @@ import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.FileManager;
 import org.sagebionetworks.warehouse.workers.db.FileManagerImpl;
 import org.sagebionetworks.warehouse.workers.db.WarehouseWorkersStateDao;
+import org.sagebionetworks.warehouse.workers.log.CloudWatchLogger;
+import org.sagebionetworks.warehouse.workers.log.CloudWatchLoggerImpl;
+import org.sagebionetworks.warehouse.workers.log.S3Logger;
+import org.sagebionetworks.warehouse.workers.log.S3LoggerImpl;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
+import org.sagebionetworks.warehouse.workers.log.AmazonLoggerImpl;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordConfigurationProvider;
 import org.sagebionetworks.warehouse.workers.snapshot.AccessRecordTopicBucketInfo;
 import org.sagebionetworks.warehouse.workers.snapshot.AclSnapshotConfigurationProvider;
@@ -94,6 +100,9 @@ public class WorkersModule extends AbstractModule {
 		bind(LockedFolderRunner.class).to(FolderCollateWorker.class);
 		bind(StreamResourceProvider.class).to(StreamResourceProviderImpl.class);
 		bind(S3ObjectCollator.class).to(S3ObjectCollatorImpl.class);
+		bind(S3Logger.class).to(S3LoggerImpl.class);
+		bind(CloudWatchLogger.class).to(CloudWatchLoggerImpl.class);
+		bind(AmazonLogger.class).to(AmazonLoggerImpl.class);
 	}
 
 	/**
@@ -352,12 +361,12 @@ public class WorkersModule extends AbstractModule {
 	}
 
 	@Provides
-	public RunDuringMaintenanceStateGate getMaintainanceStateGate(WarehouseWorkersStateDao dao) {
-		return new RunDuringMaintenanceStateGate(dao);
+	public RunDuringMaintenanceStateGate getMaintainanceStateGate(WarehouseWorkersStateDao dao, AmazonLogger logger) {
+		return new RunDuringMaintenanceStateGate(dao, logger);
 	}
 
 	@Provides
-	public RunDuringNormalStateGate getNormalStateGate(WarehouseWorkersStateDao dao) {
-		return new RunDuringNormalStateGate(dao);
+	public RunDuringNormalStateGate getNormalStateGate(WarehouseWorkersStateDao dao, AmazonLogger logger) {
+		return new RunDuringNormalStateGate(dao, logger);
 	}
 }

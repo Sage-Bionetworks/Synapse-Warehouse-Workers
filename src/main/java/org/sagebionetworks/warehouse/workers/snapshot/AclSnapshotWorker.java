@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AclSnapshotDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.AclSnapshot;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.utils.AclSnapshotUtils;
@@ -21,8 +22,8 @@ public class AclSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, AclS
 
 	@Inject
 	public AclSnapshotWorker(AmazonS3Client s3Client, AclSnapshotDao aclSnapshotDao,
-			StreamResourceProvider streamResourceProvider) {
-		super(s3Client, aclSnapshotDao, streamResourceProvider);
+			StreamResourceProvider streamResourceProvider, AmazonLogger amazonLogger) {
+		super(s3Client, aclSnapshotDao, streamResourceProvider, amazonLogger);
 		log = LogManager.getLogger(AclSnapshotWorker.class);
 		tempFileNamePrefix = TEMP_FILE_NAME_PREFIX;
 		tempFileNameSuffix = TEMP_FILE_NAME_SUFFIX;
@@ -34,8 +35,7 @@ public class AclSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord, AclS
 	public List<AclSnapshot> convert(ObjectRecord record) {
 		AclSnapshot snapshot = AclSnapshotUtils.getAclSnapshot(record);
 		if (!AclSnapshotUtils.isValidAclSnapshot(snapshot)) {
-			log.error("Invalid Acl Snapshot from Record: "+ (record == null ? "null" : record.toString()));
-			return null;
+			throw new IllegalArgumentException("Invalid Acl Snapshot from Record: "+ (record == null ? "null" : record.toString()));
 		}
 		return Arrays.asList(snapshot);
 	}

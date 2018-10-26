@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.snapshot.TeamMemberSnapshotDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.model.TeamMemberSnapshot;
 import org.sagebionetworks.warehouse.workers.utils.TeamMemberSnapshotUtils;
@@ -21,8 +22,8 @@ public class TeamMemberSnapshotWorker extends AbstractSnapshotWorker<ObjectRecor
 
 	@Inject
 	public TeamMemberSnapshotWorker(AmazonS3Client s3Client, TeamMemberSnapshotDao dao,
-			StreamResourceProvider streamResourceProvider) {
-		super(s3Client, dao, streamResourceProvider);
+			StreamResourceProvider streamResourceProvider, AmazonLogger amazonLogger) {
+		super(s3Client, dao, streamResourceProvider, amazonLogger);
 		log = LogManager.getLogger(TeamMemberSnapshotWorker.class);
 		tempFileNamePrefix = TEMP_FILE_NAME_PREFIX;
 		tempFileNameSuffix = TEMP_FILE_NAME_SUFFIX;
@@ -34,8 +35,7 @@ public class TeamMemberSnapshotWorker extends AbstractSnapshotWorker<ObjectRecor
 	public List<TeamMemberSnapshot> convert(ObjectRecord record) {
 		TeamMemberSnapshot snapshot = TeamMemberSnapshotUtils.getTeamMemberSnapshot(record);
 		if (!TeamMemberSnapshotUtils.isValidTeamMemberSnapshot(snapshot)) {
-			log.error("Invalid Team Snapshot from Record: "+ (record == null ? "null" : record.toString()));
-			return null;
+			throw new IllegalArgumentException("Invalid Team Snapshot from Record: "+ (record == null ? "null" : record.toString()));
 		}
 		return Arrays.asList(snapshot);
 	}

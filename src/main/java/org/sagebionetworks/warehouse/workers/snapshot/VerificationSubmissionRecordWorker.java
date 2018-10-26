@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.snapshot.VerificationSubmissionRecordDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.model.VerificationSubmissionRecord;
 import org.sagebionetworks.warehouse.workers.utils.VerificationSubmissionSnapshotUtils;
@@ -21,8 +22,8 @@ public class VerificationSubmissionRecordWorker extends AbstractSnapshotWorker<O
 
 	@Inject
 	public VerificationSubmissionRecordWorker(AmazonS3Client s3Client, VerificationSubmissionRecordDao dao,
-			StreamResourceProvider streamResourceProvider) {
-		super(s3Client, dao, streamResourceProvider);
+			StreamResourceProvider streamResourceProvider, AmazonLogger amazonLogger) {
+		super(s3Client, dao, streamResourceProvider, amazonLogger);
 		log = LogManager.getLogger(VerificationSubmissionRecordWorker.class);
 		tempFileNamePrefix = TEMP_FILE_NAME_PREFIX;
 		tempFileNameSuffix = TEMP_FILE_NAME_SUFFIX;
@@ -34,8 +35,7 @@ public class VerificationSubmissionRecordWorker extends AbstractSnapshotWorker<O
 	public List<VerificationSubmissionRecord> convert(ObjectRecord record) {
 		VerificationSubmissionRecord snapshot = VerificationSubmissionSnapshotUtils.getVerificationSubmissionRecord(record);
 		if (!VerificationSubmissionSnapshotUtils.isValidVerificationSubmissionRecord(snapshot)) {
-			log.error("Invalid Verification Submission Record from: "+ (record == null ? "null" : record.toString()));
-			return null;
+			throw new IllegalArgumentException("Invalid Verification Submission Record from: "+ (record == null ? "null" : record.toString()));
 		}
 		return Arrays.asList(snapshot);
 	}

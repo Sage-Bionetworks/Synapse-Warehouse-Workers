@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.snapshot.FileHandleDownloadRecordDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.FileHandleDownload;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.utils.FileDownloadRecordUtils;
@@ -20,8 +21,8 @@ public class FileHandleDownloadRecordWorker extends AbstractSnapshotWorker<Objec
 
 	@Inject
 	public FileHandleDownloadRecordWorker(AmazonS3Client s3Client, FileHandleDownloadRecordDao dao,
-			StreamResourceProvider streamResourceProvider) {
-		super(s3Client, dao, streamResourceProvider);
+			StreamResourceProvider streamResourceProvider, AmazonLogger amazonLogger) {
+		super(s3Client, dao, streamResourceProvider, amazonLogger);
 		log = LogManager.getLogger(FileHandleDownloadRecordWorker.class);
 		tempFileNamePrefix = TEMP_FILE_NAME_PREFIX;
 		tempFileNameSuffix = TEMP_FILE_NAME_SUFFIX;
@@ -33,8 +34,7 @@ public class FileHandleDownloadRecordWorker extends AbstractSnapshotWorker<Objec
 	public List<FileHandleDownload> convert(ObjectRecord record) {
 		List<FileHandleDownload> records = FileDownloadRecordUtils.getFileHandleDownloadRecordsForFileDownloadRecord(record);
 		if (!FileDownloadRecordUtils.isValidFileHandleDownloadRecords(records)) {
-			log.error("Invalid FileDownloadRecord from Record: "+ (record == null ? "null" : record.toString()));
-			return null;
+			throw new IllegalArgumentException("Invalid FileDownloadRecord from Record: "+ (record == null ? "null" : record.toString()));
 		}
 		return records;
 	}

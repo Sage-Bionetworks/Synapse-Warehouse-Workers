@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserProfileSnapshotDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.model.UserProfileSnapshot;
 import org.sagebionetworks.warehouse.workers.utils.PrincipalSnapshotUtils;
@@ -21,8 +22,8 @@ public class UserProfileSnapshotWorker extends AbstractSnapshotWorker<ObjectReco
 
 	@Inject
 	public UserProfileSnapshotWorker(AmazonS3Client s3Client, UserProfileSnapshotDao dao,
-			StreamResourceProvider streamResourceProvider) {
-		super(s3Client, dao, streamResourceProvider);
+			StreamResourceProvider streamResourceProvider, AmazonLogger amazonLogger) {
+		super(s3Client, dao, streamResourceProvider, amazonLogger);
 		log = LogManager.getLogger(UserProfileSnapshotWorker.class);
 		tempFileNamePrefix = TEMP_FILE_NAME_PREFIX;
 		tempFileNameSuffix = TEMP_FILE_NAME_SUFFIX;
@@ -34,8 +35,7 @@ public class UserProfileSnapshotWorker extends AbstractSnapshotWorker<ObjectReco
 	public List<UserProfileSnapshot> convert(ObjectRecord record) {
 		UserProfileSnapshot snapshot = PrincipalSnapshotUtils.getUserProfileSnapshot(record);
 		if (!PrincipalSnapshotUtils.isValidUserProfileSnapshot(snapshot)) {
-			log.error("Invalid UserProfile Snapshot from Record: "+ (record == null ? "null" : record.toString()));
-			return null;
+			throw new IllegalArgumentException("Invalid UserProfile Snapshot from Record: "+ (record == null ? "null" : record.toString()));
 		}
 		return Arrays.asList(snapshot);
 	}

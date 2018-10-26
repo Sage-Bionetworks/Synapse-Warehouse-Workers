@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.sagebionetworks.csv.utils.ObjectCSVReader;
 import org.sagebionetworks.warehouse.workers.db.snapshot.SnapshotDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 import com.amazonaws.services.sqs.model.Message;
@@ -31,20 +32,25 @@ public class SnapshotWriter {
 	 */
 	public static <K,V> int write(ObjectCSVReader<K> reader, SnapshotDao<V> dao,
 			int batchSize, ProgressCallback<Message> callback, Message message,
-			SnapshotWorker<K,V> worker) throws IOException {
+			SnapshotWorker<K,V> worker, AmazonLogger logger) throws IOException {
 		K record = null;
 		List<V> batch = new ArrayList<V>(batchSize);
 
 		int noRecords = 0;
 		while ((record = reader.next()) != null) {
-			List<V> snapshot = worker.convert(record);
-			if (snapshot != null)
-				batch.addAll(snapshot);
-			if (batch.size() >= batchSize) {
-				callback.progressMade(message);
-				dao.insert(batch);
-				noRecords += batch.size();
-				batch .clear();
+			try {
+				List<V> snapshot = worker.convert(record);
+				if (snapshot != null)
+					batch.addAll(snapshot);
+				if (batch.size() >= batchSize) {
+					callback.progressMade(message);
+					dao.insert(batch);
+					noRecords += batch.size();
+					batch .clear();
+				}
+			} catch (IllegalArgumentException e) {
+				logger.logNonRetryableError(callback, message, 
+						worker.getClass().getSimpleName(), e);
 			}
 		}
 

@@ -8,6 +8,7 @@ import org.sagebionetworks.repo.model.UserGroup;
 import org.sagebionetworks.repo.model.audit.ObjectRecord;
 import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.snapshot.UserGroupDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.SnapshotHeader;
 import org.sagebionetworks.warehouse.workers.utils.PrincipalSnapshotUtils;
 
@@ -21,8 +22,8 @@ public class UserGroupSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord
 
 	@Inject
 	public UserGroupSnapshotWorker(AmazonS3Client s3Client, UserGroupDao dao,
-			StreamResourceProvider streamResourceProvider) {
-		super(s3Client, dao, streamResourceProvider);
+			StreamResourceProvider streamResourceProvider, AmazonLogger amazonLogger) {
+		super(s3Client, dao, streamResourceProvider, amazonLogger);
 		log = LogManager.getLogger(UserGroupSnapshotWorker.class);
 		tempFileNamePrefix = TEMP_FILE_NAME_PREFIX;
 		tempFileNameSuffix = TEMP_FILE_NAME_SUFFIX;
@@ -34,8 +35,7 @@ public class UserGroupSnapshotWorker extends AbstractSnapshotWorker<ObjectRecord
 	public List<UserGroup> convert(ObjectRecord record) {
 		UserGroup snapshot = PrincipalSnapshotUtils.getUserGroupSnapshot(record);
 		if (!PrincipalSnapshotUtils.isValidUserGroupSnapshot(snapshot)) {
-			log.error("Invalid UserGroup Snapshot from Record: "+ (record == null ? "null" : record.toString()));
-			return null;
+			throw new IllegalArgumentException("Invalid UserGroup Snapshot from Record: "+ (record == null ? "null" : record.toString()));
 		}
 		return Arrays.asList(snapshot);
 	}

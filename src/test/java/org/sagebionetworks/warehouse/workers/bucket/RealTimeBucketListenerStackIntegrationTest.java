@@ -2,6 +2,9 @@ package org.sagebionetworks.warehouse.workers.bucket;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.PrintWriter;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -10,12 +13,13 @@ import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.aws.utils.s3.BucketDaoImpl;
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.warehouse.workers.WorkerStack;
+import org.sagebionetworks.warehouse.workers.collate.StreamResourceProvider;
 import org.sagebionetworks.warehouse.workers.db.FileMetadataDao;
 import org.sagebionetworks.warehouse.workers.db.TestContext;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.util.StringInputStream;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 
 public class RealTimeBucketListenerStackIntegrationTest {
 	
@@ -26,6 +30,7 @@ public class RealTimeBucketListenerStackIntegrationTest {
 	FileMetadataDao dao = TestContext.singleton().getInstance(FileMetadataDao.class);
 	BucketInfoList bucketList = TestContext.singleton().getInstance(BucketInfoList.class);
 	AmazonS3Client s3Client = TestContext.singleton().getInstance(AmazonS3Client.class);
+	StreamResourceProvider resourceProvider = TestContext.singleton().getInstance(StreamResourceProvider.class);
 	
 	@BeforeClass
 	public static void beforeClass(){
@@ -52,11 +57,17 @@ public class RealTimeBucketListenerStackIntegrationTest {
 	public void testCreateFile() throws Exception {
 		BucketInfo firstBucket = bucketList.getBucketList().get(0);
 		String bucket = firstBucket.getBucketName();
-		ObjectMetadata metadata = new ObjectMetadata();
 		String key = KeyGeneratorUtil.createNewKey(21, 1L, false);
-		StringInputStream input = new StringInputStream("Sample data");
+		File logFile = resourceProvider.createTempFile("test", "csv.gz");
+		PrintWriter writer = resourceProvider.createGzipPrintWriter(logFile);
+		writer.println("Sample data");
+		writer.flush();
+		writer.close();
 		// Create a file in one of the buckets
-		s3Client.putObject(firstBucket.getBucketName(), key, input, metadata);
+		PutObjectRequest request = new PutObjectRequest(firstBucket.getBucketName(), key, logFile)
+				// Both the object owner and the bucket owner get FULL_CONTROL over the object.
+				.withCannedAcl(CannedAccessControlList.BucketOwnerFullControl);
+		s3Client.putObject(request);
 		// wait for the file to exist
 		waitForFileToExist(bucket, key);
 	}

@@ -2,7 +2,6 @@ package org.sagebionetworks.warehouse.workers.snapshot;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class AclSnapshotWorkerTest {
 
 	@Before
 	public void before() {
-		worker = new AclSnapshotWorker(null, null, null);
+		worker = new AclSnapshotWorker(null, null, null, null);
 	}
 
 	@Test
@@ -29,10 +28,10 @@ public class AclSnapshotWorkerTest {
 		assertEquals(actual.size(), 1);
 	}
 
-	@Test
+	@Test (expected = IllegalArgumentException.class)
 	public void testConvertInvalidRecord() throws JSONObjectAdapterException {
 		ObjectRecord record = ObjectSnapshotTestUtil.createValidAclObjectRecord();
 		record.setTimestamp(null);
-		assertNull(worker.convert(record));
+		worker.convert(record);
 	}
 }

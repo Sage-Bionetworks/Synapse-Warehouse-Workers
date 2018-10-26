@@ -2,7 +2,9 @@ package org.sagebionetworks.warehouse.workers.collate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -17,31 +19,42 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.sagebionetworks.aws.utils.s3.BucketDao;
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
+import org.sagebionetworks.common.util.progress.ProgressCallback;
 import org.sagebionetworks.warehouse.workers.BucketDaoProvider;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfo;
 import org.sagebionetworks.warehouse.workers.bucket.BucketInfoList;
 import org.sagebionetworks.warehouse.workers.db.FolderMetadataDao;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.FolderState;
-import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 public class FolderCollateWorkerTest {
 
+	@Mock
 	BucketDaoProvider mockBucketDaoProvider;
+	@Mock
 	S3ObjectCollator mockCollator;
-	BucketInfoList bucketList;
+	@Mock
 	FolderMetadataDao mockFolderMetadataDao;
+	@Mock
 	BucketDao mockBucketDao;
-	BucketInfo bucketInfo;
+	@Mock
 	ProgressCallback<Void> mockProgressCallback;
+	@Mock
+	AmazonLogger mockAmazonLogger;
 	FolderState folder;
 	List<String> keysInBucket;
 	FolderCollateWorker worker;
+	BucketInfoList bucketList;
+	BucketInfo bucketInfo;
 
+	@SuppressWarnings("rawtypes")
 	ArgumentCaptor<ProgressCallback> callbackCapture;
 	ArgumentCaptor<String> bucketCapture;
+	@SuppressWarnings("rawtypes")
 	ArgumentCaptor<List> keysCapture;
 	ArgumentCaptor<String> destinationKeyCapture;
 	ArgumentCaptor<Integer> sortIndexCapture;
@@ -49,11 +62,7 @@ public class FolderCollateWorkerTest {
 
 	@Before
 	public void before() {
-		mockBucketDaoProvider = Mockito.mock(BucketDaoProvider.class);
-		mockCollator = Mockito.mock(S3ObjectCollator.class);
-		mockFolderMetadataDao = Mockito.mock(FolderMetadataDao.class);
-		mockProgressCallback = Mockito.mock(ProgressCallback.class);
-		mockBucketDao = Mockito.mock(BucketDao.class);
+		MockitoAnnotations.initMocks(this);
 		bucketInfo = new BucketInfo();
 		bucketInfo.setBucketName("someBucket");
 		bucketInfo.setTimestampColumnIndex(3);
@@ -66,7 +75,7 @@ public class FolderCollateWorkerTest {
 				mockBucketDao);
 
 		worker = new FolderCollateWorker(mockBucketDaoProvider, mockCollator,
-				bucketList, mockFolderMetadataDao);
+				bucketList, mockFolderMetadataDao, mockAmazonLogger);
 
 		callbackCapture = ArgumentCaptor.forClass(ProgressCallback.class);
 		bucketCapture = ArgumentCaptor.forClass(String.class);
@@ -82,6 +91,7 @@ public class FolderCollateWorkerTest {
 	 * 
 	 * @throws IOException
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testRunWhileHoldingLockNotCollated() throws IOException {
 		// These are the keys in this path.
@@ -134,6 +144,7 @@ public class FolderCollateWorkerTest {
 	 * 
 	 * @throws IOException
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testRunWhileHoldingLockCollated() throws IOException {
 		// These are the keys in this path.
@@ -180,6 +191,7 @@ public class FolderCollateWorkerTest {
 	 * 
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testRunWhileHoldingLockAlreadyCollated() throws IOException {
 		// These are the keys in this path.
@@ -211,6 +223,7 @@ public class FolderCollateWorkerTest {
 	 * 
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testRunWhileHoldingLockFailedToCollate() throws IOException {
 		// These are the keys in this path.
@@ -236,7 +249,8 @@ public class FolderCollateWorkerTest {
 		// state should not change.
 		verify(mockFolderMetadataDao, never()).createOrUpdateFolderState(
 				stateCapture.capture());
-
+		verify(mockAmazonLogger, times(2)).logNonRetryableError(eq(mockProgressCallback),
+				any(Void.class), eq("FolderCollateWorker"), any(Throwable.class));
 	}
 
 	@Test

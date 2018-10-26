@@ -15,7 +15,7 @@ public class AccessRecordWorkerTest {
 
 	@Before
 	public void before() {
-		worker = new AccessRecordWorker(null, null, null);
+		worker = new AccessRecordWorker(null, null, null, null);
 	}
 
 	@Test
@@ -25,10 +25,10 @@ public class AccessRecordWorkerTest {
 		assertEquals(actual.size(), 1);
 	}
 
-	@Test
+	@Test (expected = IllegalArgumentException.class)
 	public void testConvertInvalidRecord() {
 		AccessRecord record = AccessRecordTestUtil.createValidAccessRecord();
 		record.setDate(null);
-		assertNull(worker.convert(record));
+		worker.convert(record);
 	}
 }
