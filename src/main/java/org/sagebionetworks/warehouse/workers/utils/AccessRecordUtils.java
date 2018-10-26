@@ -59,6 +59,9 @@ public class AccessRecordUtils {
 	 * @return
 	 */
 	public static Long getEntityId(String requestURL) {
+		if (requestURL == null) {
+			return null;
+		}
 		requestURL = requestURL.toLowerCase();
 		Matcher matcher = ENTITY_PATTERN.matcher(requestURL);
         if (!matcher.find()) {
@@ -78,6 +81,9 @@ public class AccessRecordUtils {
 	 * @return
 	 */
 	public static String getClientVersion(Client client, String userAgent) {
+		if (userAgent == null) {
+			return null;
+		}
 		Matcher matcher = null;
 		switch(client) {
 		case WEB:
@@ -117,6 +123,9 @@ public class AccessRecordUtils {
 	 * @return
 	 */
 	public static Client getClient(String userAgent) {
+		if (userAgent == null) {
+			return Client.UNKNOWN;
+		}
 		/*
 		 * The order of web and java client matters since some web client call
 		 * go through Java client, therefore, the USER_AGENT contains both keys
