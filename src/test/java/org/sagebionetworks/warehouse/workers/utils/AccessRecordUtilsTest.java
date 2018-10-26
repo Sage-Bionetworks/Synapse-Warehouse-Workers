@@ -53,6 +53,11 @@ public class AccessRecordUtilsTest {
 	public void unknownClientTest() {
 		assertEquals(Client.UNKNOWN, AccessRecordUtils.getClient("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:56.0) Gecko/20100101 Firefox/56.0"));
 	}
+	
+	@Test
+	public void unknownClientWithNullUserAgentTest() {
+		assertEquals(Client.UNKNOWN, AccessRecordUtils.getClient(null));
+	}
 
 	/*
 	 * Client Version Tests
@@ -96,6 +101,11 @@ public class AccessRecordUtilsTest {
 	public void unknownClientVersionTest() {
 		assertNull(AccessRecordUtils.getClientVersion(Client.UNKNOWN, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:56.0) Gecko/20100101 Firefox/56.0"));
 	}
+	
+	@Test
+	public void unknownWithNullUserAgentTest() {
+		assertNull(AccessRecordUtils.getClientVersion(Client.UNKNOWN, null));
+	}
 
 	/*
 	 * Entity ID Tests
@@ -129,6 +139,11 @@ public class AccessRecordUtilsTest {
 	@Test
 	public void nullEntityIdTest() {
 		assertNull(AccessRecordUtils.getEntityId("/repo/v1/version"));
+	}
+	
+	@Test
+	public void nullRequestURL() {
+		assertNull(AccessRecordUtils.getEntityId(null));
 	}
 
 	/*
