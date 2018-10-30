@@ -6,6 +6,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 public class PartitionUtil {
 
@@ -116,8 +117,8 @@ public class PartitionUtil {
 	public static DateTime floorDateByPeriod(DateTime date, Period period) {
 		if (period == null || date == null) throw new IllegalArgumentException();
 		switch (period) {
-			case DAY: return new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), 0, 0);
-			case MONTH: return new DateTime(date.getYear(), date.getMonthOfYear(), 1, 0, 0);
+			case DAY: return new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), 0, 0, DateTimeZone.UTC);
+			case MONTH: return new DateTime(date.getYear(), date.getMonthOfYear(), 1, 0, 0, DateTimeZone.UTC);
 		}
 		return null;
 	}
