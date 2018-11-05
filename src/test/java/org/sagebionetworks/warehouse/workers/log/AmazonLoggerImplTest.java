@@ -13,13 +13,13 @@ import org.mockito.MockitoAnnotations;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 import org.sagebionetworks.warehouse.workers.model.LogRecord;
 
-public class WorkerLoggerImplTest {
+public class AmazonLoggerImplTest {
 	@Mock
 	S3Logger mockS3Logger;
 	@Mock
 	CloudWatchLogger mockCloudWatchLogger;
 	@Mock
-	ProgressCallback<Void> mockProgressCallback;
+	ProgressCallback<Integer> mockProgressCallback;
 	
 	ArgumentCaptor<LogRecord> argCaptor;
 	AmazonLoggerImpl logger;
@@ -34,11 +34,12 @@ public class WorkerLoggerImplTest {
 	@Test
 	public void testLog() {
 		Exception e = new Exception("test");
-		logger.logNonRetryableError(mockProgressCallback, null, "workerName", e);
-		verify(mockProgressCallback).progressMade(null);
-		verify(mockS3Logger).log(eq(mockProgressCallback), any(Void.class), argCaptor.capture());
+		Integer toCallback = 3;
+		logger.logNonRetryableError(mockProgressCallback, toCallback, "workerName", e);
+		verify(mockProgressCallback).progressMade(toCallback);
+		verify(mockS3Logger).log(eq(mockProgressCallback), eq(toCallback), argCaptor.capture());
 		LogRecord s3Input = argCaptor.getValue();
-		verify(mockCloudWatchLogger).log(eq(mockProgressCallback), any(Void.class), argCaptor.capture());
+		verify(mockCloudWatchLogger).log(eq(mockProgressCallback), eq(toCallback), argCaptor.capture());
 		LogRecord cloudWatchInput = argCaptor.getValue();
 		assertEquals(s3Input, cloudWatchInput);
 		assertEquals("workerName", s3Input.getClassName());
