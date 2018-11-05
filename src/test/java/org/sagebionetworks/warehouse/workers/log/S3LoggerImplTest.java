@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,6 +55,7 @@ public class S3LoggerImplTest {
 		when(mockConfig.getProperty(BUCKET_CONFIG_KEY)).thenReturn(bucketName);
 		when(mockResourceProvider.createTempFile(TEMP_FILE_NAME, TEMP_FILE_EXTENSION)).thenReturn(mockFile);
 		when(mockResourceProvider.createGzipPrintWriter(mockFile)).thenReturn(mockWriter);
+		when(mockS3Client.doesBucketExist(any(String.class))).thenReturn(false);
 		s3Logger = new S3LoggerImpl(mockS3Client, mockResourceProvider, mockConfig);
 		captor = ArgumentCaptor.forClass(PutObjectRequest.class);
 	}
@@ -61,7 +63,16 @@ public class S3LoggerImplTest {
 	@Test
 	public void testConstructor() {
 		verify(mockConfig).getProperty(BUCKET_CONFIG_KEY);
+		verify(mockS3Client).doesBucketExist(bucketName);
 		verify(mockS3Client).createBucket(bucketName);
+	}
+
+	@Test
+	public void testConstructorBucketExist() {
+		reset(mockS3Client);
+		when(mockS3Client.doesBucketExist(any(String.class))).thenReturn(true);
+		s3Logger = new S3LoggerImpl(mockS3Client, mockResourceProvider, mockConfig);
+		verify(mockS3Client, never()).createBucket(bucketName);
 	}
 
 	@Test
