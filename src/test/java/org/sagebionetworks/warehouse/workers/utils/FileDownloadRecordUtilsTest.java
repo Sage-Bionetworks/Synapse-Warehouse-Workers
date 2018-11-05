@@ -34,6 +34,14 @@ public class FileDownloadRecordUtilsTest {
 		FileDownload snapshot = ObjectSnapshotTestUtil.createValidFileDownloadRecord();
 		assertTrue(FileDownloadRecordUtils.isValidFileDownloadRecord(snapshot));
 	}
+	
+	// WW-78
+	@Test
+	public void validFileDownloadTestWW78() {
+		FileDownload snapshot = ObjectSnapshotTestUtil.createValidFileDownloadRecord();
+		snapshot.setAssociationObjectType(FileHandleAssociateType.WikiMarkdown);
+		assertTrue(FileDownloadRecordUtils.isValidFileDownloadRecord(snapshot));
+	}
 
 	@Test
 	public void invalidFileDownloadWithNullTimestampTest() {
