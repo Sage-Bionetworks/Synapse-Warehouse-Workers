@@ -140,11 +140,21 @@ public class FileManagerImplTest {
 	
 	@Test
 	public void testLogger() {
-		List<S3ObjectSummary> list = Arrays.asList(rollingOne, rollingOne);
+		List<S3ObjectSummary> list = Arrays.asList(rollingOne);
 		Exception e = new IllegalArgumentException();
 		doThrow(e).when(mockFolderMetadataDao).createOrUpdateFolderState(any(FolderState.class));
 		manger.addS3Objects(list.iterator(), mockCallback);
-		verify(mockAmazonLogger, times(2)).logNonRetryableError(eq(mockCallback),
+		verify(mockAmazonLogger).logNonRetryableError(eq(mockCallback),
+				any(Void.class), eq("FileManagerImpl"), any(Throwable.class));
+	}
+	
+	// WW-76
+	@Test
+	public void testUnknownKeyFormat() {
+		rollingOne.setKey("fake-key");
+		List<S3ObjectSummary> list = Arrays.asList(rollingOne);
+		manger.addS3Objects(list.iterator(), mockCallback);
+		verify(mockAmazonLogger, never()).logNonRetryableError(eq(mockCallback),
 				any(Void.class), eq("FileManagerImpl"), any(Throwable.class));
 	}
 	
