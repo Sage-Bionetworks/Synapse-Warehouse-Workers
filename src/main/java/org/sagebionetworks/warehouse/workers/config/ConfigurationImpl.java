@@ -17,6 +17,7 @@ import com.google.inject.Singleton;
 
 @Singleton
 public class ConfigurationImpl implements Configuration {
+	public static final String MONTHS_TO_BACKFILL_KEY = "org.sagebionetworks.warehouse.worker.backfill.months";
 
 	private static final int MONTHLY_AUDIT_DAY = 7;
 	private static final int MAINTENANCE_START_TIME = 8;
@@ -90,7 +91,8 @@ public class ConfigurationImpl implements Configuration {
 
 	@Override
 	public DateTime getStartDate() {
-		DateTime startDate = new DateTime().minusYears(2);
+		String monthsToBackfill = getProperty(MONTHS_TO_BACKFILL_KEY);
+		DateTime startDate = new DateTime().minusMonths(Integer.valueOf(monthsToBackfill));
 		return new DateTime(startDate.getYear(), startDate.getMonthOfYear(), startDate.getDayOfMonth(), 0, 0);
 	}
 
