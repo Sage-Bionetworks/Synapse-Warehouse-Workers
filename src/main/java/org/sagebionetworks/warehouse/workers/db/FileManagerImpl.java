@@ -73,7 +73,15 @@ public class FileManagerImpl implements FileManager{
 					}
 				}
 			} catch (IllegalArgumentException e) {
-				log.error(e.toString());
+				if (e.getMessage()!= null && e.getMessage().startsWith("Unknown key format:")) {
+					// skip this error
+					log.error(e.toString());
+				} else {
+					amazonLogger.logNonRetryableError(
+							progressCallback, null,
+							this.getClass().getSimpleName(), e);
+				}
+			} catch (Exception e) {
 				amazonLogger.logNonRetryableError(
 						progressCallback, null,
 						this.getClass().getSimpleName(), e);
