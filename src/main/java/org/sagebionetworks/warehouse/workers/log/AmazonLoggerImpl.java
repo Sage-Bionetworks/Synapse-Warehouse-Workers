@@ -22,7 +22,7 @@ public class AmazonLoggerImpl implements AmazonLogger{
 		long timestamp = System.currentTimeMillis();
 		LogRecord toLog = new LogRecord(timestamp, className, throwable);
 		if (progressCallback != null) {
-			progressCallback.progressMade(null);
+			progressCallback.progressMade(toCallback);
 		}
 		s3Logger.log(progressCallback, toCallback, toLog);
 		cloudWatchLogger.log(progressCallback, toCallback, toLog);
