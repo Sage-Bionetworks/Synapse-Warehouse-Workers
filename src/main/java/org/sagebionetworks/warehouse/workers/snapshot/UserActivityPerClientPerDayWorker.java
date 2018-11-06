@@ -37,7 +37,7 @@ public class UserActivityPerClientPerDayWorker extends AbstractSnapshotWorker<Ac
 
 	@Override
 	public List<UserActivityPerClientPerDay> convert(AccessRecord record) {
-		if (!AccessRecordUtils.isValidUserAccessRecord(record)) {
+		if (!AccessRecordUtils.isValidAccessRecord(record)) {
 			throw new IllegalArgumentException("Invalid Access Record: "+ (record == null ? "null" : record.toString()));
 		}
 		return Arrays.asList(AccessRecordUtils.getUserActivityPerClientPerDay(record));

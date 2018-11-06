@@ -27,6 +27,8 @@ public class AccessRecordUtils {
 	private static final Pattern COMMAND_LINE_CLIENT_PATTERN = Pattern.compile(COMMAND_LINE_CLIENT+CLIENT_REGEX);
 	private static final Pattern ELB_CLIENT_PATTERN = Pattern.compile(ELB_CLIENT+CLIENT_REGEX);
 	
+	public static final Long ANONYMOUS_ID = 273950L;
+	
 	public static final String NON_NORMALIZABLE_SIGNATURE = "NON_NORMALIZABLE";
 
 	private static final Pattern ENTITY_PATTERN = Pattern.compile("/entity/(syn\\d+|\\d+)");
@@ -167,14 +169,14 @@ public class AccessRecordUtils {
 		return true;
 	}
 
-	public static boolean isValidUserAccessRecord(AccessRecord ar) {
-		return isValidAccessRecord(ar) && (ar.getUserId() != null);
-	}
-
 	public static UserActivityPerClientPerDay getUserActivityPerClientPerDay(AccessRecord accessRecord) {
 		UserActivityPerClientPerDay uar = new UserActivityPerClientPerDay();
 		uar.setClient(getClient(accessRecord.getUserAgent()));
-		uar.setUserId(accessRecord.getUserId());
+		if (accessRecord.getUserId() == null) {
+			uar.setUserId(ANONYMOUS_ID);
+		} else {
+			uar.setUserId(accessRecord.getUserId());
+		}
 		uar.setDate(accessRecord.getDate());
 		return uar;
 	}

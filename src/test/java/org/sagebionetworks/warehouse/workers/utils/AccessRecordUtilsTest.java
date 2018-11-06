@@ -192,6 +192,21 @@ public class AccessRecordUtilsTest {
 
 		assertEquals(expected, AccessRecordUtils.getUserActivityPerClientPerDay(ar));
 	}
+	
+	@Test
+	public void getUserAccessRecordForAnonymousTest() {
+		AccessRecord ar = new AccessRecord();
+		ar.setUserAgent("Synpase-Java-Client/64.0  Synapse-Web-Client/67.0");
+		ar.setUserId(null);
+		ar.setDate("date");
+
+		UserActivityPerClientPerDay expected = new UserActivityPerClientPerDay();
+		expected.setUserId(AccessRecordUtils.ANONYMOUS_ID);
+		expected.setDate("date");
+		expected.setClient(Client.WEB);
+
+		assertEquals(expected, AccessRecordUtils.getUserActivityPerClientPerDay(ar));
+	}
 
 	/*
 	 * isValidated() Test
@@ -286,20 +301,4 @@ public class AccessRecordUtilsTest {
 		assertFalse(AccessRecordUtils.isValidAccessRecord(ar));
 	}
 
-	/*
-	 * isValidUserAccessRecord()
-	 */
-
-	@Test
-	public void invalidUserARTest() {
-		AccessRecord ar = AccessRecordTestUtil.createValidAccessRecord();
-		ar.setUserId(null);
-		assertFalse(AccessRecordUtils.isValidUserAccessRecord(ar));
-	}
-
-	@Test
-	public void validUserARTest() {
-		AccessRecord ar = AccessRecordTestUtil.createValidAccessRecord();
-		assertTrue(AccessRecordUtils.isValidUserAccessRecord(ar));
-	}
 }
