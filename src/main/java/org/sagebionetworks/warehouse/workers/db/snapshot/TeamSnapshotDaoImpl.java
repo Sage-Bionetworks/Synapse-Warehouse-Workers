@@ -5,6 +5,7 @@ import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 
@@ -70,7 +71,10 @@ public class TeamSnapshotDaoImpl implements TeamSnapshotDao {
 			snapshot.setModifiedOn(new Date(rs.getLong(COL_TEAM_SNAPSHOT_MODIFIED_ON)));
 			snapshot.setModifiedBy("" + rs.getLong(COL_TEAM_SNAPSHOT_MODIFIED_BY));
 			snapshot.setName(rs.getString(COL_TEAM_SNAPSHOT_NAME));
-			snapshot.setCanPublicJoin(rs.getBoolean(COL_TEAM_SNAPSHOT_CAN_PUBLIC_JOIN));
+			Boolean canPublicJoin = rs.getBoolean(COL_TEAM_SNAPSHOT_CAN_PUBLIC_JOIN);
+			if (!rs.wasNull()) {
+				snapshot.setCanPublicJoin(canPublicJoin);
+			}
 			return snapshot;
 		}
 	};
@@ -101,7 +105,11 @@ public class TeamSnapshotDaoImpl implements TeamSnapshotDao {
 				ps.setLong(5, snapshot.getModifiedOn().getTime());
 				ps.setLong(6, Long.parseLong(snapshot.getModifiedBy()));
 				ps.setString(7, snapshot.getName());
-				ps.setBoolean(8, snapshot.getCanPublicJoin());
+				if (snapshot.getCanPublicJoin() != null) {
+					ps.setBoolean(8, snapshot.getCanPublicJoin());
+				} else {
+					ps.setNull(8, Types.BOOLEAN);
+				}
 			}
 		});
 	}
