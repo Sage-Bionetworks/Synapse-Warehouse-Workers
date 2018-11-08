@@ -29,7 +29,7 @@ public class TableCreatorImplTest {
 		mockConfig = Mockito.mock(Configuration.class);
 		Mockito.when(mockConfig.getStartDate()).thenReturn(today);
 		Mockito.when(mockConfig.getEndDate()).thenReturn(nextWeek);
-		Mockito.when(mockConfig.getProperty(Mockito.eq("org.sagebionetworks.warehouse.worker.schema"))).thenReturn("warehouse");
+		Mockito.when(mockConfig.getProperty(Mockito.eq(TableCreatorImpl.WAREHOUSE_WORKERS_SCHEMA_KEY))).thenReturn("warehouse");
 		creator = new TableCreatorImpl(mockTemplate, mockConfig);
 	}
 

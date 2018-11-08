@@ -87,7 +87,7 @@ public class ApplicationMain {
 	 * <ul>
 	 * <li>-Dorg.sagebionetworks.stack.iam.id=your_aws_id</li>
 	 * <li>-Dorg.sagebionetworks.stack.iam.key=your_aws_key</li>
-	 * <li>-Dorg.sagebionetworks.warehouse.worker.stack=your_stack</li>
+	 * <li>-Dorg.sagebionetworks.warehouse.workers.stack=your_stack</li>
 	 * <li>-Dorg.sagebionetworks.warehouse.workers.jdbc.connection.url =jdbc:mysql://your_db_host/your_db_schema</li>
 	 * <li>-Dorg.sagebionetworks.warehouse.workers.jdbc.user.password =your_password</li>
 	 * <li>-Dorg.sagebionetworks.warehouse.workers.jdbc.user.username =your_db_username</li>

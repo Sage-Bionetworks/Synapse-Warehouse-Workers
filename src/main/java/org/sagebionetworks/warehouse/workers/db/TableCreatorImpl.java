@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import com.google.inject.Inject;
 
 public class TableCreatorImpl implements TableCreator {
+	public static final String WAREHOUSE_WORKERS_SCHEMA_KEY = "org.sagebionetworks.warehouse.workers.schema";
 	private JdbcTemplate template;
 	private DateTime startDate;
 	private DateTime endDate;
@@ -36,7 +37,7 @@ public class TableCreatorImpl implements TableCreator {
 		this.template = template;
 		startDate = config.getStartDate();
 		endDate = config.getEndDate();
-		schema = config.getProperty("org.sagebionetworks.warehouse.worker.schema");
+		schema = config.getProperty(WAREHOUSE_WORKERS_SCHEMA_KEY);
 	}
 
 	@Override
