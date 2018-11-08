@@ -26,6 +26,9 @@ public class AmazonLoggerImpl implements AmazonLogger{
 		}
 		s3Logger.log(progressCallback, toCallback, toLog);
 		cloudWatchLogger.log(progressCallback, toCallback, toLog);
+		if (progressCallback != null) {
+			progressCallback.progressMade(toCallback);
+		}
 	}
 
 }
