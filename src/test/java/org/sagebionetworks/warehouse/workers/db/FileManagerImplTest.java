@@ -151,11 +151,11 @@ public class FileManagerImplTest {
 	
 	@Test
 	public void testAddFileWithOutOfRangeKey(){
-		List<S3ObjectSummary> list = Arrays.asList(badKeyFile);
+		List<S3ObjectSummary> list = Arrays.asList(outOfRangeKeyFile);
 		manger.addS3Objects(list.iterator(), mockCallback);
 		// progress should be made for each file.
 		verify(mockCallback).progressMade(null);
-		verify(mockFileMetadataDao, never()).getFileState(badKeyFile.getBucketName(), badKeyFile.getKey());
+		verify(mockFileMetadataDao, never()).getFileState(outOfRangeKeyFile.getBucketName(), outOfRangeKeyFile.getKey());
 		verify(mockFolderMetadataDao, never()).createOrUpdateFolderState((FolderState) any());
 	}
 	
@@ -172,8 +172,7 @@ public class FileManagerImplTest {
 	// WW-76
 	@Test
 	public void testUnknownKeyFormat() {
-		rollingOne.setKey("fake-key");
-		List<S3ObjectSummary> list = Arrays.asList(rollingOne);
+		List<S3ObjectSummary> list = Arrays.asList(badKeyFile);
 		manger.addS3Objects(list.iterator(), mockCallback);
 		verify(mockAmazonLogger, never()).logNonRetryableError(eq(mockCallback),
 				any(Void.class), eq("FileManagerImpl"), any(Throwable.class));
