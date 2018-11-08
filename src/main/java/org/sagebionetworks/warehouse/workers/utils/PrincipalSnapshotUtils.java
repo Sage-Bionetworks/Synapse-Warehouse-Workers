@@ -25,7 +25,6 @@ public class PrincipalSnapshotUtils {
 		if (snapshot.getCreatedBy() 		== null) return false;
 		if (snapshot.getModifiedOn()		== null) return false;
 		if (snapshot.getModifiedBy() 		== null) return false;
-		if (snapshot.getCanPublicJoin() 	== null) return false;
 		return true;
 	}
 

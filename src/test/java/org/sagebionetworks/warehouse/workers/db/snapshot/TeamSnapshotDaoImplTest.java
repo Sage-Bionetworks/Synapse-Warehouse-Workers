@@ -35,6 +35,7 @@ public class TeamSnapshotDaoImplTest {
 	public void test() {
 		TeamSnapshot snapshot1 = ObjectSnapshotTestUtil.createValidTeamSnapshot();
 		TeamSnapshot snapshot2 = ObjectSnapshotTestUtil.createValidTeamSnapshot();
+		snapshot2.setCanPublicJoin(null);
 
 		dao.insert(Arrays.asList(snapshot1, snapshot2));
 		assertEquals(snapshot1, dao.get(snapshot1.getTimestamp(), Long.parseLong(snapshot1.getId())));

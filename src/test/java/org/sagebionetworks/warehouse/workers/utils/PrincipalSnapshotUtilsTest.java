@@ -74,13 +74,6 @@ public class PrincipalSnapshotUtilsTest {
 		assertFalse(PrincipalSnapshotUtils.isValidTeamSnapshot(snapshot));
 	}
 
-	@Test
-	public void invalidTeamSnapshotWithNullCanPublicJoinTest() {
-		TeamSnapshot snapshot = ObjectSnapshotTestUtil.createValidTeamSnapshot();
-		snapshot.setCanPublicJoin(null);
-		assertFalse(PrincipalSnapshotUtils.isValidTeamSnapshot(snapshot));
-	}
-
 	/*
 	 * isValidUserProfileSnapshot() tests
 	 */
