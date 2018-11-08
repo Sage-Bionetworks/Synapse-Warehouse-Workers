@@ -147,6 +147,9 @@ public class FileManagerImplTest {
 		verify(mockFileMetadataDao, never()).getFileState(badKeyFile.getBucketName(), badKeyFile.getKey());
 		verify(mockFileMetadataDao).getFileState(fileOne.getBucketName(), fileOne.getKey());
 		verify(mockFolderMetadataDao, never()).createOrUpdateFolderState((FolderState) any());
+		// WW-76
+		verify(mockAmazonLogger, never()).logNonRetryableError(eq(mockCallback),
+				any(Void.class), eq("FileManagerImpl"), any(Throwable.class));
 	}
 	
 	@Test
@@ -166,15 +169,6 @@ public class FileManagerImplTest {
 		doThrow(e).when(mockFolderMetadataDao).createOrUpdateFolderState(any(FolderState.class));
 		manger.addS3Objects(list.iterator(), mockCallback);
 		verify(mockAmazonLogger).logNonRetryableError(eq(mockCallback),
-				any(Void.class), eq("FileManagerImpl"), any(Throwable.class));
-	}
-	
-	// WW-76
-	@Test
-	public void testUnknownKeyFormat() {
-		List<S3ObjectSummary> list = Arrays.asList(badKeyFile);
-		manger.addS3Objects(list.iterator(), mockCallback);
-		verify(mockAmazonLogger, never()).logNonRetryableError(eq(mockCallback),
 				any(Void.class), eq("FileManagerImpl"), any(Throwable.class));
 	}
 	
