@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.*;
 
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
+import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.FileState;
 import org.sagebionetworks.warehouse.workers.model.FolderState;
@@ -32,6 +34,8 @@ public class FileManagerImplTest {
 	ProgressCallback<Void> mockCallback;
 	@Mock
 	AmazonLogger mockAmazonLogger;
+	@Mock
+	Configuration mockConfig;
 	
 	S3ObjectSummary rollingOne;
 	S3ObjectSummary rollingTwo;
@@ -39,6 +43,7 @@ public class FileManagerImplTest {
 	S3ObjectSummary fileOne;
 	S3ObjectSummary fileTwo;
 	S3ObjectSummary badKeyFile;
+	S3ObjectSummary outOfRangeKeyFile;
 	
 	FileManagerImpl manger;
 	
@@ -46,7 +51,9 @@ public class FileManagerImplTest {
 	public void before(){
 		MockitoAnnotations.initMocks(this);
 		manger = new FileManagerImpl(mockFolderMetadataDao, mockFileMetadataDao,
-				mockBucketToTopicManager, mockAmazonLogger);
+				mockBucketToTopicManager, mockAmazonLogger, mockConfig);
+		when(mockConfig.getStartDate()).thenReturn(new DateTime(0L));
+		when(mockConfig.getEndDate()).thenReturn(new DateTime());
 		
 		rollingOne = new S3ObjectSummary();
 		rollingOne.setBucketName("bucketone");
@@ -67,6 +74,10 @@ public class FileManagerImplTest {
 		badKeyFile = new S3ObjectSummary();
 		badKeyFile.setBucketName("bucketfour");
 		badKeyFile.setKey("this is a bad key");
+		
+		outOfRangeKeyFile = new S3ObjectSummary();
+		outOfRangeKeyFile.setBucketName("bucketfive");
+		outOfRangeKeyFile.setKey(KeyGeneratorUtil.createNewKey(1, -1, false));
 	}
 	
 	@Test
@@ -136,6 +147,19 @@ public class FileManagerImplTest {
 		verify(mockFileMetadataDao, never()).getFileState(badKeyFile.getBucketName(), badKeyFile.getKey());
 		verify(mockFileMetadataDao).getFileState(fileOne.getBucketName(), fileOne.getKey());
 		verify(mockFolderMetadataDao, never()).createOrUpdateFolderState((FolderState) any());
+		// WW-76
+		verify(mockAmazonLogger, never()).logNonRetryableError(eq(mockCallback),
+				any(Void.class), eq("FileManagerImpl"), any(Throwable.class));
+	}
+	
+	@Test
+	public void testAddFileWithOutOfRangeKey(){
+		List<S3ObjectSummary> list = Arrays.asList(outOfRangeKeyFile);
+		manger.addS3Objects(list.iterator(), mockCallback);
+		// progress should be made for each file.
+		verify(mockCallback).progressMade(null);
+		verify(mockFileMetadataDao, never()).getFileState(outOfRangeKeyFile.getBucketName(), outOfRangeKeyFile.getKey());
+		verify(mockFolderMetadataDao, never()).createOrUpdateFolderState((FolderState) any());
 	}
 	
 	@Test
@@ -145,16 +169,6 @@ public class FileManagerImplTest {
 		doThrow(e).when(mockFolderMetadataDao).createOrUpdateFolderState(any(FolderState.class));
 		manger.addS3Objects(list.iterator(), mockCallback);
 		verify(mockAmazonLogger).logNonRetryableError(eq(mockCallback),
-				any(Void.class), eq("FileManagerImpl"), any(Throwable.class));
-	}
-	
-	// WW-76
-	@Test
-	public void testUnknownKeyFormat() {
-		rollingOne.setKey("fake-key");
-		List<S3ObjectSummary> list = Arrays.asList(rollingOne);
-		manger.addS3Objects(list.iterator(), mockCallback);
-		verify(mockAmazonLogger, never()).logNonRetryableError(eq(mockCallback),
 				any(Void.class), eq("FileManagerImpl"), any(Throwable.class));
 	}
 	

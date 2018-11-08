@@ -57,7 +57,8 @@ public class RealTimeBucketListenerStackIntegrationTest {
 	public void testCreateFile() throws Exception {
 		BucketInfo firstBucket = bucketList.getBucketList().get(0);
 		String bucket = firstBucket.getBucketName();
-		String key = KeyGeneratorUtil.createNewKey(21, 1L, false);
+		// 74 65 73 74  is hex form of "test"
+		String key = KeyGeneratorUtil.createNewKey(74657374, System.currentTimeMillis(), false);
 		File logFile = resourceProvider.createTempFile("test", "csv.gz");
 		PrintWriter writer = resourceProvider.createGzipPrintWriter(logFile);
 		writer.println("Sample data");

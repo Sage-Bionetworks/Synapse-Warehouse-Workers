@@ -5,9 +5,11 @@ import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 import org.sagebionetworks.aws.utils.s3.KeyData;
 import org.sagebionetworks.aws.utils.s3.KeyGeneratorUtil;
 import org.sagebionetworks.warehouse.workers.bucket.BucketTopicPublisher;
+import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.model.FileState;
 import org.sagebionetworks.warehouse.workers.model.FolderState;
@@ -28,16 +30,18 @@ public class FileManagerImpl implements FileManager{
 	private FileMetadataDao fileMetadataDao;
 	private BucketTopicPublisher bucketToTopicManager;
 	private AmazonLogger amazonLogger;
+	private Configuration config;
 	
 	@Inject
 	public FileManagerImpl(FolderMetadataDao folderMetadataDao,
 			FileMetadataDao fileMetadataDao, BucketTopicPublisher bucketToTopicManager,
-			AmazonLogger amazonLogger) {
+			AmazonLogger amazonLogger, Configuration config) {
 		super();
 		this.folderMetadataDao = folderMetadataDao;
 		this.fileMetadataDao = fileMetadataDao;
 		this.bucketToTopicManager = bucketToTopicManager;
 		this.amazonLogger = amazonLogger;
+		this.config = config;
 	}
 
 	@Override
@@ -54,6 +58,12 @@ public class FileManagerImpl implements FileManager{
 			// parse the key into its parts.
 			try {
 				KeyData keyData = KeyGeneratorUtil.parseKey(summary.getKey());
+				DateTime dataDate = new DateTime(keyData.getTimeMS());
+				if (dataDate.isBefore(config.getStartDate().getMillis()) ||
+						dataDate.isAfter(config.getEndDate().getMillis())) {
+					// ignore invalid time snapshots
+					continue;
+				}
 				if(keyData.isRolling()){
 					// For rolling files we need to mark the folder as rolling.
 					if(lastRollingPath != null && lastRollingPath.equals(keyData.getPath())){
