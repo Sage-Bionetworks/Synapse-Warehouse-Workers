@@ -51,7 +51,6 @@ public class PrincipalSnapshotUtils {
 		if (snapshot 					== null) return false;
 		if (snapshot.getId() 			== null) return false;
 		if (snapshot.getIsIndividual() 	== null) return false;
-		if (snapshot.getCreationDate() 	== null) return false;
 		return true;
 	}
 

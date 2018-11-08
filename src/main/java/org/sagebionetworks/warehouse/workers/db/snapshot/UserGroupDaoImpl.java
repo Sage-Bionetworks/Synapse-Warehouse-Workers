@@ -5,6 +5,7 @@ import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 
@@ -55,7 +56,10 @@ public class UserGroupDaoImpl implements UserGroupDao {
 			UserGroup ug = new UserGroup();
 			ug.setId("" + rs.getLong(COL_USER_GROUP_ID));
 			ug.setIsIndividual(rs.getBoolean(COL_USER_GROUP_IS_INDIVIDUAL));
-			ug.setCreationDate(new Date(rs.getLong(COL_USER_GROUP_CREATED_ON)));
+			Long createdOn = rs.getLong(COL_USER_GROUP_CREATED_ON);
+			if (!rs.wasNull()) {
+				ug.setCreationDate(new Date(createdOn));
+			}
 			return ug;
 		}
 	};
@@ -81,7 +85,11 @@ public class UserGroupDaoImpl implements UserGroupDao {
 				UserGroup ug = batch.get(i);
 				ps.setLong(1, Long.parseLong(ug.getId()));
 				ps.setBoolean(2, ug.getIsIndividual());
-				ps.setLong(3, ug.getCreationDate().getTime());
+				if (ug.getCreationDate() == null) {
+					ps.setNull(3, Types.BIGINT);
+				} else {
+					ps.setLong(3, ug.getCreationDate().getTime());
+				}
 			}
 		});
 	}

@@ -130,13 +130,6 @@ public class PrincipalSnapshotUtilsTest {
 		assertFalse(PrincipalSnapshotUtils.isValidUserGroupSnapshot(snapshot));
 	}
 
-	@Test
-	public void invalidUserGroupSnapshotWithNullCreationDateTest() {
-		UserGroup snapshot = ObjectSnapshotTestUtil.createValidUserGroupSnapshot();
-		snapshot.setCreationDate(null);
-		assertFalse(PrincipalSnapshotUtils.isValidUserGroupSnapshot(snapshot));
-	}
-
 	/*
 	 * getTeamSnapshot() tests
 	 */
