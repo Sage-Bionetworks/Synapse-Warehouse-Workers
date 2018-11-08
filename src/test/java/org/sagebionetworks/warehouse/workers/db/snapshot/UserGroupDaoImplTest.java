@@ -35,6 +35,7 @@ public class UserGroupDaoImplTest {
 	public void test() {
 		UserGroup snapshot1 = ObjectSnapshotTestUtil.createValidUserGroupSnapshot();
 		UserGroup snapshot2 = ObjectSnapshotTestUtil.createValidUserGroupSnapshot();
+		snapshot2.setCreationDate(null);
 
 		dao.insert(Arrays.asList(snapshot1, snapshot2));
 		assertEquals(snapshot1, dao.get(Long.parseLong(snapshot1.getId()), snapshot1.getIsIndividual()));
