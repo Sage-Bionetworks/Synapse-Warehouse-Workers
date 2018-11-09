@@ -1,8 +1,8 @@
 package org.sagebionetworks.warehouse.workers.log;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
@@ -36,7 +36,7 @@ public class AmazonLoggerImplTest {
 		Exception e = new Exception("test");
 		Integer toCallback = 3;
 		logger.logNonRetryableError(mockProgressCallback, toCallback, "workerName", e);
-		verify(mockProgressCallback).progressMade(toCallback);
+		verify(mockProgressCallback, times(2)).progressMade(toCallback);
 		verify(mockS3Logger).log(eq(mockProgressCallback), eq(toCallback), argCaptor.capture());
 		LogRecord s3Input = argCaptor.getValue();
 		verify(mockCloudWatchLogger).log(eq(mockProgressCallback), eq(toCallback), argCaptor.capture());
