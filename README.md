@@ -6,7 +6,7 @@ In order to build the following properties must be available to the JVM:
 
 Key | Description
 ------------ | -------------
-org.sagebionetworks.warehouse.worker.stack | A unique identifier for a stack. This prefix is applied to all AWS resources.
+org.sagebionetworks.warehouse.workers.stack | A unique identifier for a stack. This prefix is applied to all AWS resources.
 org.sagebionetworks.stack.iam.id | The AMI id used used to connect to AWS
 org.sagebionetworks.stack.iam.key | The AMI secret key used to connect to AWS
 org.sagebionetworks.warehouse.workers.jdbc.user.username | database username
@@ -46,7 +46,7 @@ Here is an example:
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<org.sagebionetworks.warehouse.worker.stack>devhill</org.sagebionetworks.warehouse.worker.stack>
+				<org.sagebionetworks.warehouse.workers.stack>devhill</org.sagebionetworks.warehouse.workers.stack>
 				<org.sagebionetworks.stack.iam.id>your-id</org.sagebionetworks.stack.iam.id>
 				<org.sagebionetworks.stack.iam.key>your-key</org.sagebionetworks.stack.iam.key>						
 			</properties>

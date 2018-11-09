@@ -4,6 +4,7 @@ import org.sagebionetworks.database.semaphore.CountingSemaphore;
 import org.sagebionetworks.warehouse.workers.SemaphoreKey;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfiguration;
 import org.sagebionetworks.warehouse.workers.WorkerStackConfigurationProvider;
+import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenWorkerStack;
 import org.sagebionetworks.workers.util.aws.message.MessageDrivenWorkerStackConfiguration;
 
@@ -16,17 +17,22 @@ import com.google.inject.Inject;
  *
  */
 public class CollateFolderConfigurationProvider implements WorkerStackConfigurationProvider {
+	public static final String COLLATE_WORKER_COUNT_KEY = "org.sagebionetworks.warehouse.workers.collate.worker.count";
 	
 	WorkerStackConfiguration config;
 
 	@Inject
-	public CollateFolderConfigurationProvider(CountingSemaphore semaphore, AmazonSQSClient awsSQSClient, AmazonSNSClient awsSNSClient, CollateMessageQueue queue, FolderLockingWorker worker){
+	public CollateFolderConfigurationProvider(CountingSemaphore semaphore,
+			AmazonSQSClient awsSQSClient, AmazonSNSClient awsSNSClient,
+			CollateMessageQueue queue, FolderLockingWorker worker,
+			Configuration configuration){
+		Integer numberOfWorkers = Integer.valueOf(configuration.getProperty(COLLATE_WORKER_COUNT_KEY));
 		MessageDrivenWorkerStackConfiguration messageConfig = new MessageDrivenWorkerStackConfiguration();
 		messageConfig.setQueueName(queue.getMessageQueue().getQueueName());
 		messageConfig.setRunner(worker);
 		messageConfig.setSemaphoreLockAndMessageVisibilityTimeoutSec(60);
 		messageConfig.setSemaphoreLockKey(SemaphoreKey.FOLDER_COLLATE_WORKER.name());
-		messageConfig.setSemaphoreMaxLockCount(20);
+		messageConfig.setSemaphoreMaxLockCount(numberOfWorkers);
 		MessageDrivenWorkerStack stack = new MessageDrivenWorkerStack(semaphore, awsSQSClient, awsSNSClient, messageConfig);
 		
 		config = new WorkerStackConfiguration();

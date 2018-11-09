@@ -17,7 +17,7 @@ import com.google.inject.Singleton;
 
 @Singleton
 public class ConfigurationImpl implements Configuration {
-	public static final String MONTHS_TO_BACKFILL_KEY = "org.sagebionetworks.warehouse.worker.backfill.months";
+	public static final String MONTHS_TO_BACKFILL_KEY = "org.sagebionetworks.warehouse.workers.backfill.months";
 
 	private static final int MONTHLY_AUDIT_DAY = 7;
 	private static final int MAINTENANCE_START_TIME = 8;

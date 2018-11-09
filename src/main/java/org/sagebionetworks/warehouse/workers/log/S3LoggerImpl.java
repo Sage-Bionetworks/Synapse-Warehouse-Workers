@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 public class S3LoggerImpl implements S3Logger{
 	public static final String TEMP_FILE_EXTENSION = ".txt.gz";
 	public static final String TEMP_FILE_NAME = "workerLog";
-	public static final String BUCKET_CONFIG_KEY = "org.sagebionetworks.warehouse.worker.log.bucket";
+	public static final String BUCKET_CONFIG_KEY = "org.sagebionetworks.warehouse.workers.log.bucket";
 	
 	private AmazonS3Client s3Client;
 	private StreamResourceProvider resourceProvider;

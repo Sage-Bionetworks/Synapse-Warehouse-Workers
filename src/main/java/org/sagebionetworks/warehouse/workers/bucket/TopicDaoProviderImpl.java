@@ -19,7 +19,7 @@ public class TopicDaoProviderImpl implements TopicDaoProvider {
 	TopicDaoProviderImpl(AmazonSNSClient snsClient, Configuration config) {
 		super();
 		this.snsClient = snsClient;
-		this.stack = config.getProperty("org.sagebionetworks.warehouse.worker.stack");
+		this.stack = config.getProperty("org.sagebionetworks.warehouse.workers.stack");
 	}
 
 	@Override

@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 
 public class CloudWatchLoggerImpl implements CloudWatchLogger{
 	public static final String DIMENSION_NAME = "Class";
-	public static final String NAMESPACE_CONFIG_KEY = "org.sagebionetworks.warehouse.worker.cloudwatch.namespace";
+	public static final String NAMESPACE_CONFIG_KEY = "org.sagebionetworks.warehouse.workers.cloudwatch.namespace";
 	
 	AmazonCloudWatchClient cloudWatchClient;
 	String namespace;
