@@ -89,6 +89,10 @@ import com.google.inject.Provides;
  */
 public class WorkersModule extends AbstractModule {
 
+	public static final String ALL_INSTANCE = "all";
+	public static final String DOWNLOAD_REPORT_INSTANCE = "download-report";
+	public static final String COLLATOR_INSTANCE = "collator";
+	public static final String INSTANCE_USECASE_KEY = "org.sagebionetworks.warehouse.workers.instance.usecase";
 	private static final int COLLATE_WORKER_QUEUE_MSG_VISIBILITY_TIMEOUT_SEC = 120;
 
 	@Override
@@ -303,16 +307,16 @@ public class WorkersModule extends AbstractModule {
 	 */
 	@Provides
 	public WorkerStackConfigurationProviderList getWorkerStackConfigurationProviderList(Configuration config){
-		String usecase = config.getProperty("org.sagebionetworks.warehouse.workers.instance.usecase");
+		String usecase = config.getProperty(INSTANCE_USECASE_KEY);
 		if (usecase == null) {
 			return getSnapshotWorkerStackConfigurationProviderList();
 		}
 		switch (usecase) {
-		case "collator":
+		case COLLATOR_INSTANCE:
 			return getCollatorWorkerStackConfigurationProviderList();
-		case "download-report":
-			return getDownloadReportCollatorWorkerStackConfigurationProviderList();
-		case "all":
+		case DOWNLOAD_REPORT_INSTANCE:
+			return getDownloadReportWorkerStackConfigurationProviderList();
+		case ALL_INSTANCE:
 			// this case exists for backward compatibility and will be removed in the future
 			return getAllWorkerStackConfigurationProviderList();
 		default:
@@ -320,7 +324,7 @@ public class WorkersModule extends AbstractModule {
 		}
 	}
 
-	private WorkerStackConfigurationProviderList getDownloadReportCollatorWorkerStackConfigurationProviderList() {
+	public static WorkerStackConfigurationProviderList getDownloadReportWorkerStackConfigurationProviderList() {
 		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
 		list.add(RealTimeBucketListenerConfigurationProvider.class);
 		list.add(BucketScanningConfigurationProvider.class);
@@ -339,7 +343,7 @@ public class WorkersModule extends AbstractModule {
 		return list;
 	}
 
-	private WorkerStackConfigurationProviderList getCollatorWorkerStackConfigurationProviderList() {
+	public static WorkerStackConfigurationProviderList getCollatorWorkerStackConfigurationProviderList() {
 		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
 		list.add(RealTimeBucketListenerConfigurationProvider.class);
 		list.add(BucketScanningConfigurationProvider.class);
@@ -349,7 +353,7 @@ public class WorkersModule extends AbstractModule {
 		return list;
 	}
 
-	private WorkerStackConfigurationProviderList getSnapshotWorkerStackConfigurationProviderList() {
+	public static WorkerStackConfigurationProviderList getSnapshotWorkerStackConfigurationProviderList() {
 		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
 		list.add(RealTimeBucketListenerConfigurationProvider.class);
 		list.add(BucketScanningConfigurationProvider.class);
@@ -380,7 +384,7 @@ public class WorkersModule extends AbstractModule {
 		return list;
 	}
 
-	private WorkerStackConfigurationProviderList getAllWorkerStackConfigurationProviderList() {
+	public static WorkerStackConfigurationProviderList getAllWorkerStackConfigurationProviderList() {
 		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
 		list.add(RealTimeBucketListenerConfigurationProvider.class);
 		list.add(BucketScanningConfigurationProvider.class);
