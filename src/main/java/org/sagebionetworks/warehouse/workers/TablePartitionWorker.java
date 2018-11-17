@@ -11,6 +11,7 @@ import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
 import org.sagebionetworks.warehouse.workers.db.TableConfigurationList;
 import org.sagebionetworks.warehouse.workers.db.TableCreator;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 import org.sagebionetworks.common.util.progress.ProgressingRunner;
@@ -23,13 +24,16 @@ public class TablePartitionWorker implements ProgressingRunner<Void> {
 	private TableConfigurationList tableConfigList;
 	private TableCreator creator;
 	private Configuration config;
+	private AmazonLogger logger;
 
 	@Inject
-	public TablePartitionWorker (TableConfigurationList list, TableCreator creator, Configuration config) {
+	public TablePartitionWorker (TableConfigurationList list, TableCreator creator,
+			Configuration config, AmazonLogger logger) {
 		super();
 		this.tableConfigList = list;
 		this.creator = creator;
 		this.config = config;
+		this.logger = logger;
 	}
 
 	@Override
@@ -38,24 +42,28 @@ public class TablePartitionWorker implements ProgressingRunner<Void> {
 		DateTime endDate = config.getEndDate();
 		for (TableConfiguration tableConfig : tableConfigList.getList()) {
 			if (!tableConfig.isCreateWithPartitions()) continue;
-			progressCallback.progressMade(null);
-			String tableName = tableConfig.getTableName();
-			log.info("Checking partitions on table "+tableName+"...");
-			Map<String, Long> requiredPartitions = PartitionUtil.getPartitions(tableName, tableConfig.getPartitionPeriod(), startDate, endDate);
-			Set<String> existingPartitions = creator.getExistingPartitionsForTable(tableName);
-			Set<String> toDrop = new HashSet<String>(existingPartitions);
-			toDrop.removeAll(requiredPartitions.keySet());
-			Set<String> toAdd = requiredPartitions.keySet();
-			toAdd.removeAll(existingPartitions);
-			for (String partitionName : toAdd) {
-				log.info("Adding partition "+partitionName+"...");
-				creator.addPartition(tableName, partitionName, requiredPartitions.get(partitionName));
-			}
-			for (String partitionName : toDrop) {
-				if (partitionName != null && !partitionName.toLowerCase().equals("null")) {
-					log.info("Dropping partition "+partitionName+"...");
-					creator.dropPartition(tableName, partitionName);
+			try {
+				progressCallback.progressMade(null);
+				String tableName = tableConfig.getTableName();
+				log.info("Checking partitions on table "+tableName+"...");
+				Map<String, Long> requiredPartitions = PartitionUtil.getPartitions(tableName, tableConfig.getPartitionPeriod(), startDate, endDate);
+				Set<String> existingPartitions = creator.getExistingPartitionsForTable(tableName);
+				Set<String> toDrop = new HashSet<String>(existingPartitions);
+				toDrop.removeAll(requiredPartitions.keySet());
+				Set<String> toAdd = requiredPartitions.keySet();
+				toAdd.removeAll(existingPartitions);
+				for (String partitionName : toAdd) {
+					log.info("Adding partition "+partitionName+"...");
+					creator.addPartition(tableName, partitionName, requiredPartitions.get(partitionName));
 				}
+				for (String partitionName : toDrop) {
+					if (partitionName != null && !partitionName.toLowerCase().equals("null")) {
+						log.info("Dropping partition "+partitionName+"...");
+						creator.dropPartition(tableName, partitionName);
+					}
+				}
+			} catch (Exception e) {
+				logger.logNonRetryableError(progressCallback, null, this.getClass().getSimpleName(), e);
 			}
 		}
 	}
