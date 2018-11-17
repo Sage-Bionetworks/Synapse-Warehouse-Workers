@@ -1,5 +1,14 @@
 package org.sagebionetworks.warehouse.workers;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,33 +17,38 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.sagebionetworks.warehouse.workers.config.Configuration;
 import org.sagebionetworks.warehouse.workers.db.Sql;
 import org.sagebionetworks.warehouse.workers.db.TableConfiguration;
 import org.sagebionetworks.warehouse.workers.db.TableConfigurationList;
 import org.sagebionetworks.warehouse.workers.db.TableCreator;
 import org.sagebionetworks.warehouse.workers.db.snapshot.AccessRecordDaoImpl;
+import org.sagebionetworks.warehouse.workers.log.AmazonLogger;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.sagebionetworks.common.util.progress.ProgressCallback;
 
 public class TablePartitionWorkerTest {
+	@Mock
 	private TableConfigurationList mockTableConfigList;
+	@Mock
 	private TableCreator mockCreator;
+	@Mock
 	private Configuration mockConfig;
+	@Mock
+	private ProgressCallback<Void> mockProgressCallback;
+	@Mock
+	private AmazonLogger mockLogger;
 	private DateTime startDate;
 	private DateTime endDate;
 	private TablePartitionWorker worker;
-	private ProgressCallback<Void> mockProgressCallback;
 
-	@SuppressWarnings("unchecked")
 	@Before
 	public void before() {
-		mockTableConfigList = Mockito.mock(TableConfigurationList.class);
-		mockCreator = Mockito.mock(TableCreator.class);
-		mockConfig = Mockito.mock(Configuration.class);
-		mockProgressCallback = Mockito.mock(ProgressCallback.class);
+		MockitoAnnotations.initMocks(this);
 
 		startDate = new DateTime().minusWeeks(1);
 		endDate = new DateTime().plusDays(1);
@@ -43,42 +57,78 @@ public class TablePartitionWorkerTest {
 
 		List<TableConfiguration> list = new LinkedList<TableConfiguration>();
 		list.add(AccessRecordDaoImpl.CONFIG);
-		Mockito.when(mockTableConfigList.getList()).thenReturn(list);
+		when(mockTableConfigList.getList()).thenReturn(list);
 
-		worker = new TablePartitionWorker(mockTableConfigList, mockCreator, mockConfig);
+		worker = new TablePartitionWorker(mockTableConfigList, mockCreator, mockConfig, mockLogger);
 	}
 
 	@Test
 	public void allPartitionsExistTest() throws Exception {
 		Set<String> set = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, startDate, endDate).keySet();
-		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
+		when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
 		worker.run(mockProgressCallback);
-		Mockito.verify(mockProgressCallback).progressMade(null);
-		Mockito.verify(mockCreator, Mockito.never()).addPartition(Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
-		Mockito.verify(mockCreator, Mockito.never()).dropPartition(Mockito.anyString(), Mockito.anyString());
+		verify(mockProgressCallback).progressMade(null);
+		verify(mockCreator, never()).addPartition(any(String.class), any(String.class), any(Long.class));
+		verify(mockCreator, never()).dropPartition(any(String.class), any(String.class));
 	}
 
 	@Test
 	public void offByOneTest() throws Exception {
 		Set<String> set = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, startDate.minusDays(1), endDate.minusDays(1)).keySet();
-		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
+		when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
 		worker.run(mockProgressCallback);
-		Mockito.verify(mockProgressCallback).progressMade(null);
+		verify(mockProgressCallback).progressMade(null);
 		DateTime addDate = endDate.plusDays(1);
 		String toAdd = PartitionUtil.getPartitionName(Sql.TABLE_ACCESS_RECORD, addDate, Period.DAY);
-		Mockito.verify(mockCreator).addPartition(Mockito.eq(Sql.TABLE_ACCESS_RECORD), Mockito.eq(toAdd), Mockito.eq(PartitionUtil.floorDateByPeriod(addDate, Period.DAY).getMillis()));
+		verify(mockCreator).addPartition(eq(Sql.TABLE_ACCESS_RECORD), eq(toAdd), eq(PartitionUtil.floorDateByPeriod(addDate, Period.DAY).getMillis()));
 		DateTime dateToDrop = startDate.minusDays(1);
 		String toDrop = PartitionUtil.getPartitionName(Sql.TABLE_ACCESS_RECORD, dateToDrop, Period.DAY);
-		Mockito.verify(mockCreator).dropPartition(Mockito.eq(Sql.TABLE_ACCESS_RECORD), Mockito.eq(toDrop));
+		verify(mockCreator).dropPartition(eq(Sql.TABLE_ACCESS_RECORD), eq(toDrop));
 	}
 
 	@Test
 	public void dropNullTest() throws Exception {
 		Set<String> nullSet = new HashSet<String>();
 		nullSet.add("null");
-		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(nullSet);
+		when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(nullSet);
 		worker.run(mockProgressCallback);
-		Mockito.verify(mockProgressCallback).progressMade(null);
-		Mockito.verify(mockCreator, Mockito.never()).dropPartition(Mockito.anyString(), Mockito.anyString());
+		verify(mockProgressCallback).progressMade(null);
+		verify(mockCreator, never()).dropPartition(any(String.class), any(String.class));
+	}
+
+	@Test
+	public void missingOldPartitionsTest() throws Exception {
+		startDate = new DateTime().minusWeeks(2);
+		DateTime existStartDate = new DateTime().minusWeeks(1);
+		endDate = new DateTime().plusDays(1);
+		when(mockConfig.getStartDate()).thenReturn(startDate);
+		when(mockConfig.getEndDate()).thenReturn(endDate);
+		Set<String> existed = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, existStartDate, endDate).keySet();
+		when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(existed);
+		worker.run(mockProgressCallback);
+		verify(mockCreator, times(7)).addPartition(any(String.class), any(String.class), any(Long.class));
+	}
+
+	@Test
+	public void dropPartitionError() throws Exception{
+		DateTime existingDate = startDate.minusDays(1);
+		Set<String> set = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, existingDate, endDate).keySet();;
+		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
+		RuntimeException e = new RuntimeException();
+		doThrow(e).when(mockCreator).dropPartition(eq(Sql.TABLE_ACCESS_RECORD), any(String.class));
+		worker.run(mockProgressCallback);
+		verify(mockCreator).dropPartition(eq(Sql.TABLE_ACCESS_RECORD), any(String.class));
+		verify(mockLogger).logNonRetryableError(mockProgressCallback, null, TablePartitionWorker.class.getSimpleName(), e);
+	}
+
+	@Test
+	public void addPartitionError() throws Exception{
+		Set<String> set = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, startDate, new DateTime()).keySet();;
+		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
+		RuntimeException e = new RuntimeException();
+		doThrow(e).when(mockCreator).addPartition(eq(Sql.TABLE_ACCESS_RECORD), any(String.class), any(Long.class));
+		worker.run(mockProgressCallback);
+		verify(mockCreator).addPartition(eq(Sql.TABLE_ACCESS_RECORD), any(String.class), any(Long.class));
+		verify(mockLogger).logNonRetryableError(mockProgressCallback, null, TablePartitionWorker.class.getSimpleName(), e);
 	}
 }
