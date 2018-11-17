@@ -1,6 +1,7 @@
 package org.sagebionetworks.warehouse.workers;
 
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
@@ -68,7 +69,7 @@ public class TablePartitionWorkerTest {
 		when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
 		worker.run(mockProgressCallback);
 		verify(mockProgressCallback).progressMade(null);
-		verify(mockCreator, never()).addPartition(any(String.class), any(String.class), any(Long.class));
+		verify(mockCreator, never()).addPartition(any(String.class), any(String.class), anyLong());
 		verify(mockCreator, never()).dropPartition(any(String.class), any(String.class));
 	}
 
@@ -106,14 +107,14 @@ public class TablePartitionWorkerTest {
 		Set<String> existed = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, existStartDate, endDate).keySet();
 		when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(existed);
 		worker.run(mockProgressCallback);
-		verify(mockCreator, times(7)).addPartition(any(String.class), any(String.class), any(Long.class));
+		verify(mockCreator, times(7)).addPartition(any(String.class), any(String.class), anyLong());
 	}
 
 	@Test
 	public void dropPartitionError() throws Exception{
 		DateTime existingDate = startDate.minusDays(1);
 		Set<String> set = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, existingDate, endDate).keySet();;
-		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
+		when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
 		RuntimeException e = new RuntimeException();
 		doThrow(e).when(mockCreator).dropPartition(eq(Sql.TABLE_ACCESS_RECORD), any(String.class));
 		worker.run(mockProgressCallback);
@@ -124,11 +125,11 @@ public class TablePartitionWorkerTest {
 	@Test
 	public void addPartitionError() throws Exception{
 		Set<String> set = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, startDate, new DateTime()).keySet();;
-		Mockito.when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
+		when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(set);
 		RuntimeException e = new RuntimeException();
-		doThrow(e).when(mockCreator).addPartition(eq(Sql.TABLE_ACCESS_RECORD), any(String.class), any(Long.class));
+		doThrow(e).when(mockCreator).addPartition(eq(Sql.TABLE_ACCESS_RECORD), any(String.class), anyLong());
 		worker.run(mockProgressCallback);
-		verify(mockCreator).addPartition(eq(Sql.TABLE_ACCESS_RECORD), any(String.class), any(Long.class));
+		verify(mockCreator).addPartition(eq(Sql.TABLE_ACCESS_RECORD), any(String.class), anyLong());
 		verify(mockLogger).logNonRetryableError(mockProgressCallback, null, TablePartitionWorker.class.getSimpleName(), e);
 	}
 }
