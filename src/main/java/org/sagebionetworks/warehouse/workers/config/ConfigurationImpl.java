@@ -18,6 +18,10 @@ import com.google.inject.Singleton;
 @Singleton
 public class ConfigurationImpl implements Configuration {
 	public static final String MONTHS_TO_BACKFILL_KEY = "org.sagebionetworks.warehouse.workers.backfill.months";
+	public static final String UNCHANGE_PARTITION_MONTHS_KEY = "org.sagebionetworks.warehouse.workers.unchange.partition.months";
+	public static final int MAX_PARTITION_MONTHS = 60;
+	public static final int DEFAULT_PARTITION_MONTHS = 24;
+	public static final int DEFAULT_BACKFILL_MONTHS = 6;
 
 	private static final int MONTHLY_AUDIT_DAY = 7;
 	private static final int MAINTENANCE_START_TIME = 8;
@@ -90,10 +94,40 @@ public class ConfigurationImpl implements Configuration {
 	}
 
 	@Override
-	public DateTime getStartDate() {
-		String monthsToBackfill = getProperty(MONTHS_TO_BACKFILL_KEY);
-		DateTime startDate = new DateTime().minusMonths(Integer.valueOf(monthsToBackfill));
+	public DateTime getBackfillStartDate() {
+		Integer backfillMonths = getBackfillMonths(getProperty(MONTHS_TO_BACKFILL_KEY),
+				getPartitionMonths(getProperty(UNCHANGE_PARTITION_MONTHS_KEY)));
+		DateTime startDate = new DateTime().minusMonths(backfillMonths);
 		return new DateTime(startDate.getYear(), startDate.getMonthOfYear(), startDate.getDayOfMonth(), 0, 0);
+	}
+
+	public static Integer getBackfillMonths(String backfillMonthsInString, Integer partitionMonths) {
+		if (backfillMonthsInString == null) {
+			return DEFAULT_BACKFILL_MONTHS;
+		}
+		Integer backfillMonths = Integer.valueOf(backfillMonthsInString);
+		if (backfillMonths <= 0 || backfillMonths > partitionMonths) {
+			return DEFAULT_BACKFILL_MONTHS;
+		}
+		return backfillMonths;
+	}
+	
+	@Override
+	public DateTime getPartitionStartDate() {
+		Integer partitionMonths = getPartitionMonths(getProperty(UNCHANGE_PARTITION_MONTHS_KEY));
+		DateTime startDate = new DateTime().minusMonths(partitionMonths);
+		return new DateTime(startDate.getYear(), startDate.getMonthOfYear(), startDate.getDayOfMonth(), 0, 0);
+	}
+
+	public static Integer getPartitionMonths(String months) {
+		if (months == null) {
+			return DEFAULT_PARTITION_MONTHS;
+		}
+		Integer partitionMonths = Integer.valueOf(months);
+		if (partitionMonths <= 0 || partitionMonths > MAX_PARTITION_MONTHS) {
+			return DEFAULT_PARTITION_MONTHS;
+		}
+		return partitionMonths;
 	}
 
 	@Override

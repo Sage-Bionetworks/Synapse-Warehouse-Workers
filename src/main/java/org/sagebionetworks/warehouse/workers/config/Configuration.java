@@ -25,11 +25,11 @@ public interface Configuration {
 	public List<Class<? extends WorkerStackConfigurationProvider>> listAllWorkerStackInterfaces();
 
 	/**
-	 * Get the date two years ago
+	 * Get the start date to backfill data
 	 * 
 	 * @return 
 	 */
-	public DateTime getStartDate();
+	public DateTime getBackfillStartDate();
 
 	/**
 	 * Get the date a week from now
@@ -56,4 +56,12 @@ public interface Configuration {
 	 * @return the day of the month that we will run the audit queries
 	 */
 	public int getMonthlyAuditDay();
+
+	/**
+	 * Get the start date to setup partitions
+	 * 
+	 * @return
+	 */
+	public DateTime getPartitionStartDate();
+
 }

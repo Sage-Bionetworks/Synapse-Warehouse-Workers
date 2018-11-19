@@ -27,7 +27,7 @@ public class TableCreatorImplTest {
 	public void before(){
 		mockTemplate = Mockito.mock(JdbcTemplate.class);
 		mockConfig = Mockito.mock(Configuration.class);
-		Mockito.when(mockConfig.getStartDate()).thenReturn(today);
+		Mockito.when(mockConfig.getPartitionStartDate()).thenReturn(today);
 		Mockito.when(mockConfig.getEndDate()).thenReturn(nextWeek);
 		Mockito.when(mockConfig.getProperty(Mockito.eq(TableCreatorImpl.WAREHOUSE_WORKERS_SCHEMA_KEY))).thenReturn("warehouse");
 		creator = new TableCreatorImpl(mockTemplate, mockConfig);

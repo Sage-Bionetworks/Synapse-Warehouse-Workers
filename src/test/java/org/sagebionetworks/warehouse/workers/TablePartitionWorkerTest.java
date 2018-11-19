@@ -53,7 +53,7 @@ public class TablePartitionWorkerTest {
 
 		startDate = new DateTime().minusWeeks(1);
 		endDate = new DateTime().plusDays(1);
-		Mockito.when(mockConfig.getStartDate()).thenReturn(startDate);
+		Mockito.when(mockConfig.getPartitionStartDate()).thenReturn(startDate);
 		Mockito.when(mockConfig.getEndDate()).thenReturn(endDate);
 
 		List<TableConfiguration> list = new LinkedList<TableConfiguration>();
@@ -102,7 +102,7 @@ public class TablePartitionWorkerTest {
 		startDate = new DateTime().minusWeeks(2);
 		DateTime existStartDate = new DateTime().minusWeeks(1);
 		endDate = new DateTime().plusDays(1);
-		when(mockConfig.getStartDate()).thenReturn(startDate);
+		when(mockConfig.getPartitionStartDate()).thenReturn(startDate);
 		when(mockConfig.getEndDate()).thenReturn(endDate);
 		Set<String> existed = PartitionUtil.getPartitions(Sql.TABLE_ACCESS_RECORD, Period.DAY, existStartDate, endDate).keySet();
 		when(mockCreator.getExistingPartitionsForTable(Sql.TABLE_ACCESS_RECORD)).thenReturn(existed);
