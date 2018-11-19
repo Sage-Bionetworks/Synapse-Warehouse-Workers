@@ -89,6 +89,10 @@ import com.google.inject.Provides;
  */
 public class WorkersModule extends AbstractModule {
 
+	public static final String ALL_INSTANCE = "all";
+	public static final String DOWNLOAD_REPORT_INSTANCE = "download-report";
+	public static final String COLLATOR_INSTANCE = "collator";
+	public static final String INSTANCE_USECASE_KEY = "org.sagebionetworks.warehouse.workers.instance.usecase";
 	private static final int COLLATE_WORKER_QUEUE_MSG_VISIBILITY_TIMEOUT_SEC = 120;
 
 	@Override
@@ -302,7 +306,85 @@ public class WorkersModule extends AbstractModule {
 	 * @return
 	 */
 	@Provides
-	public WorkerStackConfigurationProviderList getWorkerStackConfigurationProviderList(){
+	public WorkerStackConfigurationProviderList getWorkerStackConfigurationProviderList(Configuration config){
+		String usecase = config.getProperty(INSTANCE_USECASE_KEY);
+		if (usecase == null) {
+			return getSnapshotWorkerStackConfigurationProviderList();
+		}
+		switch (usecase) {
+		case COLLATOR_INSTANCE:
+			return getCollatorWorkerStackConfigurationProviderList();
+		case DOWNLOAD_REPORT_INSTANCE:
+			return getDownloadReportWorkerStackConfigurationProviderList();
+		case ALL_INSTANCE:
+			// this case exists for backward compatibility and will be removed in the future
+			return getAllWorkerStackConfigurationProviderList();
+		default:
+			return getSnapshotWorkerStackConfigurationProviderList();
+		}
+	}
+
+	public static WorkerStackConfigurationProviderList getDownloadReportWorkerStackConfigurationProviderList() {
+		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
+		list.add(RealTimeBucketListenerConfigurationProvider.class);
+		list.add(BucketScanningConfigurationProvider.class);
+		list.add(AccessRecordConfigurationProvider.class);
+		list.add(ProcessAccessRecordConfigurationProvider.class);
+		list.add(NodeSnapshotConfigurationProvider.class);
+		list.add(TeamMemberSnapshotConfigurationProvider.class);
+		list.add(TablePartitionConfigurationProvider.class);
+		list.add(HealthCheckConfigurationProvider.class);
+		list.add(MaintenanceConfigurationProvider.class);
+		list.add(BulkFileDownloadRecordConfigurationProvider.class);
+		list.add(BulkFileHandleDownloadRecordConfigurationProvider.class);
+		list.add(FileHandleRecordConfigurationProvider.class);
+		list.add(FileDownloadRecordWorkerConfigurationProvider.class);
+		list.add(FileHandleDownloadRecordWorkerConfigurationProvider.class);
+		return list;
+	}
+
+	public static WorkerStackConfigurationProviderList getCollatorWorkerStackConfigurationProviderList() {
+		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
+		list.add(RealTimeBucketListenerConfigurationProvider.class);
+		list.add(BucketScanningConfigurationProvider.class);
+		list.add(PeriodicRollingFolderConfigurationProvider.class);
+		list.add(CollateFolderConfigurationProvider.class);
+		list.add(HealthCheckConfigurationProvider.class);
+		return list;
+	}
+
+	public static WorkerStackConfigurationProviderList getSnapshotWorkerStackConfigurationProviderList() {
+		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
+		list.add(RealTimeBucketListenerConfigurationProvider.class);
+		list.add(BucketScanningConfigurationProvider.class);
+		list.add(AccessRecordConfigurationProvider.class);
+		list.add(ProcessAccessRecordConfigurationProvider.class);
+		list.add(NodeSnapshotConfigurationProvider.class);
+		list.add(TeamSnapshotConfigurationProvider.class);
+		list.add(TeamMemberSnapshotConfigurationProvider.class);
+		list.add(UserProfileSnapshotConfigurationProvider.class);
+		list.add(AclSnapshotConfigurationProvider.class);
+		list.add(TablePartitionConfigurationProvider.class);
+		list.add(HealthCheckConfigurationProvider.class);
+		list.add(MaintenanceConfigurationProvider.class);
+		list.add(UserGroupSnapshotConfigurationProvider.class);
+		list.add(CertifiedQuizRecordConfigurationProvider.class);
+		list.add(CertifiedQuizQuestionRecordConfigurationProvider.class);
+		list.add(VerificationSubmissionRecordConfigurationProvider.class);
+		list.add(VerificationSubmissionStateRecordConfigurationProvider.class);
+		list.add(BulkFileDownloadRecordConfigurationProvider.class);
+		list.add(BulkFileHandleDownloadRecordConfigurationProvider.class);
+		list.add(UserActivityPerClientPerDayConfigurationProvider.class);
+		list.add(UserActivityPerMonthWorkerConfigurationProvider.class);
+		list.add(DeletedNodeSnapshotConfigurationProvider.class);
+		list.add(FileHandleRecordConfigurationProvider.class);
+		list.add(FileDownloadRecordWorkerConfigurationProvider.class);
+		list.add(FileHandleDownloadRecordWorkerConfigurationProvider.class);
+		list.add(FileHandleCopyRecordWorkerConfigurationProvider.class);
+		return list;
+	}
+
+	public static WorkerStackConfigurationProviderList getAllWorkerStackConfigurationProviderList() {
 		WorkerStackConfigurationProviderList list = new WorkerStackConfigurationProviderList();
 		list.add(RealTimeBucketListenerConfigurationProvider.class);
 		list.add(BucketScanningConfigurationProvider.class);
