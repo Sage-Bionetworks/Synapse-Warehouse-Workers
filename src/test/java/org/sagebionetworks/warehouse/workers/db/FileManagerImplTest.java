@@ -52,7 +52,7 @@ public class FileManagerImplTest {
 		MockitoAnnotations.initMocks(this);
 		manger = new FileManagerImpl(mockFolderMetadataDao, mockFileMetadataDao,
 				mockBucketToTopicManager, mockAmazonLogger, mockConfig);
-		when(mockConfig.getStartDate()).thenReturn(new DateTime(0L));
+		when(mockConfig.getBackfillStartDate()).thenReturn(new DateTime(0L));
 		when(mockConfig.getEndDate()).thenReturn(new DateTime());
 		
 		rollingOne = new S3ObjectSummary();

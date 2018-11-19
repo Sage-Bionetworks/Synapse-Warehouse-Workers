@@ -38,7 +38,7 @@ public class TablePartitionWorker implements ProgressingRunner<Void> {
 
 	@Override
 	public void run(ProgressCallback<Void> progressCallback) throws Exception {
-		DateTime startDate = config.getStartDate();
+		DateTime startDate = config.getPartitionStartDate();
 		DateTime endDate = config.getEndDate();
 		for (TableConfiguration tableConfig : tableConfigList.getList()) {
 			if (!tableConfig.isCreateWithPartitions()) continue;

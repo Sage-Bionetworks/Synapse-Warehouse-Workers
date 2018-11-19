@@ -27,7 +27,7 @@ public class BucketTopicPublisherImpl implements BucketTopicPublisher {
 	public void publishS3ObjectToTopic(String bucket, String key) {
 		KeyData keyData = KeyGeneratorUtil.parseKey(key);
 		DateTime dataDate = new DateTime(keyData.getTimeMS());
-		if (dataDate.isBefore(config.getStartDate().getMillis()) ||
+		if (dataDate.isBefore(config.getBackfillStartDate().getMillis()) ||
 				dataDate.isAfter(config.getEndDate().getMillis())) {
 			// ignore invalid time snapshots
 			return;

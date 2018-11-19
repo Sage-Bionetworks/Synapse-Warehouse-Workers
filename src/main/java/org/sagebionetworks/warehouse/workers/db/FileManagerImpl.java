@@ -59,7 +59,7 @@ public class FileManagerImpl implements FileManager{
 			try {
 				KeyData keyData = KeyGeneratorUtil.parseKey(summary.getKey());
 				DateTime dataDate = new DateTime(keyData.getTimeMS());
-				if (dataDate.isBefore(config.getStartDate().getMillis()) ||
+				if (dataDate.isBefore(config.getBackfillStartDate().getMillis()) ||
 						dataDate.isAfter(config.getEndDate().getMillis())) {
 					// ignore invalid time snapshots
 					continue;

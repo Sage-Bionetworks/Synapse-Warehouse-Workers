@@ -35,7 +35,7 @@ public class TableCreatorImpl implements TableCreator {
 	@Inject
 	TableCreatorImpl (JdbcTemplate template, Configuration config) {
 		this.template = template;
-		startDate = config.getStartDate();
+		startDate = config.getPartitionStartDate();
 		endDate = config.getEndDate();
 		schema = config.getProperty(WAREHOUSE_WORKERS_SCHEMA_KEY);
 	}

@@ -41,7 +41,7 @@ public class BucketTopicPublisherImplTest {
 
 	@Test
 	public void validTimeTest() {
-		Mockito.when(mockConfig.getStartDate()).thenReturn(new DateTime(2000, 1, 1, 0, 0));
+		Mockito.when(mockConfig.getBackfillStartDate()).thenReturn(new DateTime(2000, 1, 1, 0, 0));
 		Mockito.when(mockConfig.getEndDate()).thenReturn(new DateTime(3000, 1, 1, 0, 0));
 
 		ArgumentCaptor<String> topicArnCaptor = ArgumentCaptor.forClass(String.class);
@@ -55,7 +55,7 @@ public class BucketTopicPublisherImplTest {
 
 	@Test
 	public void invalidTimeTest() {
-		Mockito.when(mockConfig.getStartDate()).thenReturn(new DateTime(1, 1, 1, 0, 0));
+		Mockito.when(mockConfig.getBackfillStartDate()).thenReturn(new DateTime(1, 1, 1, 0, 0));
 		Mockito.when(mockConfig.getEndDate()).thenReturn(new DateTime(2, 1, 1, 0, 0));
 		publisher.publishS3ObjectToTopic(bucket, key);
 		Mockito.verify(mockAmazonSNSClient, Mockito.never()).publish(Mockito.anyString(), Mockito.anyString());
