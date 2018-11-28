@@ -55,3 +55,34 @@ Here is an example:
 	<activeProfiles />
 </settings>
 ```
+
+### Collator
+
+To deploy a collator stack, please specify the following properties:
+
+Key | Description / Value
+------------ | -------------
+org.sagebionetworks.warehouse.workers.instance.usecase | collator
+org.sagebionetworks.warehouse.workers.bucket.access.record | bucket that contains access records
+org.sagebionetworks.warehouse.workers.bucket.snapshot.record | bucket that contains snapshot records
+
+### All Snapshots
+
+To deploy a snapshots stack, please specify the following properties:
+
+Key | Description / Value
+------------ | -------------
+org.sagebionetworks.warehouse.workers.instance.usecase | all-snapshots
+org.sagebionetworks.warehouse.workers.bucket.access.record | bucket that contains access records
+org.sagebionetworks.warehouse.workers.bucket.snapshot.record | bucket that contains snapshot records
+
+### Download Report
+
+To deploy a download report stack, please specify the following properties:
+
+Key | Description / Value
+------------ | -------------
+org.sagebionetworks.warehouse.workers.instance.usecase | download-report
+org.sagebionetworks.warehouse.workers.bucket.access.record | bucket that contains access records
+org.sagebionetworks.warehouse.workers.bucket.snapshot.record | bucket that contains snapshot records
+
