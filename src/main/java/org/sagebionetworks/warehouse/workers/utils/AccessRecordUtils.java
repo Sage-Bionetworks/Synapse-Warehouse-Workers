@@ -15,7 +15,8 @@ public class AccessRecordUtils {
 	private static final String R_CLIENT = "synapseRClient";
 	private static final String PYTHON_CLIENT = "synapseclient";
 	private static final String WEB_CLIENT = "Synapse-Web-Client";
-	private static final String JAVA_CLIENT = "Synpase-Java-Client";
+	private static final String OLD_JAVA_CLIENT = "Synpase-Java-Client"; // delete when old client is no longer in use
+	private static final String JAVA_CLIENT = "Synapse-Java-Client";
 	private static final String COMMAND_LINE_CLIENT = "synapsecommandlineclient";
 	private static final String ELB_CLIENT = "ELB-HealthChecker";
 	private static final String CLIENT_REGEX = "/(\\S+)";
@@ -23,6 +24,7 @@ public class AccessRecordUtils {
 	private static final Pattern R_CLIENT_PATTERN = Pattern.compile(R_CLIENT+CLIENT_REGEX);
 	private static final Pattern PYTHON_CLIENT_PATTERN = Pattern.compile(PYTHON_CLIENT+CLIENT_REGEX);
 	private static final Pattern WEB_CLIENT_PATTERN = Pattern.compile(WEB_CLIENT+CLIENT_REGEX);
+	private static final Pattern OLD_JAVA_CLIENT_PATTERN = Pattern.compile(OLD_JAVA_CLIENT+CLIENT_REGEX); // delete when old client is no longer in use
 	private static final Pattern JAVA_CLIENT_PATTERN = Pattern.compile(JAVA_CLIENT+CLIENT_REGEX);
 	private static final Pattern COMMAND_LINE_CLIENT_PATTERN = Pattern.compile(COMMAND_LINE_CLIENT+CLIENT_REGEX);
 	private static final Pattern ELB_CLIENT_PATTERN = Pattern.compile(ELB_CLIENT+CLIENT_REGEX);
@@ -92,7 +94,11 @@ public class AccessRecordUtils {
 			matcher = WEB_CLIENT_PATTERN.matcher(userAgent);
 			break;
 		case JAVA:
-			matcher = JAVA_CLIENT_PATTERN.matcher(userAgent);
+			if (userAgent.startsWith("Synpase")) { // delete this condition when old client is no longer in use
+				matcher = OLD_JAVA_CLIENT_PATTERN.matcher(userAgent);
+			} else {
+				matcher = JAVA_CLIENT_PATTERN.matcher(userAgent);
+			}
 			break;
 		case SYNAPSER:
 			matcher = SYNAPSER_CLIENT_PATTERN.matcher(userAgent);
@@ -135,6 +141,7 @@ public class AccessRecordUtils {
 		 */
 		if (userAgent.indexOf(WEB_CLIENT) >= 0) return Client.WEB;
 		if (userAgent.indexOf(JAVA_CLIENT) >= 0) return Client.JAVA;
+		if (userAgent.indexOf(OLD_JAVA_CLIENT) >= 0) return Client.JAVA; // delete when old client is no longer in use
 		if (userAgent.indexOf(SYNAPSER_CLIENT) >= 0) return Client.SYNAPSER;
 		if (userAgent.indexOf(R_CLIENT) >= 0) return Client.R;
 		/*
