@@ -31,12 +31,18 @@ public class AccessRecordUtilsTest {
 
 	@Test
 	public void webClientTest() {
-		assertEquals(Client.WEB, AccessRecordUtils.getClient("Synpase-Java-Client/64.0  Synapse-Web-Client/67.0"));
+		assertEquals(Client.WEB, AccessRecordUtils.getClient("Synapse-Java-Client/64.0  Synapse-Web-Client/67.0"));
+	}
+
+	// Delete when no longer needed
+	@Test
+	public void oldJavaClientTest() {
+		assertEquals(Client.JAVA, AccessRecordUtils.getClient("Synpase-Java-Client/64.0"));
 	}
 
 	@Test
 	public void javaClientTest() {
-		assertEquals(Client.JAVA, AccessRecordUtils.getClient("Synpase-Java-Client/64.0"));
+		assertEquals(Client.JAVA, AccessRecordUtils.getClient("Synapse-Java-Client/64.0"));
 	}
 
 	@Test
@@ -79,12 +85,18 @@ public class AccessRecordUtilsTest {
 
 	@Test
 	public void webClientVersionTest() {
-		assertEquals("67.0", AccessRecordUtils.getClientVersion(Client.WEB, "Synpase-Java-Client/64.0  Synapse-Web-Client/67.0"));
+		assertEquals("67.0", AccessRecordUtils.getClientVersion(Client.WEB, "Synapse-Java-Client/64.0  Synapse-Web-Client/67.0"));
+	}
+
+	// Delete when no longer needed
+	@Test
+	public void oldJavaClientVersionTest() {
+		assertEquals("64.0", AccessRecordUtils.getClientVersion(Client.JAVA, "Synpase-Java-Client/64.0"));
 	}
 
 	@Test
 	public void javaClientVersionTest() {
-		assertEquals("64.0", AccessRecordUtils.getClientVersion(Client.JAVA, "Synpase-Java-Client/64.0"));
+		assertEquals("64.0", AccessRecordUtils.getClientVersion(Client.JAVA, "Synapse-Java-Client/64.0"));
 	}
 
 	@Test
@@ -152,7 +164,7 @@ public class AccessRecordUtilsTest {
 	@Test
 	public void processAccessRecordTest() {
 		AccessRecord ar = new AccessRecord();
-		ar.setUserAgent("Synpase-Java-Client/64.0  Synapse-Web-Client/67.0");
+		ar.setUserAgent("Synapse-Java-Client/64.0  Synapse-Web-Client/67.0");
 		ar.setMethod("GET");
 		ar.setRequestURL("/repo/v1/entity/syn2600225/descendants");
 		ar.setSessionId("28a75682-f056-40f7-9a1e-416cb703bed5");
@@ -181,7 +193,7 @@ public class AccessRecordUtilsTest {
 	@Test
 	public void getUserAccessRecordTest() {
 		AccessRecord ar = new AccessRecord();
-		ar.setUserAgent("Synpase-Java-Client/64.0  Synapse-Web-Client/67.0");
+		ar.setUserAgent("Synapse-Java-Client/64.0  Synapse-Web-Client/67.0");
 		ar.setUserId(123L);
 		ar.setDate("date");
 
@@ -196,7 +208,7 @@ public class AccessRecordUtilsTest {
 	@Test
 	public void getUserAccessRecordForAnonymousTest() {
 		AccessRecord ar = new AccessRecord();
-		ar.setUserAgent("Synpase-Java-Client/64.0  Synapse-Web-Client/67.0");
+		ar.setUserAgent("Synapse-Java-Client/64.0  Synapse-Web-Client/67.0");
 		ar.setUserId(null);
 		ar.setDate("date");
 
