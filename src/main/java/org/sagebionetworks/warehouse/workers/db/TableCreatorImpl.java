@@ -12,7 +12,6 @@ import org.sagebionetworks.warehouse.workers.utils.PartitionUtil;
 import org.sagebionetworks.warehouse.workers.utils.PartitionUtil.Period;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 import com.google.inject.Inject;
 
@@ -87,7 +86,8 @@ public class TableCreatorImpl implements TableCreator {
 
 	@Override
 	public boolean doesPartitionExist(String tableName, String partitionName) {
-		return template.queryForLong(CHECK_PARTITION, schema, tableName, partitionName) == 1;
+		Long c = template.queryForLong(CHECK_PARTITION, schema, tableName, partitionName);
+		return  (c == 1);
 	}
 
 	@Override
