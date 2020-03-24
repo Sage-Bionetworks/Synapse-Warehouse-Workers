@@ -70,7 +70,7 @@ public class WarehouseWorkersStateDaoImpl implements WarehouseWorkersStateDao {
 		transactionTemplate.execute(new TransactionCallback<Void>() {
 			@Override
 			public Void doInTransaction(TransactionStatus status) {
-				if (template.queryForInt(COUNT) == 0) {
+				if (template.queryForObject(COUNT, Integer.class) == 0) {
 					// set the inital state
 					setState(WarehouseWorkersState.NORMAL);
 				}

@@ -266,7 +266,7 @@
 		</site>
 	</distributionManagement>
 	<properties>
-		<spring.version>4.1.6.RELEASE</spring.version>
+		<spring.version>4.3.17.RELEASE</spring.version>
 		<synapse.version>303.0-5-g14279ab</synapse.version>
 	</properties>
 </project>

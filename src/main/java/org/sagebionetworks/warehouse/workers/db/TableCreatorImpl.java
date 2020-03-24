@@ -86,7 +86,7 @@ public class TableCreatorImpl implements TableCreator {
 
 	@Override
 	public boolean doesPartitionExist(String tableName, String partitionName) {
-		Long c = template.queryForLong(CHECK_PARTITION, schema, tableName, partitionName);
+		Long c = template.queryForObject(CHECK_PARTITION, Long.class, schema, tableName, partitionName);
 		return  (c == 1);
 	}
 

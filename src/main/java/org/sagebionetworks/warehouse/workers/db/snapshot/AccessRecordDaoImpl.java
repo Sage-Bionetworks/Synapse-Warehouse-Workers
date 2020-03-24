@@ -120,10 +120,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao{
 			ar.setStack(rs.getString(COL_ACCESS_RECORD_STACK));
 			ar.setSuccess(rs.getBoolean(COL_ACCESS_RECORD_SUCCESS));
 			ar.setResponseStatus(rs.getLong(COL_ACCESS_RECORD_RESPONSE_STATUS));
-			String oauthClientId = rs.getString(COL_ACCESS_RECORD_OAUTH_CLIENT_ID);
-			if (!rs.wasNull()) {
-				ar.setOauthClientId(oauthClientId);
-			}
+			ar.setOauthClientId(rs.getString(COL_ACCESS_RECORD_OAUTH_CLIENT_ID));
 			return ar;
 		}
 	};
@@ -177,11 +174,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao{
 						ps.setString(18, ar.getStack());
 						ps.setBoolean(19, ar.getSuccess());
 						ps.setLong(20, ar.getResponseStatus());
-						if (ar.getOauthClientId() != null) {
-							ps.setString(21, ar.getOauthClientId());
-						} else {
-							ps.setNull(21, Types.BIGINT);
-						}
+						ps.setString(21, ar.getOauthClientId());
 					}
 				});
 				return null;
