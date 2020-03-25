@@ -1,27 +1,5 @@
 package org.sagebionetworks.warehouse.workers.db.snapshot;
 
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_DATE;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_ELAPSE_MS;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_HOST;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_INSTANCE;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_METHOD;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_ORIGIN;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_QUERY_STRING;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_REQUEST_URL;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_RESPONSE_STATUS;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_RETURN_OBJECT_ID;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_SESSION_ID;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_STACK;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_SUCCESS;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_THREAD_ID;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_TIMESTAMP;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_USER_AGENT;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_USER_ID;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_VIA;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_VM_ID;
-import static org.sagebionetworks.warehouse.workers.db.Sql.COL_ACCESS_RECORD_X_FORWARDED_FOR;
-import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_ACCESS_RECORD;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,6 +19,8 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.inject.Inject;
+
+import static org.sagebionetworks.warehouse.workers.db.Sql.*;
 
 public class AccessRecordDaoImpl implements AccessRecordDao{
 	public static final String ACCESS_RECORD_DDL_SQL = "AccessRecord.ddl.sql";
@@ -93,7 +73,10 @@ public class AccessRecordDaoImpl implements AccessRecordDao{
 			+ COL_ACCESS_RECORD_SUCCESS
 			+ ","
 			+ COL_ACCESS_RECORD_RESPONSE_STATUS
-			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ ","
+			+ COL_ACCESS_RECORD_OAUTH_CLIENT_ID
+			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_ACCESS_RECORD
 			+ " WHERE "
@@ -137,6 +120,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao{
 			ar.setStack(rs.getString(COL_ACCESS_RECORD_STACK));
 			ar.setSuccess(rs.getBoolean(COL_ACCESS_RECORD_SUCCESS));
 			ar.setResponseStatus(rs.getLong(COL_ACCESS_RECORD_RESPONSE_STATUS));
+			ar.setOauthClientId(rs.getString(COL_ACCESS_RECORD_OAUTH_CLIENT_ID));
 			return ar;
 		}
 	};
@@ -190,6 +174,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao{
 						ps.setString(18, ar.getStack());
 						ps.setBoolean(19, ar.getSuccess());
 						ps.setLong(20, ar.getResponseStatus());
+						ps.setString(21, ar.getOauthClientId());
 					}
 				});
 				return null;

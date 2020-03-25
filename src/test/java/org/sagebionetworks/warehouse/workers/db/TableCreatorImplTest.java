@@ -73,26 +73,26 @@ public class TableCreatorImplTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void doesPartitionExistForDayTest() {
-		Mockito.when(mockTemplate.queryForLong(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(1L);
+		Mockito.when(mockTemplate.queryForObject(Mockito.anyString(), Mockito.eq(Long.class), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(1L);
 		DateTime today = new DateTime();
 		String expectedSameDatePartition = PartitionUtil.getPartitionName("TEST", today, Period.DAY);
 		String expectedNextDatePartition = PartitionUtil.getPartitionName("TEST", today.plusDays(1), Period.DAY);
 		creator.doesPartitionExist("TEST", today.getMillis(), Period.DAY);
-		Mockito.verify(mockTemplate, Mockito.times(2)).queryForLong(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-		Mockito.verify(mockTemplate).queryForLong(Mockito.anyString(), Mockito.anyString(), Mockito.eq("TEST"), Mockito.eq(expectedSameDatePartition));
-		Mockito.verify(mockTemplate).queryForLong(Mockito.anyString(), Mockito.anyString(), Mockito.eq("TEST"), Mockito.eq(expectedNextDatePartition));
+		Mockito.verify(mockTemplate, Mockito.times(2)).queryForObject(Mockito.anyString(), Mockito.eq(Long.class), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+		Mockito.verify(mockTemplate).queryForObject(Mockito.anyString(), Mockito.eq(Long.class), Mockito.anyString(), Mockito.eq("TEST"), Mockito.eq(expectedSameDatePartition));
+		Mockito.verify(mockTemplate).queryForObject(Mockito.anyString(), Mockito.eq(Long.class), Mockito.anyString(), Mockito.eq("TEST"), Mockito.eq(expectedNextDatePartition));
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
 	public void doesPartitionExistForMonthTest() {
-		Mockito.when(mockTemplate.queryForLong(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(1L);
+		Mockito.when(mockTemplate.queryForObject(Mockito.anyString(), Mockito.eq(Long.class), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(1L);
 		DateTime today = new DateTime();
 		String expectedSameDatePartition = PartitionUtil.getPartitionName("TEST", today, Period.MONTH);
 		String expectedNextDatePartition = PartitionUtil.getPartitionName("TEST", today.plusMonths(1), Period.MONTH);
 		creator.doesPartitionExist("TEST", today.getMillis(), Period.MONTH);
-		Mockito.verify(mockTemplate, Mockito.times(2)).queryForLong(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-		Mockito.verify(mockTemplate).queryForLong(Mockito.anyString(), Mockito.anyString(), Mockito.eq("TEST"), Mockito.eq(expectedSameDatePartition));
-		Mockito.verify(mockTemplate).queryForLong(Mockito.anyString(), Mockito.anyString(), Mockito.eq("TEST"), Mockito.eq(expectedNextDatePartition));
+		Mockito.verify(mockTemplate, Mockito.times(2)).queryForObject(Mockito.anyString(), Mockito.eq(Long.class), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+		Mockito.verify(mockTemplate).queryForObject(Mockito.anyString(), Mockito.eq(Long.class), Mockito.anyString(), Mockito.eq("TEST"), Mockito.eq(expectedSameDatePartition));
+		Mockito.verify(mockTemplate).queryForObject(Mockito.anyString(), Mockito.eq(Long.class), Mockito.anyString(), Mockito.eq("TEST"), Mockito.eq(expectedNextDatePartition));
 	}
 }

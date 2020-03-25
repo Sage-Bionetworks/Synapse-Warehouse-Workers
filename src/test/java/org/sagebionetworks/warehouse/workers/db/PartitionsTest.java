@@ -97,6 +97,6 @@ public class PartitionsTest {
 	 * check to see if the value exists in the test table
 	 */
 	private boolean doesValueExist(long value) {
-		return template.queryForLong(SELECT, value) == 1;
+		return template.queryForObject(SELECT, Long.class, value) == 1;
 	}
 }
