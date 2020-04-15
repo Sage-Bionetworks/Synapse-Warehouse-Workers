@@ -26,15 +26,15 @@
 		</repository>
 		<repository>
 			<id>mvn-gae-plugin-repo</id>
-			<url>http://maven-gae-plugin.googlecode.com/svn/repository/</url>
+			<url>https://maven-gae-plugin.googlecode.com/svn/repository/</url>
 		</repository>
 		<repository>
 			<id>maven-central-rep-1</id>
-			<url>http://repo1.maven.org/maven2/</url>
+			<url>https://repo1.maven.org/maven2/</url>
 		</repository>
 		<repository>
 			<id>sun-maven-repository</id>
-			<url>http://download.java.net/maven/2/</url>
+			<url>https://download.java.net/maven/2/</url>
 		</repository>
 		<repository>
 			<id>apache-repo-releases</id>
@@ -92,11 +92,6 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20140107</version>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
@@ -222,6 +217,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
 				<configuration>
 					<webResources>
 						<resource>
@@ -266,6 +262,7 @@
 		</site>
 	</distributionManagement>
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.3.26.RELEASE</spring.version>
 		<synapse.version>303.0-5-g14279ab</synapse.version>
 	</properties>
