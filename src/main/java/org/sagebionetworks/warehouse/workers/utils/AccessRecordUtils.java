@@ -19,6 +19,8 @@ public class AccessRecordUtils {
 	private static final String JAVA_CLIENT = "Synapse-Java-Client";
 	private static final String COMMAND_LINE_CLIENT = "synapsecommandlineclient";
 	private static final String ELB_CLIENT = "ELB-HealthChecker";
+	private static final String STACK_CLIENT = "SynapseRepositoryStack";
+	
 	private static final String CLIENT_REGEX = "/(\\S+)";
 	private static final Pattern SYNAPSER_CLIENT_PATTERN = Pattern.compile(SYNAPSER_CLIENT+CLIENT_REGEX);
 	private static final Pattern R_CLIENT_PATTERN = Pattern.compile(R_CLIENT+CLIENT_REGEX);
@@ -28,6 +30,7 @@ public class AccessRecordUtils {
 	private static final Pattern JAVA_CLIENT_PATTERN = Pattern.compile(JAVA_CLIENT+CLIENT_REGEX);
 	private static final Pattern COMMAND_LINE_CLIENT_PATTERN = Pattern.compile(COMMAND_LINE_CLIENT+CLIENT_REGEX);
 	private static final Pattern ELB_CLIENT_PATTERN = Pattern.compile(ELB_CLIENT+CLIENT_REGEX);
+	private static final Pattern STACK_CLIENT_PATTERN = Pattern.compile(STACK_CLIENT+CLIENT_REGEX);
 	
 	public static final Long ANONYMOUS_ID = 273950L;
 	
@@ -115,6 +118,9 @@ public class AccessRecordUtils {
 		case COMMAND_LINE:
 			matcher = COMMAND_LINE_CLIENT_PATTERN.matcher(userAgent);
 			break;
+		case STACK:
+			matcher = STACK_CLIENT_PATTERN.matcher(userAgent);
+			break;
 		default:
 			return null;
 		}
@@ -151,6 +157,7 @@ public class AccessRecordUtils {
 		if (userAgent.indexOf(COMMAND_LINE_CLIENT) >= 0) return Client.COMMAND_LINE;
 		if (userAgent.indexOf(PYTHON_CLIENT) >= 0) return Client.PYTHON;
 		if (userAgent.indexOf(ELB_CLIENT) >= 0) return Client.ELB_HEALTHCHECKER;
+		if (userAgent.indexOf(STACK_CLIENT) >= 0) return Client.STACK;
 		return Client.UNKNOWN;
 	}
 

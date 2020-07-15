@@ -1,13 +1,15 @@
 package org.sagebionetworks.warehouse.workers.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.sagebionetworks.repo.model.audit.AccessRecord;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 import org.sagebionetworks.warehouse.workers.model.UserActivityPerClientPerDay;
-import org.sagebionetworks.warehouse.workers.utils.AccessRecordUtils;
 
 public class AccessRecordUtilsTest {
 
@@ -54,6 +56,12 @@ public class AccessRecordUtilsTest {
 	public void elbHealthCheckerClientTest() {
 		assertEquals(Client.ELB_HEALTHCHECKER, AccessRecordUtils.getClient("ELB-HealthChecker/1.0"));
 	}
+	
+	@Test
+	public void stackClientTest() {
+		assertEquals(Client.STACK, AccessRecordUtils.getClient("SynapseRepositoryStack/319.0"));
+	}
+
 
 	@Test
 	public void unknownClientTest() {
@@ -107,6 +115,11 @@ public class AccessRecordUtilsTest {
 	@Test
 	public void elbHealthCheckerClientVersionTest() {
 		assertEquals("1.0", AccessRecordUtils.getClientVersion(Client.ELB_HEALTHCHECKER, "ELB-HealthChecker/1.0"));
+	}
+	
+	@Test
+	public void stackClientVersionTest() {
+		assertEquals("318.0", AccessRecordUtils.getClientVersion(Client.STACK, "SynapseRepositoryStack/318.0"));
 	}
 
 	@Test
