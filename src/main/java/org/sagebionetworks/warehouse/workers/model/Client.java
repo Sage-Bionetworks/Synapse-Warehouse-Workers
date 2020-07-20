@@ -9,4 +9,5 @@ public enum Client {
 	ELB_HEALTHCHECKER,
 	UNKNOWN,
 	SYNAPSER,
+	STACK
 }
