@@ -75,7 +75,9 @@ public class AccessRecordDaoImpl implements AccessRecordDao{
 			+ COL_ACCESS_RECORD_RESPONSE_STATUS
 			+ ","
 			+ COL_ACCESS_RECORD_OAUTH_CLIENT_ID
-			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ ","
+			+ COL_ACCESS_RECORD_BASIC_AUTH_USERNAME
+			+ ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	private static final String SQL_GET = "SELECT * FROM "
 			+ TABLE_ACCESS_RECORD
@@ -121,6 +123,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao{
 			ar.setSuccess(rs.getBoolean(COL_ACCESS_RECORD_SUCCESS));
 			ar.setResponseStatus(rs.getLong(COL_ACCESS_RECORD_RESPONSE_STATUS));
 			ar.setOauthClientId(rs.getString(COL_ACCESS_RECORD_OAUTH_CLIENT_ID));
+			ar.setBasicAuthUsername(rs.getString(COL_ACCESS_RECORD_BASIC_AUTH_USERNAME));
 			return ar;
 		}
 	};
@@ -175,6 +178,7 @@ public class AccessRecordDaoImpl implements AccessRecordDao{
 						ps.setBoolean(19, ar.getSuccess());
 						ps.setLong(20, ar.getResponseStatus());
 						ps.setString(21, ar.getOauthClientId());
+						ps.setString(22, ar.getBasicAuthUsername());
 					}
 				});
 				return null;

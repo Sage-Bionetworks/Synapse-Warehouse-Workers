@@ -36,6 +36,7 @@ public class AccessRecordTestUtil {
 		ar.setUserAgent("synapser/1.0 synapseclient/1.7.2 python-requests/2.18.4");
 		ar.setUserId(random.nextLong());
 		ar.setOauthClientId(Long.toString(random.nextLong()));
+		ar.setBasicAuthUsername("aBasicAuthUserName");
 		return ar;
 	}
 
