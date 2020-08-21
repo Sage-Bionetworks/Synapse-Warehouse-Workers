@@ -1,6 +1,6 @@
 package org.sagebionetworks.warehouse.workers.db.snapshot;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
@@ -9,8 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sagebionetworks.warehouse.workers.db.TableCreator;
 import org.sagebionetworks.warehouse.workers.db.TestContext;
-import org.sagebionetworks.warehouse.workers.db.snapshot.ProcessedAccessRecordDao;
-import org.sagebionetworks.warehouse.workers.db.snapshot.ProcessedAccessRecordDaoImpl;
 import org.sagebionetworks.warehouse.workers.model.Client;
 import org.sagebionetworks.warehouse.workers.model.ProcessedAccessRecord;
 import org.sagebionetworks.warehouse.workers.utils.AccessRecordTestUtil;
@@ -51,6 +49,21 @@ public class ProcessedAccessRecordDaoImplTest {
 		// validate that the par2 record is updated
 		actualPar2 = dao.get(par2.getSessionId(), par2.getTimestamp());
 		assertEquals(par2, actualPar2);
+	}
+	
+	@Test
+	public void testAllClients() {
+		for (Client client : Client.values()) {
+			ProcessedAccessRecord par = AccessRecordUtils.processAccessRecord(AccessRecordTestUtil.createValidAccessRecord());
+			
+			par.setClient(client);
+			
+			dao.insert(Arrays.asList(par));
+			
+			ProcessedAccessRecord actualPar = dao.get(par.getSessionId(), par.getTimestamp());
+			
+			assertEquals(par, actualPar);
+		}
 	}
 
 }
