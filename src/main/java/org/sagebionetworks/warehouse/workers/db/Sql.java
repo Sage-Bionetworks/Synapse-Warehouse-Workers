@@ -60,6 +60,7 @@ public class Sql {
 	public static final String COL_ACCESS_RECORD_RESPONSE_STATUS = 		"RESPONSE_STATUS";
 	public static final String COL_ACCESS_RECORD_OAUTH_CLIENT_ID =		"OAUTH_CLIENT_ID";
 	public static final String COL_ACCESS_RECORD_BASIC_AUTH_USERNAME = 	"BASIC_AUTH_USERNAME";
+	public static final String COL_ACCESS_RECORD_AUTH_METHOD = 			"AUTH_METHOD";
 
 	// NODE_SNAPSHOT
 	public static final String TABLE_NODE_SNAPSHOT = 				"NODE_SNAPSHOT";
