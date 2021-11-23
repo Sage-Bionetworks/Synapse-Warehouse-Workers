@@ -264,6 +264,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.3.26.RELEASE</spring.version>
-		<synapse.version>320.0</synapse.version>
+		<synapse.version>383.0</synapse.version>
 	</properties>
 </project>

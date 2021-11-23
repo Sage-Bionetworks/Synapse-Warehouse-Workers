@@ -37,6 +37,7 @@ public class AccessRecordTestUtil {
 		ar.setUserId(random.nextLong());
 		ar.setOauthClientId(Long.toString(random.nextLong()));
 		ar.setBasicAuthUsername("aBasicAuthUserName");
+		ar.setAuthenticationMethod("BEARERTOKEN");
 		return ar;
 	}
 
