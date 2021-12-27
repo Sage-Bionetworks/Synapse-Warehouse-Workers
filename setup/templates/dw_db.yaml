@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS CloudFormation template to create an RDS instance for the warehouse workers build
+Parameters:
+  DBInstanceIdentifier:
+    Description: The RDS instance identifier
+    Type: String
+  DBAllocatedStorage:
+    Default: '5'
+    Description: The size of the database (Gb)
+    Type: Number
+  DBClass:
+    Default: db.t2.micro
+    Description: Database instance class
+    Type: String
+  DBName:
+    Default: MyDb
+    Description: The database name
+    MaxLength: '64'
+    MinLength: '1'
+    Type: String
+  DBPassword:
+    Description: The database admin account password
+    NoEcho: true
+    Type: String
+  DBUser:
+    Description: The database admin account username
+    NoEcho: true
+    Type: String
+Resources:
+  WarehouseDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Ref 'DBInstanceIdentifier'
+      AllocatedStorage: !Ref 'DBAllocatedStorage'
+      DBInstanceClass: !Ref 'DBClass'
+      DBName: !Ref 'DBName'
+      DBSubnetGroupName: !ImportValue us-east-1-dwapp2019-DBSubnetGroup
+      DeletionProtection: true
+      Engine: MySQL
+      EngineVersion: 5.7.23
+      MasterUserPassword: !Ref 'DBPassword'
+      MasterUsername: !Ref 'DBUser'
+      StorageType: 'gp2'
+      VPCSecurityGroups:
+        - !ImportValue us-east-1-vpc-VpnSecurityGroup
+        - !ImportValue us-east-1-dwapp2019-DBSecurityGroup
+Outputs:
+  JDBCConnectionString:
+    Description: JDBC connection string for database instance
+    Value: !Join
+      - ''
+      - - jdbc:mysql://
+        - !GetAtt 'WarehouseDB.Endpoint.Address'
+        - ':'
+        - !GetAtt 'WarehouseDB.Endpoint.Port'
+        - '/'
+        - !Ref 'DBName'
+    Export:
+      Name: !Sub '${AWS::Region}-${AWS::StackName}-DwDbEndpoint'

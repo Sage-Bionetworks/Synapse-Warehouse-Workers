@@ -1,0 +1,233 @@
+Description: AWS CloudFormation template to create a beanstalk environment for a datawarehouse instance
+Parameters:
+  AppHealthcheckUrl:
+    Type: String
+    Description: The AWS EB health check path
+    Default: '/health/check'
+  AutoScalingMaxSize:
+    Type: String
+    Default: '2'
+  AutoScalingMinSize:
+    Type: String
+    Default: '1'
+  EbHealthReportingSystem:
+    Type: String
+    Default: basic
+    AllowedValues:
+      - basic
+      - enhanced
+    ConstraintDescription: must be either basic or enhanced
+  EbSolutionStackName:
+    Description: The AWS Solution Stack
+    Type: String
+    Default: '64bit Amazon Linux 2018.03 v3.4.13 running Tomcat 8.5 Java 8'
+  EC2InstanceType:
+    Type: String
+    Description: Instance type to use for Elastic Beanstalk Instances
+    Default: t2.micro
+  EC2KeyName:
+    Description: An existing EC2 keypair to allow secure access to instances
+    Type: String
+  ArtifactKey:
+    Description: The S3 file that contains the deployed code
+    Type: String
+  UseCase:
+    Description: Use case for this stack
+    Type: String
+    AllowedValues:
+      - collator
+      - all-snapshots
+      - download-report
+  StackIamId:
+    Description: DW Stack IAM ID
+    Type: String
+  StackIamKey:
+    Description: DW Stack IAM key
+    Type: String
+  StackEnv:
+    Description: DW Stack environment name
+    Type: String
+  JdbcConnUrl:
+    Description: DW Stack JdbcConnectionUrl
+    Type: String
+  JdbcPassword:
+    Description: DW Stack JdbcConnection password
+    Type: String
+  JdbcUserName:
+    Description: DW Stack JdbcConnection user name
+    Type: String
+  SnapshotRecordBucketName:
+    Description: Name of the S3 bucket that contains the snapshot records
+    Type: String
+  AccessRecordBucketName:
+    Description: Name of the S3 bucket that contains the access records
+    Type: String
+  BackfillMonths:
+    Description: Number of months to backfill
+    Type: Number
+    Default: 3
+  UnchangePartitionMonths:
+    Description: Number of months to build partitions for
+    Type: Number
+    Default: 3
+  DbSchema:
+      Description: The schema of the database
+      Type: String
+      Default: datawarehouse
+Resources:
+  BeanstalkApplicationVersion:
+    Type: 'AWS::ElasticBeanstalk::ApplicationVersion'
+    Properties:
+      ApplicationName: !ImportValue us-east-1-dwapp2019-DWBeanstalkAppName
+      Description: Artifact for DW Beanstalk instance
+      SourceBundle:
+        S3Bucket: !ImportValue us-east-1-dwapp2019-DWAppDeployBucketName
+        S3Key: !Ref ArtifactKey
+  BeanstalkConfigTemplate:
+    Type: 'AWS::ElasticBeanstalk::ConfigurationTemplate'
+    Properties:
+      ApplicationName: !ImportValue us-east-1-dwapp2019-DWBeanstalkAppName
+      SolutionStackName: !Ref EbSolutionStackName
+      OptionSettings:
+        # EB environment options
+        - Namespace: 'aws:ec2:vpc'
+          OptionName: VPCId
+          Value: !ImportValue us-east-1-vpc-VPCId
+        - Namespace: 'aws:ec2:vpc'
+          OptionName: ELBScheme
+          Value: 'internal'
+        - Namespace: 'aws:ec2:vpc'
+          OptionName: AssociatePublicIpAddress
+          Value: 'false'
+        - Namespace: 'aws:ec2:vpc'
+          OptionName: Subnets
+          Value: !Join
+            - ','
+            - - !ImportValue us-east-1-vpc-PrivateSubnet
+              - !ImportValue us-east-1-vpc-PrivateSubnet1
+        - Namespace: 'aws:ec2:vpc'
+          OptionName: ELBSubnets
+          Value: !Join
+            - ','
+            - - !ImportValue us-east-1-vpc-PrivateSubnet
+              - !ImportValue us-east-1-vpc-PrivateSubnet1
+        - Namespace: 'aws:autoscaling:asg'
+          OptionName: MaxSize
+          Value: !Ref AutoScalingMaxSize
+        - Namespace: 'aws:autoscaling:asg'
+          OptionName: MinSize
+          Value: !Ref AutoScalingMinSize
+        - Namespace: 'aws:autoscaling:launchconfiguration'
+          OptionName: IamInstanceProfile
+          Value: !ImportValue us-east-1-dwapp2019-DWInstanceProfile
+        - Namespace: 'aws:autoscaling:launchconfiguration'
+          OptionName: InstanceType
+          Value: !Ref EC2InstanceType
+        - Namespace: 'aws:autoscaling:launchconfiguration'
+          OptionName: EC2KeyName
+          Value: !Ref EC2KeyName
+        - Namespace: 'aws:autoscaling:launchconfiguration'
+          OptionName: SecurityGroups
+          Value: !ImportValue us-east-1-vpc-VpnSecurityGroup
+        - Namespace: 'aws:autoscaling:updatepolicy:rollingupdate'
+          OptionName: RollingUpdateEnabled
+          Value: 'true'
+        - Namespace: 'aws:elasticbeanstalk:environment:process:default'
+          OptionName: HealthCheckInterval
+          Value: 30
+        - Namespace: 'aws:elasticbeanstalk:environment:process:default'
+          OptionName: HealthCheckPath
+          Value: !Ref AppHealthcheckUrl
+        - Namespace: 'aws:elasticbeanstalk:environment:process:default'
+          OptionName: HealthCheckTimeout
+          Value: 5
+        - Namespace: 'aws:elasticbeanstalk:environment:process:default'
+          OptionName: HealthyThresholdCount
+          Value: 2
+        - Namespace: 'aws:elasticbeanstalk:environment:process:default'
+          OptionName: UnhealthyThresholdCount
+          Value: 5
+        - Namespace: 'aws:elasticbeanstalk:cloudwatch:logs'
+          OptionName: StreamLogs
+          Value: 'true'
+        - Namespace: 'aws:elasticbeanstalk:cloudwatch:logs'
+          OptionName: DeleteOnTerminate
+          Value: 'true'
+        - Namespace: 'aws:elasticbeanstalk:cloudwatch:logs'
+          OptionName: RetentionInDays
+          Value: '90'
+        - Namespace: 'aws:elasticbeanstalk:command'
+          OptionName: DeploymentPolicy
+          Value: AllAtOnce
+        - Namespace: 'aws:elasticbeanstalk:environment'
+          OptionName: ServiceRole
+          Value: !ImportValue us-east-1-dwapp2019-DWBeanstalkServiceRole
+        - Namespace: 'aws:elasticbeanstalk:environment'
+          OptionName: LoadBalancerType
+          Value: 'application'
+        - Namespace: 'aws:elbv2:loadbalancer'
+          OptionName: AccessLogsS3Bucket
+          Value: !ImportValue us-east-1-dwapp2019-DWLoadBalancerAccessLogsBucketName
+        - Namespace: 'aws:elbv2:loadbalancer'
+          OptionName: AccessLogsS3Enabled
+          Value: 'true'
+        - Namespace: 'aws:elasticbeanstalk:environment:process:default'
+          OptionName: Protocol
+          Value: 'HTTP'
+        - Namespace: 'aws:elasticbeanstalk:healthreporting:system'
+          OptionName: SystemType
+          Value: !Ref EbHealthReportingSystem
+        - Namespace: 'aws:elasticbeanstalk:hostmanager'
+          OptionName: LogPublicationControl
+          Value: 'true'
+        # Actual parameters to the app
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.stack.iam.key'
+          Value: !Ref StackIamKey
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.stack.iam.id'
+          Value: !Ref StackIamId
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.warehouse.workers.stack'
+          Value: !Ref StackEnv
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.warehouse.workers.jdbc.connection.url'
+          Value: !Ref JdbcConnUrl
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.warehouse.workers.jdbc.user.password'
+          Value: !Ref JdbcPassword
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.warehouse.workers.jdbc.user.username'
+          Value: !Ref JdbcUserName
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.warehouse.workers.instance.usecase'
+          Value: !Ref UseCase
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.warehouse.workers.bucket.access.record'
+          Value: !Ref AccessRecordBucketName
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.warehouse.workers.bucket.snapshot.record'
+          Value: !Ref SnapshotRecordBucketName
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.warehouse.workers.backfill.months'
+          Value: !Ref BackfillMonths
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: 'org.sagebionetworks.warehouse.workers.schema'
+          Value: !Ref DbSchema
+  BeanstalkEnvironment:
+    Type: 'AWS::ElasticBeanstalk::Environment'
+    Properties:
+      ApplicationName: !ImportValue us-east-1-dwapp2019-DWBeanstalkAppName
+      TemplateName: !Ref BeanstalkConfigTemplate
+      EnvironmentName: !Join
+        - '-'
+        - - !Ref 'AWS::StackName'
+      Tier:
+        Name: WebServer
+        Type: Standard
+      VersionLabel: !Ref BeanstalkApplicationVersion
+Outputs:
+  BeanstalkEnvironmentName:
+    Value: !Ref BeanstalkEnvironment
+    Export:
+      Name: !Sub '${AWS::Region}-${AWS::StackName}-BeanstalkEnvironmentName'
