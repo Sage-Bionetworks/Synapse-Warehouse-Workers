@@ -71,9 +71,9 @@ Parameters:
     Type: Number
     Default: 3
   DbSchema:
-      Description: The schema of the database
-      Type: String
-      Default: datawarehouse
+    Description: The schema of the database
+    Type: String
+    Default: datawarehouse
 Resources:
   BeanstalkApplicationVersion:
     Type: 'AWS::ElasticBeanstalk::ApplicationVersion'

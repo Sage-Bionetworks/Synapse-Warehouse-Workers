@@ -8,6 +8,10 @@ Parameters:
     Default: '5'
     Description: The size of the database (Gb)
     Type: Number
+  DBMaxAllocatedStorage:
+    Default: '1024'
+    Description: The maximum size of the database
+    Type: Number  
   DBClass:
     Default: db.t2.micro
     Description: Database instance class
@@ -40,6 +44,7 @@ Resources:
       EngineVersion: 5.7.23
       MasterUserPassword: !Ref 'DBPassword'
       MasterUsername: !Ref 'DBUser'
+      MaxAllocatedStorage: !Ref DBMaxAllocatedStorage
       StorageType: 'gp2'
       VPCSecurityGroups:
         - !ImportValue us-east-1-vpc-VpnSecurityGroup
