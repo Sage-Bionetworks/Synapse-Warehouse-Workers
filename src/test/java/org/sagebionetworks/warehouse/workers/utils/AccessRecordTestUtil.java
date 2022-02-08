@@ -31,6 +31,7 @@ public class AccessRecordTestUtil {
 		ar.setStack("prod");
 		ar.setSuccess(true);
 		ar.setResponseStatus(201L);
+		ar.setXForwardedFor("1.2.3.4");
 		// non required fields
 		ar.setHost("repo-staging.prod.sagebase.org");
 		ar.setUserAgent("synapser/1.0 synapseclient/1.7.2 python-requests/2.18.4");

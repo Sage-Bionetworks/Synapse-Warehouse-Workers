@@ -11,7 +11,7 @@ public interface UserActivityPerMonthDao {
 	 * 
 	 * @return a UserActivityPerMonth given the userId and month
 	 */
-	public UserActivityPerMonth get(Long userId, String month);
+	public UserActivityPerMonth get(Long userId, String xForwardedFor, String month);
 
 	/**
 	 * Truncate all of the data.

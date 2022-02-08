@@ -192,6 +192,7 @@ public class AccessRecordUtils {
 			uar.setUserId(accessRecord.getUserId());
 		}
 		uar.setDate(accessRecord.getDate());
+		uar.setXForwardedFor(accessRecord.getXForwardedFor());
 		return uar;
 	}
 }

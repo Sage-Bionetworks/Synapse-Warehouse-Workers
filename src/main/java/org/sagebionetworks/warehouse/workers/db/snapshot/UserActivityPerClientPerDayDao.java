@@ -13,7 +13,7 @@ public interface UserActivityPerClientPerDayDao extends SnapshotDao<UserActivity
 	 * 
 	 * @return a UserActivityPerClientPerDay given the userId, date and client
 	 */
-	public UserActivityPerClientPerDay get(Long userId, String date, Client client);
+	public UserActivityPerClientPerDay get(Long userId, String xForwardedFor, String date, Client client);
 
 	/**
 	 * Truncate all of the data.

@@ -3,6 +3,7 @@ package org.sagebionetworks.warehouse.workers.db.audit;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_MONTH;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_ACTIVE_DAY_COUNT;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_USER_ID;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_MONTH_XFORWARDEDFOR;
 import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_USER_ACTIVITY_PER_MONTH;
 
 import java.util.Date;
@@ -39,13 +40,15 @@ public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
 	private static final String TRUNCATE = "TRUNCATE TABLE " + TABLE_USER_ACTIVITY_PER_MONTH;
 	private static final String INSERT = "INSERT INTO " + TABLE_USER_ACTIVITY_PER_MONTH + " ("
 			+ COL_USER_ACTIVITY_PER_MONTH_USER_ID + ","
+			+ COL_USER_ACTIVITY_PER_MONTH_XFORWARDEDFOR + ","
 			+ COL_USER_ACTIVITY_PER_MONTH_MONTH + ","
 			+ COL_USER_ACTIVITY_PER_MONTH_ACTIVE_DAY_COUNT + ")"
-			+ " VALUES (?,?,?) ON DUPLICATE KEY UPDATE "
+			+ " VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE "
 			+ COL_USER_ACTIVITY_PER_MONTH_ACTIVE_DAY_COUNT + " = ?";
 	private static final String SQL_GET = "SELECT *"
 			+ " FROM " + TABLE_USER_ACTIVITY_PER_MONTH
 			+ " WHERE " + COL_USER_ACTIVITY_PER_MONTH_USER_ID + " = ?"
+			+ " AND " + COL_USER_ACTIVITY_PER_MONTH_XFORWARDEDFOR + " = ?"
 			+ " AND " + COL_USER_ACTIVITY_PER_MONTH_MONTH + " = ?";
 	private static final String SQL_CHECK_RECORD_FOR_MONTH =
 			"SELECT " + COL_USER_ACTIVITY_PER_MONTH_MONTH
@@ -81,9 +84,10 @@ public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
 							throws SQLException {
 						UserActivityPerMonth uar = batch.get(i);
 						ps.setLong(1, uar.getUserId());
-						ps.setString(2, uar.getMonth());
-						ps.setLong(3, uar.getUniqueDate());
+						ps.setString(2, uar.getXForwardedFor());
+						ps.setString(3, uar.getMonth());
 						ps.setLong(4, uar.getUniqueDate());
+						ps.setLong(5, uar.getUniqueDate());
 					}
 				});
 				return null;
@@ -97,8 +101,8 @@ public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
 	}
 
 	@Override
-	public UserActivityPerMonth get(Long userId, String month) {
-		return template.queryForObject(SQL_GET, this.rowMapper, userId, month);
+	public UserActivityPerMonth get(Long userId, String xForwardedFor, String month) {
+		return template.queryForObject(SQL_GET, this.rowMapper, userId, xForwardedFor, month);
 	}
 
 	/*
@@ -109,6 +113,7 @@ public class UserActivityPerMonthDaoImpl implements UserActivityPerMonthDao {
 		public UserActivityPerMonth mapRow(ResultSet rs, int arg1) throws SQLException {
 			UserActivityPerMonth uar = new UserActivityPerMonth();
 			uar.setUserId(rs.getLong(COL_USER_ACTIVITY_PER_MONTH_USER_ID));
+			uar.setXForwardedFor(rs.getString(COL_USER_ACTIVITY_PER_MONTH_XFORWARDEDFOR));
 			uar.setMonth(rs.getString(COL_USER_ACTIVITY_PER_MONTH_MONTH));
 			uar.setUniqueDate(rs.getLong(COL_USER_ACTIVITY_PER_MONTH_ACTIVE_DAY_COUNT));
 			return uar;

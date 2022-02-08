@@ -5,6 +5,8 @@ public class UserActivityPerMonth {
 	private Long userId;
 	private String month;
 	private Long uniqueDate;
+	private String xForwardedFor;
+
 	public Long getUserId() {
 		return userId;
 	}
@@ -23,6 +25,9 @@ public class UserActivityPerMonth {
 	public void setUniqueDate(Long uniqueDate) {
 		this.uniqueDate = uniqueDate;
 	}
+	public String getXForwardedFor() { return xForwardedFor; }
+	public void setXForwardedFor(String xForwardedFor) { this.xForwardedFor = xForwardedFor; }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -30,6 +35,7 @@ public class UserActivityPerMonth {
 		result = prime * result + ((month == null) ? 0 : month.hashCode());
 		result = prime * result + ((uniqueDate == null) ? 0 : uniqueDate.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		result = prime * result + ((xForwardedFor == null) ? 0 : xForwardedFor.hashCode());
 		return result;
 	}
 	@Override
@@ -56,10 +62,15 @@ public class UserActivityPerMonth {
 				return false;
 		} else if (!userId.equals(other.userId))
 			return false;
+		if (xForwardedFor == null) {
+			if (other.xForwardedFor != null)
+				return false;
+		} else if (!xForwardedFor.equals(other.xForwardedFor))
+			return false;
 		return true;
 	}
 	@Override
 	public String toString() {
-		return "UserActivityPerMonth [userId=" + userId + ", month=" + month + ", uniqueDate=" + uniqueDate + "]";
+		return "UserActivityPerMonth [userId=" + userId + " xForwardedFor=" + xForwardedFor + ", month=" + month + ", uniqueDate=" + uniqueDate + "]";
 	}
 }

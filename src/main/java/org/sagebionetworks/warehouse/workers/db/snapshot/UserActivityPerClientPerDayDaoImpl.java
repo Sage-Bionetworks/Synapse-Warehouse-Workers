@@ -3,6 +3,7 @@ package org.sagebionetworks.warehouse.workers.db.snapshot;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID;
 import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_CLIENT;
+import static org.sagebionetworks.warehouse.workers.db.Sql.COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_XFORWARDEDFOR;
 import static org.sagebionetworks.warehouse.workers.db.Sql.TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY;
 
 import java.util.Date;
@@ -46,21 +47,23 @@ public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClient
 	private static final String INSERT = "INSERT IGNORE INTO " + TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY + " ("
 			+ COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID + ","
 			+ COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE + ","
-			+ COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_CLIENT + ")"
-			+ " VALUES (?,?,?)";
+			+ COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_CLIENT + ","
+			+ COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_XFORWARDEDFOR + ")"
+			+ " VALUES (?,?,?,?)";
 	private static final String SQL_GET = "SELECT *"
 			+ " FROM " + TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY
 			+ " WHERE " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID + " = ?"
 			+ " AND " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE + " = ?"
-			+ " AND " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_CLIENT + " = ?";
+			+ " AND " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_CLIENT + " = ?"
+			+ " AND " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_XFORWARDEDFOR + " = ?";
 	private static final String UNIQUE_DATE = "UNIQUE_DATE";
 	private static final String SQL_GET_USER_ACTIVITY_PER_MONTH = "SELECT "
-			+ COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID + ","
+			+ COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID + "," + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_XFORWARDEDFOR + ","
 			+ " COUNT(DISTINCT " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE + ") AS " + UNIQUE_DATE
 			+ " FROM " + TABLE_USER_ACTIVITY_PER_CLIENT_PER_DAY
 			+ " WHERE " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE
 			+ " BETWEEN ? AND ?"
-			+ " GROUP BY " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID;
+			+ " GROUP BY " + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID + "," + COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_XFORWARDEDFOR;
 
 	private JdbcTemplate template;
 	private TransactionTemplate transactionTemplate;
@@ -94,6 +97,7 @@ public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClient
 						ps.setLong(1, uar.getUserId());
 						ps.setString(2, uar.getDate());
 						ps.setString(3, uar.getClient().name());
+						ps.setString(4, uar.getXForwardedFor());
 					}
 				});
 				return null;
@@ -107,8 +111,8 @@ public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClient
 	}
 
 	@Override
-	public UserActivityPerClientPerDay get(Long userId, String date, Client client) {
-		return template.queryForObject(SQL_GET, this.rowMapper, userId, date, client.name());
+	public UserActivityPerClientPerDay get(Long userId, String xForwardedFor, String date, Client client) {
+		return template.queryForObject(SQL_GET, this.rowMapper, userId, date, client.name(), xForwardedFor);
 	}
 
 	/*
@@ -121,6 +125,7 @@ public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClient
 			uar.setUserId(rs.getLong(COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID));
 			uar.setDate(rs.getString(COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_DATE));
 			uar.setClient(Client.valueOf(rs.getString(COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_CLIENT)));
+			uar.setXForwardedFor(rs.getString(COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_XFORWARDEDFOR));
 			return uar;
 		}
 	};
@@ -137,6 +142,7 @@ public class UserActivityPerClientPerDayDaoImpl implements UserActivityPerClient
 				uapm.setMonth(DateTimeUtils.toDateString(month));
 				uapm.setUniqueDate(rs.getLong(UNIQUE_DATE));
 				uapm.setUserId(rs.getLong(COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_USER_ID));
+				uapm.setXForwardedFor(rs.getString(COL_USER_ACTIVITY_PER_CLIENT_PER_DAY_XFORWARDEDFOR));
 				return uapm;
 			}
 		}, month, nextMonth);

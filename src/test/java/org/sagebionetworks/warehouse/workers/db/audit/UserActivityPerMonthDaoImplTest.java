@@ -35,14 +35,14 @@ public class UserActivityPerMonthDaoImplTest {
 
 	@Test
 	public void testRoundTrip() {
-		UserActivityPerMonth uar1 = createUserActivityPerMonth(1L, "2016-01-01", 2L);
-		UserActivityPerMonth uar2 = createUserActivityPerMonth(2L, "2016-01-01", 1L);
+		UserActivityPerMonth uar1 = createUserActivityPerMonth(1L, "1.2.3.4", "2016-01-01", 2L);
+		UserActivityPerMonth uar2 = createUserActivityPerMonth(2L, "5.6.7.8", "2016-01-01", 1L);
 
 		dao.insert(Arrays.asList(uar1, uar2));
 
 		// verify that we have 2 entries in the table
-		UserActivityPerMonth actualUar1 = dao.get(uar1.getUserId(), uar1.getMonth());
-		UserActivityPerMonth actualUar2 = dao.get(uar2.getUserId(), uar2.getMonth());
+		UserActivityPerMonth actualUar1 = dao.get(uar1.getUserId(), uar1.getXForwardedFor(), uar1.getMonth());
+		UserActivityPerMonth actualUar2 = dao.get(uar2.getUserId(), uar2.getXForwardedFor(), uar2.getMonth());
 		assertEquals(uar1, actualUar1);
 		assertEquals(uar2, actualUar2);
 
@@ -50,7 +50,7 @@ public class UserActivityPerMonthDaoImplTest {
 		UserActivityPerMonth uar3 = uar2;
 		uar3.setUniqueDate(3L);
 		dao.insert(Arrays.asList(uar3));
-		UserActivityPerMonth actualUar3 = dao.get(uar3.getUserId(), uar3.getMonth());
+		UserActivityPerMonth actualUar3 = dao.get(uar3.getUserId(), uar3.getXForwardedFor(), uar3.getMonth());
 		assertEquals(uar3, actualUar3);
 		assertFalse(actualUar2.equals(actualUar3));
 	}
@@ -64,24 +64,25 @@ public class UserActivityPerMonthDaoImplTest {
 	@Test
 	public void testHasRecordForMonthTrue() {
 		Date month = new DateTime().withDate(2016, 1, 1).withTime(0, 0, 0, 0).toDate();
-		UserActivityPerMonth uar = createUserActivityPerMonth(1L, "2016-01-01", 2L);
+		UserActivityPerMonth uar = createUserActivityPerMonth(1L, "1.2.3.4","2016-01-01", 2L);
 		dao.insert(Arrays.asList(uar));
 		assertTrue(dao.hasRecordForMonth(month));
 	}
 
 	@Test
 	public void testHasRecordForPreviousMonth() {
-		UserActivityPerMonth uar = createUserActivityPerMonth(1L, "2016-01-01", 2L);
+		UserActivityPerMonth uar = createUserActivityPerMonth(1L, "5.6.7.8", "2016-01-01", 2L);
 		dao.insert(Arrays.asList(uar));
 		Date previousMonth = new DateTime().withDate(2015, 12, 1).withTime(0, 0, 0, 0).toDate();
 		assertFalse(dao.hasRecordForMonth(previousMonth));
 	}
 
-	private UserActivityPerMonth createUserActivityPerMonth(long userId, String month, long uniqueDate) {
+	private UserActivityPerMonth createUserActivityPerMonth(long userId, String xForwardedFor, String month, long uniqueDate) {
 		UserActivityPerMonth uapm = new UserActivityPerMonth();
 		uapm.setUserId(userId);
 		uapm.setMonth(month);
 		uapm.setUniqueDate(uniqueDate);
+		uapm.setXForwardedFor(xForwardedFor);
 		return uapm;
 	}
 
