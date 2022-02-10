@@ -56,6 +56,28 @@ Resources:
         - 
           Fn::ImportValue:
             !Sub us-east-1-${ApplicationStackName}-DBSecurityGroup
+  LowFreeStorageAlarm:
+    Type : AWS::CloudWatch::Alarm
+    DependsOn: WarehouseDB
+    Properties:
+      ActionsEnabled: True
+      AlarmActions:
+        -
+          Fn::ImportValue:
+            !Sub us-east-1-${ApplicationStackName}-DWSnsTopic
+      AlarmDescription: Alert when database storage is low
+      ComparisonOperator: LessThanOrEqualToThreshold
+      Dimensions:
+      -
+        Name: DBInstanceIdentifier
+        Value: !Ref DBInstanceIdentifier
+      EvaluationPeriods: 3
+      Period: 300
+      MetricName: FreeStorageSpace
+      Namespace: AWS/RDS
+      Statistic: Average
+      Threshold: 64
+
 Outputs:
   JDBCConnectionString:
     Description: JDBC connection string for database instance
