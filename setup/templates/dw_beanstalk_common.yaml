@@ -194,3 +194,7 @@ Outputs:
     Value: !Ref DwInstanceProfile
     Export:
       Name: !Sub '${AWS::Region}-${AWS::StackName}-DWInstanceProfile'
+  DwNotificationTopic:
+    Value: !Ref DwSNSTopic
+    Export:
+        Name: !Sub '${AWS::Region}-${AWS::StackName}-DWSnsTopic'
