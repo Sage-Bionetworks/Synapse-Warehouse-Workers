@@ -263,7 +263,7 @@
 	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>4.3.26.RELEASE</spring.version>
+		<spring.version>5.2.23.RELEASE</spring.version>
 		<synapse.version>383.0</synapse.version>
 	</properties>
 </project>
